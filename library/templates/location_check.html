@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Vault - Location Verification</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts - Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        :root {
+            --primary: #2E86AB;
+            --primary-dark: #1B5E7A;
+            --secondary: #F18F01;
+            --accent: #C73E1D;
+            --dark: #2A2D3E;
+            --light: #F8F9FA;
+            --gray: #6C757D;
+            --success: #28a745;
+            --danger: #dc3545;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            overflow-x: hidden;
+            background: linear-gradient(135deg, #2E86AB 0%, #1B5E7A 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* Navigation */
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 1rem 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary) !important;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            margin: 0 0.5rem;
+            color: var(--dark) !important;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--primary) !important;
+        }
+
+        /* Header Section */
+        header {
+            text-align: center;
+            padding: 100px 20px 40px;
+            color: white;
+            width: 100%;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            animation: bounceIn 1s ease-out;
+        }
+
+        .college-logo {
+            width: 300px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .college-logo img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            font-weight: 800;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); }
+            to { text-shadow: 2px 2px 20px rgba(255, 255, 255, 0.4); }
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 0 auto 30px;
+            opacity: 0.95;
+            line-height: 1.6;
+            animation: fadeIn 1.4s ease-out;
+        }
+
+        /* Location Verification Card Styles */
+        .location-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+        }
+
+        .location-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .location-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .location-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s ease;
+        }
+
+        .location-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .location-header {
+            margin-bottom: 30px;
+        }
+
+/* Updated Location Icon Container */
+.location-icon-container {
+    position: relative;
+    width: 180px;
+    height: 180px;
+    margin: 0 auto 20px;
+}
+
+.location-circle {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 3px dashed var(--primary);
+    border-radius: 50%;
+    
+}
+
+.location-circle.stopped {
+    border-color: var(--success);
+}
+
+.location-circle.error {
+    border-color: var(--danger);
+}
+
+.institution-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4rem;
+    color:#ffaa00;
+    transition: all 0.5s ease;
+    z-index: 2;
+}
+
+.institution-icon.verified {
+    color: var(--success);
+    animation: pulse 1.5s infinite;
+}
+
+.institution-icon.error {
+    color: var(--danger);
+    animation: shake 0.5s ease-in-out;
+}
+
+/* Updated Location Pin */
+.location-pin {
+    position: absolute;
+    top: 60px;
+    
+   /* Start at top of circle */
+    left: 40%;
+    transform: translateX(-40%);
+    font-size: 1.8rem;
+    color:#ff0101;
+    z-index: 2;
+    animation: orbit 5s linear infinite;
+}
+
+.location-pin.stopped {
+    animation: none;
+    color: var(--success);
+}
+
+.location-pin.error {
+    animation: none;
+    color: var(--danger);
+}
+
+/* New Orbit Animation */
+@keyframes orbit {
+    0% {
+        transform: translateX(-50%) rotate(0deg) translateY(90px) rotate(0deg);
+    }
+    100% {
+        transform: translateX(-50%) rotate(360deg) translateY(90px) rotate(-360deg);
+    }
+}
+
+        .location-icon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5rem;
+            color: var(--primary);
+            animation: rotate 5s linear infinite;
+            z-index: 3;
+        }
+
+        .location-icon.stopped {
+            animation: none;
+            color: var(--success);
+        }
+
+        .location-icon.error {
+            animation: none;
+            color: var(--danger);
+        }
+
+        .location-header h2 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .location-content p {
+            margin-bottom: 20px;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            margin: 5px;
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 15px rgba(46, 134, 171, 0.3);
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(46, 134, 171, 0.4);
+        }
+
+        .btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .status-message {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: left;
+        }
+
+        .status-message.success {
+            background: #f0fdf4;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .status-message.error {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+
+        .status-message.info {
+            background: #eff6ff;
+            color: #1e40af;
+            border: 1px solid #dbeafe;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translate(-50%, -50%); }
+            25% { transform: translate(-55%, -50%); }
+            75% { transform: translate(-45%, -50%); }
+        }
+
+        .help-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: var(--light);
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            text-align: left;
+            transition: all 0.3s ease;
+        }
+
+        .help-section:hover {
+            transform: scale(1.02);
+        }
+
+        .help-section h3 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .help-section ul {
+            color: #555;
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+
+        .help-section li {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Developer Section */
+        .developer-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 40px auto;
+            text-align: center;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            animation: fadeInUp 0.8s ease-out;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .developer-info {
+            margin-bottom: 20px;
+        }
+
+        .developer-info p {
+            margin-bottom: 10px;
+        }
+
+        .developer-logo {
+            width: 120px;
+            height: 120px;
+            background: white;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 15px 0;
+            padding: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .developer-logo:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        .developer-logo img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        .developer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .dev-social-link {
+            color: white;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            text-decoration: none;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .dev-social-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px) scale(1.1);
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            padding: 20px;
+            opacity: 0.8;
+            font-size: 0.9rem;
+            width: 100%;
+            animation: fadeIn 1s ease-out;
+            margin-top: 40px;
+        }
+
+        /* Animation Keyframes */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+            70% {
+                transform: scale(0.9);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            header {
+                padding: 80px 20px 30px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            .location-card {
+                padding: 30px 20px;
+            }
+            
+            .location-header h2 {
+                font-size: 1.5rem;
+            }
+            
+            .btn {
+                padding: 12px 24px;
+                font-size: 1rem;
+            }
+            
+            .location-icon-container {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .institution-icon {
+                font-size: 3rem;
+            }
+            
+            .location-icon {
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header {
+                padding: 70px 15px 20px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .subtitle {
+                font-size: 0.9rem;
+            }
+            
+            .location-card {
+                padding: 25px 15px;
+            }
+            
+            .location-header h2 {
+                font-size: 1.3rem;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .location-icon-container {
+                width: 130px;
+                height: 130px;
+            }
+            
+            .institution-icon {
+                font-size: 2.5rem;
+            }
+            
+            .location-icon {
+                font-size: 1rem;
+            }
+            
+            .developer-logo {
+                width: 100px;
+                height: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('welcome') }}">
+                <i class="fas fa-book me-2"></i>E-Vault
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                     <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('welcome') }}"><i class="fas fa-home me-1"></i>Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('contact') }}"><i class="fas fa-envelope me-1"></i>Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <div class="college-logo">
+                    <img src="/static/images/college_logo.png" alt="Sphoorthy Engineering College Logo">
+                </div>
+            </div>
+            <h1>E-Vault</h1>
+            <p class="subtitle">A Safe Repository for Knowledge - Location Verification Required</p>
+        </header>
+        
+        <div class="location-container">
+            <div class="location-card">
+                <div class="location-header">
+                    <div class="location-icon-container">
+    <div class="location-circle" id="locationCircle"></div>
+    <i class="fas fa-university institution-icon" id="institutionIcon"></i>
+    <i class="fas fa-map-marker-alt location-pin" id="locationPin"></i>
+</div>
+<br>
+                    <h2>Location Verification</h2>
+                </div>
+                
+                <div class="location-content">
+                    <p>To access the secure E-Vault resources, please allow location access when prompted.</p>
+                    <p><small>Your location data is used solely for access verification and is not stored.</small></p>
+                    
+                    <div class="permission-prompt">
+                        <button id="getLocation" class="btn">
+                            <i class="fas fa-location-arrow"></i> Verify Location & Access E-Vault
+                        </button>
+                    </div>
+                    
+                    <div id="locationStatus">
+                        <div class="status-message info" id="loadingMessage" style="display: none;">
+                            <i class="fas fa-spinner spinner"></i> Verifying your location...
+                        </div>
+                        <div class="status-message success" id="successMessage" style="display: none;">
+                            <i class="fas fa-check-circle"></i> Location verified! Redirecting to login page...
+                        </div>
+                        <div class="status-message error" id="errorMessage" style="display: none;">
+                            <i class="fas fa-exclamation-circle"></i> <span id="errorText"></span>
+                        </div>
+                    </div>
+
+                    <div class="help-section">
+                        <h3><i class="fas fa-question-circle"></i> Location Access Help</h3>
+                        <ul>
+                            <li><i class="fas fa-check"></i> Click "Allow" when your browser asks for location permission</li>
+                            <li><i class="fas fa-check"></i> Ensure location services are enabled on your device</li>
+                            <li><i class="fas fa-check"></i> For best results, use a device with GPS capability</li>
+                            <li><i class="fas fa-check"></i> Make sure you're within the authorized area</li>
+                        </ul>
+                        <p><small>If you continue having issues, please contact your administrator.</small></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Developer Section -->
+        <div class="developer-section">
+            <div class="developer-info">
+                <p style="font-size: 1.1rem;">E-Vault System developed by</p> 
+                    <strong>Laxmi Nivas Morishetty</strong>
+                <p style="font-size: 0.9rem; color: rgba(255,255,255,0.9);"> Founder & CEO @Smart N Light Innovations</p>
+            </div>
+            
+            <!-- SmartNLight Innovation Logo -->
+            <a href="https://smartnlightinnovation.netlify.app" target="_blank" class="developer-logo">
+                <img src="/static/images/4.png" alt="SmartNLight Innovation Logo">
+            </a>
+            
+            <!-- Developer Contact Links -->
+            <div class="developer-links">
+                <a href="https://www.linkedin.com/in/laxmi-nivas-morishetty-02468m/" target="_blank" class="dev-social-link">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+                <a href="https://laxminivasmorishetty.netlify.app" target="_blank" class="dev-social-link">
+                    <i class="fas fa-globe"></i>
+                </a>
+                <a href="https://instagram.com/laxminivasmorishetty" target="_blank" class="dev-social-link">
+                    <i class="fab fa-instagram"></i>
+                </a>
+            </div>
+        </div>
+        
+        <footer>
+           <p>© <span id="year"></span> Sphoorthy Engineering College - E-Vault. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+       // Updated JavaScript for location verification
+document.addEventListener('DOMContentLoaded', function() {
+    const getLocationBtn = document.getElementById('getLocation');
+    const loadingMessage = document.getElementById('loadingMessage');
+    const successMessage = document.getElementById('successMessage');
+    const errorMessage = document.getElementById('errorMessage');
+    const errorText = document.getElementById('errorText');
+    const locationPin = document.getElementById('locationPin');
+    const institutionIcon = document.getElementById('institutionIcon');
+    const locationCircle = document.getElementById('locationCircle');
+
+    getLocationBtn.addEventListener('click', function() {
+        // Show loading state
+        loadingMessage.style.display = 'block';
+        successMessage.style.display = 'none';
+        errorMessage.style.display = 'none';
+        getLocationBtn.disabled = true;
+
+        // Try to get location
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    verifyLocation(lat, lon);
+                },
+                function(error) {
+                    // Handle location errors
+                    let errorMsg = 'Unable to access your location. ';
+                    
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            errorMsg += 'Please allow location access and try again.';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            errorMsg += 'Location information is unavailable.';
+                            break;
+                        case error.TIMEOUT:
+                            errorMsg += 'Location request timed out. Please try again.';
+                            break;
+                        default:
+                            errorMsg += 'An unknown error occurred.';
+                            break;
+                    }
+                    
+                    showError(errorMsg);
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 60000
+                }
+            );
+        } else {
+            // Geolocation not supported
+            showError('Geolocation is not supported by your browser.');
+        }
+    });
+
+    function verifyLocation(lat, lon) {
+        // Send location data to Flask backend
+        fetch('/location-check', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                latitude: lat,
+                longitude: lon
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showSuccess();
+            } else {
+                showError(data.message || 'Access denied. You are not in an authorized location.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showError('Network error. Please check your connection and try again.');
+        });
+    }
+
+    function showSuccess() {
+        loadingMessage.style.display = 'none';
+        successMessage.style.display = 'block';
+        
+        // Stop animations and show success state
+        locationPin.classList.add('stopped');
+        institutionIcon.classList.add('verified');
+        locationCircle.classList.add('stopped');
+        
+        // Redirect to login page after 2 seconds
+        setTimeout(() => {
+            window.location.href = '/login'; // Redirect to login page
+        }, 2000);
+    }
+
+    function showError(message) {
+        errorText.textContent = message;
+        errorMessage.style.display = 'block';
+        loadingMessage.style.display = 'none';
+        getLocationBtn.disabled = false;
+        
+        // Stop animations and show error state
+        locationPin.classList.add('error');
+        institutionIcon.classList.add('error');
+        locationCircle.classList.add('error');
+    }
+
+    // Set current year in footer
+    document.getElementById('year').textContent = new Date().getFullYear();
+});
+
+// Close mobile navbar when a nav link is clicked
+document.addEventListener('DOMContentLoaded', function() {
+    const navLinks = document.querySelectorAll('.nav-link');
+    const navbarToggler = document.querySelector('.navbar-toggler');
+    const navbarCollapse = document.querySelector('.navbar-collapse');
+    
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            // Check if navbar is collapsed (mobile view)
+            if (navbarCollapse.classList.contains('show')) {
+                // Trigger click on navbar toggler to close it
+                navbarToggler.click();
+            }
+        });
+    });
+});
+
+    </script>
+</body>
+</html>

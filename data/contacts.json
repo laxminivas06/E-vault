@@ -1,0 +1,28 @@
+[
+  {
+    "id": 1,
+    "name": "Laxmi Nivas Morishetty",
+    "email": "morishettylaxminivas@gmail.com",
+    "contact_number": "09059160424",
+    "message_type": "feedback",
+    "message": "good",
+    "submitted_by": "admin",
+    "submitted_at": "2025-11-03T23:10:48.592319",
+    "submitted_date": "2025-11-03",
+    "status": "new",
+    "location": "Not verified"
+  },
+  {
+    "id": 2,
+    "name": "Laxmi Nivas Morishetty",
+    "email": "morishettylaxminivas@gmail.com",
+    "contact_number": "09059160424",
+    "message_type": "feedback",
+    "message": "rwtfgrwt",
+    "submitted_by": "admin",
+    "submitted_at": "2025-11-03T23:45:45.945083",
+    "submitted_date": "2025-11-03",
+    "status": "new",
+    "location": "Not verified"
+  }
+]

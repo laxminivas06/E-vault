@@ -1,0 +1,12 @@
+[
+  {
+    "id": 2,
+    "name": "dwwd",
+    "type": "circle",
+    "latitude": 17.272011,
+    "longitude": 78.585175,
+    "radius_km": 1.0,
+    "created_by": "admin",
+    "created_at": "2025-11-02T20:11:37.882144"
+  }
+]

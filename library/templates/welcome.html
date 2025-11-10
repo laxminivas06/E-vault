@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Vault - A Safe Repository for Knowledge</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts - Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        :root {
+            --primary: #2E86AB;
+            --primary-dark: #1B5E7A;
+            --secondary: #F18F01;
+            --accent: #C73E1D;
+            --dark: #2A2D3E;
+            --light: #F8F9FA;
+            --gray: #6C757D;
+            --success: #28a745;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            overflow-x: hidden;
+            background: linear-gradient(135deg, #2E86AB 0%, #1B5E7A 100%);
+            min-height: 100vh;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* Navigation */
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 1rem 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary) !important;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            margin: 0 0.5rem;
+            color: var(--dark) !important;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--primary) !important;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 0.6rem 1.8rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(46, 134, 171, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(46, 134, 171, 0.4);
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 120px 0 40px;
+            position: relative;
+            overflow: hidden;
+            margin-top: 76px;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.1" d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,202.7C672,203,768,181,864,181.3C960,181,1056,203,1152,213.3C1248,224,1344,224,1392,224L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+            background-size: cover;
+            background-position: center bottom;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); }
+            to { text-shadow: 2px 2px 20px rgba(255, 255, 255, 0.4); }
+        }
+
+        .hero-subtitle {
+            font-size: 1rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+            font-weight: 300;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-hero {
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-hero-primary {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 5px 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-hero-primary:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.4);
+        }
+
+        /* TV Animation Section */
+        .tv-section {
+            padding: 30px 0;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            margin: 20px auto;
+            max-width: 95%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tv-container {
+            position: relative;
+            width: 300px;
+            height: 200px;
+            margin: 0 auto;
+        }
+
+        .tv {
+            width: 100%;
+            height: 100%;
+            background: #1a1a1a;
+            border-radius: 15px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .tv-screen {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            background: #0a0a0a;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .tv-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tv-books {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .book {
+            position: absolute;
+            width: 40px;
+            height: 50px;
+            background: var(--secondary);
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            animation: book-appear 4s infinite;
+            opacity: 0;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .book:hover {
+            transform: scale(1.2);
+            z-index: 10;
+        }
+
+        .book:nth-child(1) { 
+            top: 20%; left: 20%; 
+            animation-delay: 0.5s; 
+            background: #2E86AB; 
+        }
+        .book:nth-child(2) { 
+            top: 60%; left: 30%; 
+            animation-delay: 1s; 
+            background: #F18F01; 
+        }
+        .book:nth-child(3) { 
+            top: 40%; left: 60%; 
+            animation-delay: 1.5s; 
+            background: #C73E1D; 
+        }
+        .book:nth-child(4) { 
+            top: 70%; left: 70%; 
+            animation-delay: 2s; 
+            background: #2E86AB; 
+        }
+
+        @keyframes book-appear {
+            0% {
+                transform: scale(0) rotate(0deg);
+                opacity: 0;
+            }
+            20% {
+                transform: scale(1) rotate(5deg);
+                opacity: 1;
+            }
+            80% {
+                transform: scale(1) rotate(5deg);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(0) rotate(0deg);
+                opacity: 0;
+            }
+        }
+
+        .person {
+            position: absolute;
+            width: 40px;
+            height: 60px;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: person-study 6s infinite;
+            opacity: 0;
+        }
+
+        .person-body {
+            position: absolute;
+            width: 25px;
+            height: 40px;
+            background: #3498db;
+            border-radius: 10px 10px 0 0;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .person-head {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #ffdbac;
+            border-radius: 50%;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .phone {
+            position: absolute;
+            width: 15px;
+            height: 25px;
+            background: #333;
+            border-radius: 3px;
+            bottom: 45px;
+            right: 5px;
+            animation: phone-use 6s infinite;
+            opacity: 0;
+        }
+
+        @keyframes person-study {
+            0%, 20% {
+                opacity: 0;
+                transform: translateX(-50%) scale(0);
+            }
+            30%, 80% {
+                opacity: 1;
+                transform: translateX(-50%) scale(1);
+            }
+            90%, 100% {
+                opacity: 0;
+                transform: translateX(-50%) scale(0);
+            }
+        }
+
+        @keyframes phone-use {
+            0%, 40% {
+                opacity: 0;
+                transform: scale(0);
+            }
+            50%, 70% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            80%, 100% {
+                opacity: 0;
+                transform: scale(0);
+            }
+        }
+
+        .tv-stand {
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 15px;
+            background: #333;
+            border-radius: 0 0 5px 5px;
+        }
+
+        /* Stats Section */
+        .stats-section {
+            padding: 30px 0;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 1.5rem 1rem;
+            border-radius: 15px;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            min-width: 160px;
+            flex: 1;
+            max-width: 200px;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        /* Cards Section */
+        .card-section {
+            padding: 30px 0;
+        }
+
+        .card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            background: white;
+            margin-bottom: 1.5rem;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            background: linear-gradient(45deg, var(--primary), var(--primary-dark));
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border: none;
+            padding: 1.2rem;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* Library Resources Section */
+        .library-section {
+            padding: 30px 0;
+        }
+
+        .library-feature {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+        }
+
+        .library-feature:hover {
+            background: rgba(46, 134, 171, 0.05);
+            transform: translateX(5px);
+        }
+
+        .library-icon {
+            background: #e3f2fd;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 1.1rem;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+
+        .library-feature:hover .library-icon {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        /* Developer Section */
+        .developer-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            text-align: center;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .developer-info {
+            margin-bottom: 15px;
+        }
+
+        .developer-info p {
+            margin-bottom: 8px;
+        }
+
+        .developer-logo {
+            width: 100px;
+            height: 100px;
+            background: white;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px 0;
+            padding: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .developer-logo:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        .developer-logo img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        .developer-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .dev-social-link {
+            color: white;
+            font-size: 1.3rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            text-decoration: none;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .dev-social-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px) scale(1.1);
+        }
+
+        /* Footer */
+        .footer {
+            background: linear-gradient(135deg, var(--dark) 0%, #1a1c2b 100%);
+            color: white;
+            padding: 40px 0 20px;
+            position: relative;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 1.5rem;
+            margin-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        /* Animations */
+        .animate__animated {
+            animation-duration: 1s;
+            animation-fill-mode: both;
+        }
+
+        .animate-delay-1 { animation-delay: 0.2s; }
+        .animate-delay-2 { animation-delay: 0.4s; }
+        .animate-delay-3 { animation-delay: 0.6s; }
+
+        /* Mobile Responsive */
+        @media (max-width: 1200px) {
+            .container {
+                max-width: 1140px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .container {
+                max-width: 960px;
+            }
+            
+            .hero-title {
+                font-size: 2.2rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 0.95rem;
+            }
+            
+            .card-section {
+                padding: 25px 0;
+            }
+            
+            .tv-container {
+                width: 280px;
+                height: 190px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                max-width: 720px;
+            }
+            
+            .hero-section {
+                padding: 110px 0 30px;
+                margin-top: 70px;
+            }
+            
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 0.9rem;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn-hero {
+                width: 100%;
+                max-width: 280px;
+                justify-content: center;
+            }
+            
+            .card-body {
+                padding: 1.2rem;
+            }
+            
+            .navbar-collapse {
+                background: white;
+                padding: 1rem;
+                border-radius: 15px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+                margin-top: 1rem;
+            }
+            
+            .footer {
+                padding: 30px 0 15px;
+            }
+            
+            .tv-container {
+                width: 250px;
+                height: 170px;
+            }
+            
+            .stat-card {
+                min-width: 140px;
+                padding: 1.2rem 0.8rem;
+            }
+            
+            .stat-number {
+                font-size: 1.8rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .container {
+                max-width: 540px;
+                padding: 0 10px;
+            }
+            
+            .hero-section {
+                padding: 100px 0 20px;
+            }
+            
+            .hero-title {
+                font-size: 1.8rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 0.85rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .card-section {
+                padding: 20px 0;
+            }
+            
+            .card-header {
+                padding: 1rem;
+                font-size: 1rem;
+            }
+            
+            .card-body {
+                padding: 1rem;
+            }
+            
+            .stat-number {
+                font-size: 1.6rem;
+            }
+            
+            .developer-logo {
+                width: 90px;
+                height: 90px;
+            }
+            
+            .copyright {
+                font-size: 0.8rem;
+            }
+            
+            .tv-container {
+                width: 220px;
+                height: 150px;
+            }
+            
+            .book {
+                width: 35px;
+                height: 45px;
+                font-size: 9px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .hero-title {
+                font-size: 1.6rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 0.8rem;
+            }
+            
+            .btn-hero {
+                padding: 0.7rem 1.5rem;
+                font-size: 0.9rem;
+            }
+            
+            .card-header {
+                font-size: 0.95rem;
+                padding: 0.9rem;
+            }
+            
+            .card-body {
+                padding: 0.9rem;
+            }
+            
+            .developer-logo {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .tv-container {
+                width: 200px;
+                height: 140px;
+            }
+            
+            .stats-row {
+                gap: 15px;
+            }
+            
+            .stat-card {
+                min-width: 130px;
+                padding: 1rem 0.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('welcome') }}">
+                <i class="fas fa-book me-2"></i>E-Vault
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('contact') }}"><i class="fas fa-envelope me-1"></i>Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="hero-content">
+                <div class="logo-container mb-3">
+                    <div class="college-logo d-inline-block p-2 rounded" style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2);">
+                        <img src="/static/images/college_logo.png" alt="Sphoorthy Engineering College Logo" style="max-height: 50px;">
+                    </div>
+                </div>
+                <h1 class="hero-title animate__animated animate__fadeInDown">E-Vault</h1>
+                <h3 class="hero-subtitle animate__animated animate__fadeIn animate-delay-1">A Safe Repository for Knowledge</h3>
+                <p class="lead mb-3 animate__animated animate__fadeIn animate-delay-2">Access thousands of PDFs, e-books, and academic resources through our comprehensive online library management system.</p>
+                
+                <!-- TV Animation -->
+                <div class="tv-section animate__animated animate__fadeIn animate-delay-3">
+                    <div class="tv-container">
+                        <div class="tv">
+                            <div class="tv-screen">
+                                <div class="tv-content">
+                                    <div class="tv-books">
+                                        <div class="book">PDF</div>
+                                        <div class="book">DOC</div>
+                                        <div class="book">EPUB</div>
+                                        <div class="book">PDF</div>
+                                    </div>
+                                   
+                                
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tv-stand"></div>
+                    </div>
+                    <p class="text-center mt-3 text-white">Access knowledge from anywhere, anytime</p>
+                </div>
+                
+                <div class="hero-buttons">
+                    <a href="{{ url_for('location_check') }}" class="btn-hero btn-hero-primary animate__animated animate__fadeIn animate-delay-3">
+                        <i class="fas fa-lock-open me-2"></i>Access Library
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-row">
+                <div class="stat-card animate__animated animate__fadeInLeft">
+                    <div class="stat-number">{{ user_stats.total_users if user_stats else '0' }}+</div>
+                    <div class="stat-label">Total Users</div>
+                </div>
+                <div class="stat-card animate__animated animate__fadeInRight">
+                    <div class="stat-number">{{ user_stats.total_pdfs if user_stats else '0' }}+</div>
+                    <div class="stat-label">PDF Documents</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content Section -->
+    <section class="card-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100 animate__animated animate__fadeInLeft">
+                        <div class="card-header">
+                            <i class="fas fa-book-reader me-2"></i>Welcome to E-Vault
+                        </div>
+                        <div class="card-body">
+                            <p>Welcome to Sphoorthy Engineering College's comprehensive digital library - E-Vault: A Safe Repository for Knowledge. Our platform provides students and faculty with access to thousands of academic resources, including PDFs, e-books, journals, and research papers.</p>
+                            <p>Our library management system ensures that educational materials are easily accessible while maintaining security and proper access controls for copyrighted content.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100 animate__animated animate__fadeInRight">
+                        <div class="card-header">
+                            <i class="fas fa-lock-open me-2"></i>Access Library Resources
+                        </div>
+                        <div class="card-body">
+                            <p>To access our digital library resources, please verify your credentials. Our system ensures that only authorized users can access copyrighted materials.</p>
+                            <div class="mt-3 p-3 rounded" style="background: #f8f9fa;">
+                                <p class="mb-2"><strong>Why verification is required:</strong></p>
+                                <p class="mb-1"><i class="fas fa-check me-2 text-success"></i>Ensure only authorized users access materials</p>
+                                <p class="mb-1"><i class="fas fa-check me-2 text-success"></i>Comply with copyright regulations</p>
+                                <p class="mb-0"><i class="fas fa-check me-2 text-success"></i>Track resource usage for library management</p>
+                            </div>
+                            <div class="mt-3">
+                                <a href="{{ url_for('location_check') }}" class="btn btn-primary w-100">
+                                    <i class="fas fa-lock me-2"></i>Access Library Resources
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Library Resources Section -->
+    <section class="library-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card animate__animated animate__fadeInUp">
+                        <div class="card-header">
+                            <i class="fas fa-book me-2"></i>Library Resources
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="library-feature">
+                                        <div class="library-icon">
+                                            <i class="fas fa-book"></i>
+                                        </div>
+                                        <div>
+                                            <h5>5,000+ E-Books</h5>
+                                            <p class="mb-0">Comprehensive collection of digital books</p>
+                                        </div>
+                                    </div>
+                                    <div class="library-feature">
+                                        <div class="library-icon">
+                                            <i class="fas fa-file-pdf"></i>
+                                        </div>
+                                        <div>
+                                            <h5>5,000+ PDF Documents</h5>
+                                            <p class="mb-0">Academic papers, research, and study materials</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="library-feature">
+                                        <div class="library-icon">
+                                            <i class="fas fa-newspaper"></i>
+                                        </div>
+                                        <div>
+                                            <h5>500+ Academic Journals</h5>
+                                            <p class="mb-0">Latest research and scholarly articles</p>
+                                        </div>
+                                    </div>
+                                    <div class="library-feature">
+                                        <div class="library-icon">
+                                            <i class="fas fa-file-alt"></i>
+                                        </div>
+                                        <div>
+                                            <h5>250+ Research Papers</h5>
+                                            <p class="mb-0">Cutting-edge research from various fields</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Developer Section -->
+    <section class="card-section">
+        <div class="container">
+            <div class="developer-section animate__animated animate__fadeInUp">
+                
+            <div class="developer-info">
+                <p style="font-size: 1.1rem;">E-Vault System developed by</p> 
+                    <strong>Laxmi Nivas Morishetty</strong>
+                <p style="font-size: 0.9rem; color: rgba(255,255,255,0.9);"> Founder & CEO @Smart N Light Innovations</p>
+            </div>
+                
+                <!-- SmartNLight Innovation Logo -->
+                <a href="https://smartnlightinnovation.netlify.app" target="_blank" class="developer-logo">
+                    <img src="/static/images/4.png" alt="SmartNLight Innovation Logo">
+                </a>
+                
+                <!-- Developer Contact Links -->
+                <div class="developer-links">
+                    <a href="https://www.linkedin.com/in/laxmi-nivas-morishetty-02468m/" class="dev-social-link">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                    <a href="https://laxminivasmorishetty.netlify.app" target="_blank" class="dev-social-link">
+                        <i class="fas fa-globe"></i>
+                    </a>
+                    <a href="https://instagram.com/laxminivasmorishetty" target="_blank" class="dev-social-link">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="copyright">
+                © <span id="year"></span> Sphoorthy Engineering College - E-Vault. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Set current year in footer
+        document.getElementById('year').textContent = new Date().getFullYear();
+        
+        // Fetch stats dynamically
+        fetch('/api/stats')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const stats = data.stats;
+                    document.querySelectorAll('.stat-number')[0].textContent = stats.total_users + '+';
+                    document.querySelectorAll('.stat-number')[1].textContent = stats.total_pdfs + '+';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching stats:', error);
+            });
+        
+
+            // Close mobile navbar when a nav link is clicked
+document.addEventListener('DOMContentLoaded', function() {
+    const navLinks = document.querySelectorAll('.nav-link');
+    const navbarToggler = document.querySelector('.navbar-toggler');
+    const navbarCollapse = document.querySelector('.navbar-collapse');
+    
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            // Check if navbar is collapsed (mobile view)
+            if (navbarCollapse.classList.contains('show')) {
+                // Trigger click on navbar toggler to close it
+                navbarToggler.click();
+            }
+        });
+    });
+});
+
+        // Animate elements when they come into view
+        const animateOnScroll = function() {
+            const elements = document.querySelectorAll('.card, .stat-card, .developer-section');
+
+            elements.forEach(element => {
+                const elementPosition = element.getBoundingClientRect().top;
+                const windowHeight = window.innerHeight;
+
+                if (elementPosition < windowHeight - 100) {
+                    element.classList.add('animate__animated', 'animate__fadeInUp');
+                }
+            });
+        };
+
+        // Initial animation check
+        animateOnScroll();
+
+        // Add event listener for scroll
+        window.addEventListener('scroll', animateOnScroll);
+        
+        // Book animation interaction
+        const books = document.querySelectorAll('.book');
+        books.forEach(book => {
+            book.addEventListener('click', function() {
+                this.style.animation = 'none';
+                setTimeout(() => {
+                    this.style.animation = 'book-appear 4s infinite';
+                }, 10);
+            });
+        });
+    </script>
+</body>
+</html>
