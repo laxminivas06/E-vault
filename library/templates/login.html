@@ -652,6 +652,15 @@
                 right: 40px;
             }
         }
+        .password-format-info {
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: rgba(46, 134, 171, 0.05);
+    border-radius: 6px;
+    border-left: 3px solid var(--primary);
+    text-align: left;
+    animation: fadeIn 0.5s ease;
+}
     </style>
 </head>
 <body>
@@ -735,6 +744,13 @@
                                     <i class="fas fa-eye"></i>
                                 </button>
                             </div>
+                            <!-- Add this inside the password field section, right after the password requirements -->
+<div class="password-format-info" id="passwordFormatInfo">
+    <small class="text-muted">
+        <i class="fas fa-info-circle me-1"></i>
+        For students: Use your date of birth in <strong>DDMMYYYY</strong> or <strong>MMDDYYYY</strong> format
+    </small>
+</div>
                             
                             <!-- Password Requirements for Students -->
                             <div class="password-requirements" id="passwordRequirements">
@@ -761,7 +777,7 @@
 
                     <div class="session-info">
                         <i class="fas fa-shield-alt"></i> 
-                        Location verified | Session valid for 2.5 minutes
+                        Location verified | Session valid for 5 minutes
                     </div>
                 </div>
             </div>
@@ -815,22 +831,36 @@
         let wrongAttempts = 0;
         let isPasswordVisible = false;
         
+
+        function updatePasswordHint(username) {
+    const passwordHint = document.getElementById('passwordHint');
+    if (/^[A-Z]+$/.test(username)) {
+        passwordHint.textContent = 'For departments: Use your assigned department password';
+    } else {
+        passwordHint.textContent = 'For students: Use date of birth in DDMMYYYY format';
+    }
+}
+
         // Initialize monkeys
         monkeyClosed.classList.add('visible');
         
-        // Auto-capitalize and limit student roll numbers
-        usernameInput.addEventListener('input', function() {
-            const username = this.value.trim();
-            
-            // Check if it's likely a student roll number (starts with digit, specifically 2)
-            if (username.length > 0 && /^2/.test(username)) {
-                // Auto-capitalize all letters
-                this.value = username.toUpperCase();
-                
-                // Limit to 10 characters for student roll numbers
-                if (username.length > 10) {
-                    this.value = username.substring(0, 10);
-                }
+     usernameInput.addEventListener('input', function() {
+    const username = this.value.trim();
+    
+    // Check if it's a department code (all uppercase letters)
+    if (username.length > 0 && /^[A-Z]+$/.test(username)) {
+        // Department login - no password restrictions
+        this.value = username.toUpperCase();
+        
+        // Hide student-specific password requirements
+        passwordRequirements.classList.remove('show');
+        passwordInput.removeAttribute('maxlength');
+        passwordInput.removeAttribute('pattern');
+        passwordInput.removeAttribute('title');
+        passwordInput.setAttribute('placeholder', 'Enter department password');
+        
+    } else if (username.length > 0 && /^[2]/.test(username)) {
+        
                 
                 // Show student-specific password requirements
                 passwordRequirements.classList.add('show');

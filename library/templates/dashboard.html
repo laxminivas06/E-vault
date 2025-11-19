@@ -331,29 +331,58 @@
             color: #6b7280;
         }
         
-        /* PDF Grid - Always 2 columns */
-        .pdf-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            width: 100%;
-            margin-bottom: 30px;
-        }
+    
 
-        .pdf-card {
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 15px;
-            padding: 25px;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            animation: fadeInUp 0.8s ease-out;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
+
+        /* PDF Grid - Responsive */
+.pdf-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+/* Ensure PDF cards are properly sized */
+.pdf-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 15px;
+    padding: 25px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    animation: fadeInUp 0.8s ease-out;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 200px;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+    .pdf-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .pdf-card {
+        padding: 20px;
+        min-height: 180px;
+    }
+}
+
+@media (max-width: 480px) {
+    .pdf-grid {
+        gap: 12px;
+    }
+    
+    .pdf-card {
+        padding: 15px;
+        min-height: 160px;
+    }
+}
 
         .pdf-card::before {
             content: '';
@@ -1722,7 +1751,7 @@
                     {% endif %}
                 </div>
                 
-              <!-- PDF Grid -->
+        <!-- PDF Grid -->
 <div class="pdf-grid">
     {% for pdf in pdfs %}
     <div class="pdf-card" data-pdf-id="{{ pdf.id }}">
@@ -1751,7 +1780,7 @@
             <button class="btn btn-primary view-pdf-btn" 
                     data-pdf-id="{{ pdf.id }}" 
                     data-pdf-title="{{ pdf.title }}"
-                    data-pdf-link="{{ pdf.drive_link }}">
+                    onclick="openPdfViewer('{{ pdf.id }}', '{{ pdf.title | replace("'", "\\'") }}')">
                 <i class="fas fa-eye"></i> View PDF
             </button>
         </div>
@@ -1868,37 +1897,40 @@
     </div>
 
     <!-- PDF Viewer Modal -->
-    <div class="pdf-modal" id="pdfModal">
-        <div class="pdf-modal-header">
-            <div class="pdf-modal-title">
-                <i class="fas fa-file-pdf"></i>
-                <span id="pdfModalTitle">PDF Document</span>
-            </div>
-            <div class="pdf-modal-actions">
-                <button class="btn-close" id="closePdfModal" title="Close PDF Viewer">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
+<div class="pdf-modal" id="pdfModal">
+    <div class="pdf-modal-header">
+        <div class="pdf-modal-title">
+            <i class="fas fa-file-pdf"></i>
+            <span id="pdfModalTitle">PDF Document</span>
         </div>
-        <div class="pdf-modal-body">
-            <div class="pdf-loading">
-            </div>
-            <div class="pdf-viewer-container">
-                <iframe class="pdf-viewer-frame" id="pdfViewer" 
-                        sandbox="allow-scripts allow-same-origin"
-                        allow="fullscreen"
-                        title="PDF Document Viewer"
-                        style="background: white;">
-                </iframe>
-            </div>
-        </div> 
+        <div class="pdf-modal-actions">
+            <button class="btn-close" id="closePdfModal" title="Close PDF Viewer">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
     </div>
+    <div class="pdf-modal-body">
+        <div class="pdf-loading">
+            <i class="fas fa-spinner fa-spin"></i>
+            <span>Loading PDF...</span>
+        </div>
+        <div class="pdf-viewer-container">
+            <iframe class="pdf-viewer-frame" id="pdfViewer" 
+                    sandbox="allow-scripts allow-same-origin"
+                    allow="fullscreen"
+                    title="PDF Document Viewer"
+                    style="background: white;">
+            </iframe>
+        </div>
+    </div>
+</div>
 
     <footer>
         <p>© <span id="year"></span> Sphoorthy Engineering College - E-Vault. All rights reserved.</p>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
     // Set current year in footer
     document.getElementById('year').textContent = new Date().getFullYear();
@@ -1908,15 +1940,9 @@
     let currentZoom = 100;
     let isMobile = window.innerWidth <= 768;
     
-    // PDF data storage
-    const pdfData = {
-        {% for pdf in pdfs %}
-        '{{ pdf.id }}': {
-            title: '{{ pdf.title }}',
-            driveLink: '{{ pdf.drive_link }}'
-        },
-        {% endfor %}
-    };
+    // PDF data storage - FIXED: Use data passed from Flask
+    const pdfData = {{ all_pdfs_data | tojson | safe }};
+    console.log('Loaded PDF data:', pdfData);
 
     // Search functionality with debouncing
     let searchTimeout;
@@ -2131,6 +2157,8 @@
 
     // Separate function to handle the actual PDF viewer opening
     function openPdfViewerModal(pdfId, title) {
+        console.log('Opening PDF modal:', { pdfId, title, availablePDFs: Object.keys(pdfData) });
+        
         currentPdfId = pdfId;
         document.getElementById('pdfModalTitle').textContent = title;
         const modal = document.getElementById('pdfModal');
@@ -2142,17 +2170,56 @@
         // Show loading indicator
         document.querySelector('.pdf-loading').style.display = 'block';
         
-        // Get PDF data securely
+        // Get PDF data securely - with better error handling
         const pdfInfo = pdfData[pdfId];
+        console.log('PDF info retrieved:', pdfInfo);
+        
         if (!pdfInfo) {
-            console.error('PDF not found in local data:', pdfId);
-            alert('PDF not found in local data');
-            closePdfViewer();
+            console.error('PDF not found in local data. PDF ID:', pdfId, 'Available PDFs:', Object.keys(pdfData));
+            document.querySelector('.pdf-loading').style.display = 'none';
+            
+            // Show user-friendly error
+            const errorHtml = `
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: white; text-align: center; padding: 20px;">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 20px; color: #ff6b6b;"></i>
+                    <h3>PDF Not Available</h3>
+                    <p>The requested PDF could not be found in the system.</p>
+                    <p style="font-size: 0.9rem; opacity: 0.8;">PDF ID: ${pdfId}</p>
+                    <button class="btn-toolbar" onclick="closePdfViewer()" style="margin-top: 20px;">
+                        <i class="fas fa-times"></i> Close
+                    </button>
+                </div>
+            `;
+            
+            const iframe = document.getElementById('pdfViewer');
+            iframe.srcdoc = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <style>
+                        body { 
+                            margin: 0; 
+                            padding: 0; 
+                            background: #1a1a1a; 
+                            color: white; 
+                            font-family: Arial, sans-serif; 
+                            display: flex; 
+                            align-items: center; 
+                            justify-content: center; 
+                            height: 100vh; 
+                        }
+                    </style>
+                </head>
+                <body>${errorHtml}</body>
+                </html>
+            `;
             return;
         }
         
         // Convert to embedded URL and load
         const embeddedUrl = convertToEmbeddedUrl(pdfInfo.driveLink);
+        console.log('Loading PDF from URL:', embeddedUrl);
+        
         const iframe = document.getElementById('pdfViewer');
         
         // Set iframe source
@@ -2160,7 +2227,6 @@
         
         // Set initial zoom for mobile/desktop
         currentZoom = isMobile ? 80 : 100;
-        updateZoomDisplay();
         
         // Hide loading indicator when PDF loads
         iframe.onload = function() {
@@ -2181,20 +2247,6 @@
                     return false;
                 });
                 
-                // Remove download buttons from Google Drive viewer
-                const style = document.createElement('style');
-                style.textContent = `
-                    .ndfHFb-c4YZDc-Wrql6b, 
-                    .ndfHFb-c4YZDc-ToZjC, 
-                    .ndfHFb-c4YZDc-bN97Pc-tJHJj,
-                    .ndfHFb-c4YZDc-GSQQnc,
-                    [aria-label*="Download"],
-                    [jsname*="download"] {
-                        display: none !important;
-                    }
-                `;
-                iframe.contentDocument.head.appendChild(style);
-                
             } catch (e) {
                 console.log('Enhanced protection applied (cross-origin restrictions)');
             }
@@ -2204,11 +2256,47 @@
         iframe.onerror = function() {
             document.querySelector('.pdf-loading').style.display = 'none';
             console.error('Error loading PDF iframe:', pdfId);
-            alert('Error loading PDF. Please try again.');
-            closePdfViewer();
+            
+            // Show error in iframe
+            iframe.srcdoc = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <style>
+                        body { 
+                            margin: 0; 
+                            padding: 0; 
+                            background: #1a1a1a; 
+                            color: white; 
+                            font-family: Arial, sans-serif; 
+                            display: flex; 
+                            align-items: center; 
+                            justify-content: center; 
+                            height: 100vh; 
+                            text-align: center;
+                        }
+                        .error-content { padding: 20px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="error-content">
+                        <i class="fas fa-exclamation-circle" style="font-size: 3rem; margin-bottom: 20px; color: #ff6b6b;"></i>
+                        <h3>Error Loading PDF</h3>
+                        <p>There was an error loading the PDF document.</p>
+                        <p style="font-size: 0.9rem; opacity: 0.8;">Please try again or contact support.</p>
+                    </div>
+                </body>
+                </html>
+            `;
         };
         
-        resetPageInfo();
+        // Set timeout for loading
+        setTimeout(() => {
+            if (document.querySelector('.pdf-loading').style.display !== 'none') {
+                document.querySelector('.pdf-loading').style.display = 'none';
+                console.log('PDF loading timeout');
+            }
+        }, 10000); // 10 second timeout
     }
 
     // Initialize PDF viewers with proper event handling
@@ -2264,29 +2352,6 @@
         return driveUrl;
     }
 
-    // Update zoom display and apply zoom
-    function updateZoomDisplay() {
-        document.getElementById('zoomLevel').textContent = currentZoom + '%';
-        try {
-            const iframe = document.getElementById('pdfViewer');
-            if (iframe.contentDocument && iframe.contentDocument.body) {
-                iframe.contentDocument.body.style.zoom = currentZoom + '%';
-            }
-        } catch (e) {
-            // Cross-origin restrictions - fallback to iframe transform
-            const iframe = document.getElementById('pdfViewer');
-            iframe.style.transform = `scale(${currentZoom / 100})`;
-            iframe.style.transformOrigin = '0 0';
-        }
-    }
-
-    // Reset page info
-    function resetPageInfo() {
-        document.getElementById('pageInfo').textContent = 'Page 1 of 1';
-        document.getElementById('prevPage').disabled = true;
-        document.getElementById('nextPage').disabled = true;
-    }
-
     // Close modal function
     function closePdfViewer() {
         const modal = document.getElementById('pdfModal');
@@ -2298,47 +2363,7 @@
         console.log('PDF viewer closed');
     }
 
-    // Zoom controls
-    function setupZoomControls() {
-        document.getElementById('zoomIn').addEventListener('click', function() {
-            if (currentZoom < 200) {
-                currentZoom += isMobile ? 5 : 10;
-                updateZoomDisplay();
-            }
-        });
-
-        document.getElementById('zoomOut').addEventListener('click', function() {
-            if (currentZoom > 50) {
-                currentZoom -= isMobile ? 5 : 10;
-                updateZoomDisplay();
-            }
-        });
-
-        document.getElementById('fitWidth').addEventListener('click', function() {
-            currentZoom = isMobile ? 80 : 100;
-            updateZoomDisplay();
-        });
-
-        document.getElementById('fitPage').addEventListener('click', function() {
-            currentZoom = isMobile ? 70 : 80;
-            updateZoomDisplay();
-        });
-    }
-
-    // Page navigation (placeholder)
-    function setupPageNavigation() {
-        document.getElementById('prevPage').addEventListener('click', function() {
-            // Would require PDF.js integration for multi-page navigation
-            alert('Multi-page navigation requires advanced PDF.js integration');
-        });
-
-        document.getElementById('nextPage').addEventListener('click', function() {
-            // Would require PDF.js integration for multi-page navigation
-            alert('Multi-page navigation requires advanced PDF.js integration');
-        });
-    }
-
-    // Close modal with Escape key
+    // Setup Escape key to close modal
     function setupEscapeKey() {
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
@@ -2394,11 +2419,6 @@
     // Mobile detection
     function checkMobileStatus() {
         isMobile = window.innerWidth <= 768;
-        // Update zoom for mobile if PDF viewer is open
-        if (document.getElementById('pdfModal') && document.getElementById('pdfModal').classList.contains('active')) {
-            currentZoom = isMobile ? 80 : 100;
-            updateZoomDisplay();
-        }
     }
 
     // Initialize all event listeners and functionality
@@ -2428,8 +2448,6 @@
             closeButton.addEventListener('click', closePdfViewer);
         }
         
-        setupZoomControls();
-        setupPageNavigation();
         setupEscapeKey();
         setupBrowserNavigation();
         
@@ -2464,7 +2482,6 @@
     window.addEventListener('unhandledrejection', function(e) {
         console.error('Unhandled promise rejection:', e.reason);
     });
-    
 </script>
 </body>
 </html>

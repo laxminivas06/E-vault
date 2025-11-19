@@ -39,7 +39,7 @@ app.config['UPLOAD_FOLDER'] = 'static/uploads'
 mail = Mail(app)
 
 # Location verification settings
-LOCATION_CHECK_INTERVAL = 150  # 2.5 minutes in seconds
+LOCATION_CHECK_INTERVAL = 300  # 5 minutes in seconds
 
 def require_location_verification(f):
     """Simplified decorator for location verification"""
@@ -48,17 +48,17 @@ def require_location_verification(f):
         # Skip location check for static files and specific routes
         if request.endpoint in ['static', 'welcome', 'location_check', 'check_boundary', 'logout']:
             return f(*args, **kwargs)
-        
+
         # Check if location needs verification
         needs_verification = needs_location_verification()
-        
+
         if needs_verification:
             # Store intended destination
             session['intended_url'] = request.url
             return redirect(url_for('location_check'))
-        
+
         return f(*args, **kwargs)
-    
+
     return decorated_function
 
 def needs_location_verification():
@@ -66,7 +66,7 @@ def needs_location_verification():
     # If location is not verified at all
     if not session.get('location_verified'):
         return True
-    
+
     # Check if verification has expired
     last_check = session.get('last_location_check')
     if last_check:
@@ -78,7 +78,7 @@ def needs_location_verification():
         except Exception as e:
             logger.error(f"Error checking last location time: {str(e)}")
             return True
-    
+
     return False
 
 def update_location_verification(lat, lon, location_name):
@@ -96,11 +96,11 @@ def load_json_data(filename):
     filepath = f'data/{filename}'
     try:
         os.makedirs('data', exist_ok=True)
-        
+
         if not os.path.exists(filepath):
             logger.info(f"File {filepath} does not exist, returning empty list")
             return []
-        
+
         with open(filepath, 'r', encoding='utf-8') as f:
             content = f.read().strip()
             if not content:
@@ -108,7 +108,7 @@ def load_json_data(filename):
                 return []
             data = json.loads(content)
             return data
-            
+
     except json.JSONDecodeError as e:
         logger.error(f"JSON decode error in {filename}: {str(e)}")
         return []
@@ -121,12 +121,12 @@ def save_json_data(filename, data):
     filepath = f'data/{filename}'
     try:
         os.makedirs('data', exist_ok=True)
-        
+
         with open(filepath, 'w', encoding='utf-8') as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
-        
+
         return True
-        
+
     except Exception as e:
         logger.error(f"Error saving to {filename}: {str(e)}")
         raise
@@ -134,20 +134,20 @@ def save_json_data(filename, data):
 def calculate_distance(lat1, lon1, lat2, lon2):
     """Calculate distance between two coordinates in kilometers"""
     R = 6371  # Earth's radius in km
-    
+
     lat1, lon1, lat2, lon2 = map(radians, [lat1, lon1, lat2, lon2])
     dlat = lat2 - lat1
     dlon = lon2 - lon1
-    
+
     a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
     c = 2 * atan2(sqrt(a), sqrt(1-a))
-    
+
     return R * c
 
 def is_location_allowed(user_lat, user_lon):
     """Check if user is within any allowed location with multiple boundary types"""
     boundaries = load_json_data('boundaries.json')
-    
+
     for boundary in boundaries:
         if boundary['type'] == 'circle':
             try:
@@ -155,30 +155,30 @@ def is_location_allowed(user_lat, user_lon):
             except (ValueError, TypeError):
                 logger.warning(f"Invalid radius_km value in boundary {boundary.get('name', 'unknown')}: {boundary.get('radius_km')}")
                 continue
-                
+
             distance = calculate_distance(
                 user_lat, user_lon,
                 boundary['latitude'], boundary['longitude']
             )
             if distance <= radius_km:
                 return True, boundary['name']
-        
+
         elif boundary['type'] == 'rectangle':
-            if (boundary['south'] <= user_lat <= boundary['north'] and 
+            if (boundary['south'] <= user_lat <= boundary['north'] and
                 boundary['west'] <= user_lon <= boundary['east']):
                 return True, boundary['name']
-        
+
         elif boundary['type'] == 'polygon':
             if is_point_in_polygon(user_lat, user_lon, boundary['coordinates']):
                 return True, boundary['name']
-    
+
     return False, None
 # Add these helper functions for statistics
 def track_user_access(username, action, location=None, pdf_id=None):
     """Track user access for statistics"""
     try:
         access_logs = load_json_data('access_logs.json')
-        
+
         log_entry = {
             'id': len(access_logs) + 1,
             'username': username,
@@ -190,16 +190,16 @@ def track_user_access(username, action, location=None, pdf_id=None):
             'time': datetime.now().strftime('%H:%M:%S'),
             'hour': datetime.now().hour
         }
-        
+
         access_logs.append(log_entry)
-        
+
         # Keep only last 30 days of logs to prevent file from growing too large
         thirty_days_ago = datetime.now() - timedelta(days=30)
-        access_logs = [log for log in access_logs 
+        access_logs = [log for log in access_logs
                       if datetime.fromisoformat(log['timestamp']) > thirty_days_ago]
-        
+
         save_json_data('access_logs.json', access_logs)
-        
+
     except Exception as e:
         logger.error(f"Error tracking user access: {str(e)}")
 
@@ -209,23 +209,23 @@ def export_statistics():
     """Export statistics to Excel format"""
     if session.get('user_role') != 'admin':
         return jsonify({'success': False, 'message': 'Access denied'}), 403
-    
+
     try:
         # Get all data
         stats = get_user_statistics()
         access_logs = load_json_data('access_logs.json')
         users = load_json_data('users.json')
         pdfs = load_json_data('pdfs.json')
-        
+
         # Create Excel file in memory
         output = BytesIO()
-        
+
         with pd.ExcelWriter(output, engine='openpyxl') as writer:
             # Summary Sheet
             summary_data = {
                 'Metric': [
-                    'Total Users', 'Active Users', 'Today Activity', 
-                    'Average Session Duration (min)', 'Total Administrators', 
+                    'Total Users', 'Active Users', 'Today Activity',
+                    'Average Session Duration (min)', 'Total Administrators',
                     'Total Students', 'Total PDFs', 'Total Sessions Tracked'
                 ],
                 'Value': [
@@ -241,7 +241,7 @@ def export_statistics():
             }
             df_summary = pd.DataFrame(summary_data)
             df_summary.to_excel(writer, sheet_name='Summary', index=False)
-            
+
             # Activity Logs Sheet
             if access_logs:
                 df_activity = pd.DataFrame(access_logs)
@@ -250,7 +250,7 @@ def export_statistics():
                     df_activity['timestamp'] = pd.to_datetime(df_activity['timestamp'])
                     df_activity['timestamp'] = df_activity['timestamp'].dt.strftime('%Y-%m-%d %H:%M:%S')
                 df_activity.to_excel(writer, sheet_name='Activity Logs', index=False)
-            
+
             # Users Sheet
             if users:
                 df_users = pd.DataFrame(users)
@@ -258,30 +258,30 @@ def export_statistics():
                 if 'password' in df_users.columns:
                     df_users = df_users.drop('password', axis=1)
                 df_users.to_excel(writer, sheet_name='Users', index=False)
-            
+
             # Location Statistics Sheet
             location_stats = stats.get('location_stats', {})
             if location_stats:
                 df_locations = pd.DataFrame(list(location_stats.items()), columns=['Location', 'Access Count'])
                 df_locations = df_locations.sort_values('Access Count', ascending=False)
                 df_locations.to_excel(writer, sheet_name='Locations', index=False)
-            
+
             # Hourly Usage Sheet
             hourly_usage = stats.get('hourly_usage', {})
             if hourly_usage:
                 df_hourly = pd.DataFrame(list(hourly_usage.items()), columns=['Hour', 'Access Count'])
                 df_hourly = df_hourly.sort_values('Hour')
                 df_hourly.to_excel(writer, sheet_name='Hourly Usage', index=False)
-        
+
         output.seek(0)
-        
+
         return send_file(
             output,
             as_attachment=True,
             download_name=f'statistics_export_{datetime.now().strftime("%Y%m%d_%H%M%S")}.xlsx',
             mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         )
-        
+
     except Exception as e:
         logger.error(f"Error exporting statistics: {str(e)}")
         flash('Error exporting statistics', 'error')
@@ -294,44 +294,44 @@ def track_pdf_view():
     """Track when a user views a PDF"""
     if not session.get('user_id'):
         return jsonify({'success': False, 'message': 'Not authenticated'}), 401
-    
+
     data = request.get_json()
     pdf_id = data.get('pdf_id')
     pdf_title = data.get('pdf_title')
-    
+
     if not pdf_id:
         return jsonify({'success': False, 'message': 'PDF ID required'}), 400
-    
+
     try:
         # Convert pdf_id to integer to ensure consistency
         pdf_id = int(pdf_id)
-        
+
         # Verify PDF exists
         pdfs = load_json_data('pdfs.json')
         pdf_exists = any(pdf['id'] == pdf_id for pdf in pdfs)
-        
+
         if not pdf_exists:
             logger.warning(f"PDF ID {pdf_id} not found in database")
             return jsonify({'success': False, 'message': 'PDF not found'}), 404
-        
+
         # Track PDF view with location
         current_location = session.get('verified_location', 'Unknown')
         track_user_access(session['user_id'], 'pdf_view', current_location, pdf_id)
-        
+
         # Update session counter for user stats
         session['documents_viewed'] = session.get('documents_viewed', 0) + 1
-        
+
         logger.info(f"User {session['user_id']} viewed PDF {pdf_id} ({pdf_title}) from {current_location}")
-        
+
         return jsonify({'success': True, 'message': 'PDF view tracked'})
-    
+
     except ValueError:
         logger.error(f"Invalid PDF ID format: {pdf_id}")
         return jsonify({'success': False, 'message': 'Invalid PDF ID format'}), 400
     except Exception as e:
         logger.error(f"Error tracking PDF view: {str(e)}")
         return jsonify({'success': False, 'message': 'Error tracking PDF view'}), 500
-    
+
 # Update the get_user_statistics function to handle PDF IDs properly
 def get_user_statistics():
     """Get comprehensive user statistics"""
@@ -339,34 +339,34 @@ def get_user_statistics():
         users = load_json_data('users.json')
         access_logs = load_json_data('access_logs.json')
         pdfs = load_json_data('pdfs.json')
-        
+
         # Basic counts
         total_users = len(users)
         total_admins = len([u for u in users if u.get('role') == 'admin'])
         total_students = len([u for u in users if u.get('role') == 'student'])
         total_pdfs = len(pdfs)
-        
+
         # User activity analysis
         active_users = set(log['username'] for log in access_logs)
         total_active_users = len(active_users)
-        
+
         # Time-based analysis
         today = datetime.now().strftime('%Y-%m-%d')
         today_logs = [log for log in access_logs if log['date'] == today]
-        
+
         # Location analysis
         location_logs = [log for log in access_logs if log.get('location')]
         location_stats = {}
         for log in location_logs:
             location = log['location']
             location_stats[location] = location_stats.get(location, 0) + 1
-        
+
         # Hourly usage pattern
         hourly_usage = {}
         for log in access_logs:
             hour = log.get('hour', 0)
             hourly_usage[hour] = hourly_usage.get(hour, 0) + 1
-        
+
         # PDF access statistics - FIXED: Ensure PDF IDs are properly handled
         pdf_access = {}
         for log in access_logs:
@@ -374,7 +374,7 @@ def get_user_statistics():
                 # Convert to string for consistency, as IDs might be stored as strings or integers
                 pdf_id = str(log['pdf_id'])
                 pdf_access[pdf_id] = pdf_access.get(pdf_id, 0) + 1
-        
+
         # User session analysis
         user_sessions = {}
         for log in access_logs:
@@ -382,7 +382,7 @@ def get_user_statistics():
             if username not in user_sessions:
                 user_sessions[username] = []
             user_sessions[username].append(log['timestamp'])
-        
+
         # Calculate average session duration (simplified)
         session_durations = []
         for username, timestamps in user_sessions.items():
@@ -393,9 +393,9 @@ def get_user_statistics():
                 last_access = datetime.fromisoformat(timestamps[-1])
                 duration = (last_access - first_access).total_seconds() / 60  # in minutes
                 session_durations.append(duration)
-        
+
         avg_session_duration = sum(session_durations) / len(session_durations) if session_durations else 0
-        
+
         # Calculate day-wise average session duration
         today_sessions = {}
         for log in today_logs:
@@ -403,7 +403,7 @@ def get_user_statistics():
             if username not in today_sessions:
                 today_sessions[username] = []
             today_sessions[username].append(log['timestamp'])
-        
+
         today_durations = []
         for username, timestamps in today_sessions.items():
             if len(timestamps) > 1:
@@ -412,9 +412,9 @@ def get_user_statistics():
                 last_access = datetime.fromisoformat(timestamps[-1])
                 duration = (last_access - first_access).total_seconds() / 60
                 today_durations.append(duration)
-        
+
         day_avg_session_duration = sum(today_durations) / len(today_durations) if today_durations else 0
-        
+
         stats = {
             'total_users': total_users,
             'total_admins': total_admins,
@@ -429,9 +429,9 @@ def get_user_statistics():
             'day_avg_session_duration': round(day_avg_session_duration, 2),
             'total_sessions_tracked': len(access_logs)
         }
-        
+
         return stats
-        
+
     except Exception as e:
         logger.error(f"Error generating statistics: {str(e)}")
         return {}
@@ -444,22 +444,22 @@ def admin_statistics():
     if session.get('user_role') != 'admin':
         flash('Access denied. Admin privileges required.', 'error')
         return redirect(url_for('dashboard'))
-    
+
     # Get overall statistics
     stats = get_user_statistics()
-    
+
     # Get user list for detailed views
     users = load_json_data('users.json')
-    
+
     # Get recent activity (last 50 logs)
     access_logs = load_json_data('access_logs.json')
     recent_activity = sorted(access_logs, key=lambda x: x['timestamp'], reverse=True)[:50]
-    
+
     # Get top PDFs - FIXED: Handle PDF ID conversion properly
     pdfs = load_json_data('pdfs.json')
     pdf_access_stats = stats.get('pdf_access', {})
     top_pdfs = []
-    
+
     for pdf_id_str, count in pdf_access_stats.items():
         try:
             # Convert back to integer for comparison
@@ -474,9 +474,9 @@ def admin_statistics():
         except (ValueError, TypeError):
             logger.warning(f"Invalid PDF ID in access stats: {pdf_id_str}")
             continue
-    
+
     top_pdfs.sort(key=lambda x: x['access_count'], reverse=True)
-    
+
     return render_template('admin_statistics.html',
                          stats=stats,
                          users=users,
@@ -496,32 +496,32 @@ def contact():
         contact_number = request.form.get('contact_number', '').strip()
         message = request.form.get('message', '').strip()
         message_type = request.form.get('message_type', 'general').strip()
-        
+
         # Basic validation
         if not name or not email or not message:
             flash('Please fill in all required fields (Name, Email, Message)', 'error')
             return render_template('contact.html',
                                  username=session.get('user_id'),
                                  location=session.get('verified_location'))
-        
+
         # Validate email format
         if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email):
             flash('Please enter a valid email address', 'error')
             return render_template('contact.html',
                                  username=session.get('user_id'),
                                  location=session.get('verified_location'))
-        
+
         # Validate contact number if provided
         if contact_number and not re.match(r'^[\d\s\+\-\(\)]{10,15}$', contact_number):
             flash('Please enter a valid contact number', 'error')
             return render_template('contact.html',
                                  username=session.get('user_id'),
                                  location=session.get('verified_location'))
-        
+
         try:
             # Load existing contacts
             contacts = load_json_data('contacts.json')
-            
+
             # Create new contact entry
             new_contact = {
                 'id': len(contacts) + 1,
@@ -536,32 +536,32 @@ def contact():
                 'status': 'new',
                 'location': session.get('verified_location', 'Not verified')
             }
-            
+
             # Save to contacts.json
             contacts.append(new_contact)
             save_json_data('contacts.json', contacts)
-            
+
             # Send thank you email to user
             try:
                 send_thank_you_email(name, email, message_type)
             except Exception as email_error:
                 logger.error(f"Failed to send thank you email: {str(email_error)}")
                 # Don't fail the entire submission if email fails
-            
+
             # Track contact submission if user is logged in
             if session.get('user_id'):
-                track_user_access(session['user_id'], 'contact_submission', 
+                track_user_access(session['user_id'], 'contact_submission',
                                 session.get('verified_location', 'Not verified'))
-            
+
             logger.info(f"New contact form submitted by {name} ({email})")
             flash('Thank you for your message! We will get back to you soon. A confirmation email has been sent.', 'success')
-            
+
             return redirect(url_for('contact'))
-            
+
         except Exception as e:
             logger.error(f"Error saving contact form: {str(e)}")
             flash('Sorry, there was an error submitting your message. Please try again.', 'error')
-    
+
     return render_template('contact.html',
                          username=session.get('user_id'),
                          location=session.get('verified_location'))
@@ -570,7 +570,7 @@ def send_thank_you_email(name, email, message_type):
     """Send thank you email to user after contact form submission"""
     try:
         subject = f"Thank you for contacting E-Vault - {message_type.title()} Query"
-        
+
         html_body = f"""
         <!DOCTYPE html>
         <html>
@@ -593,14 +593,14 @@ def send_thank_you_email(name, email, message_type):
                     <h2>Thank You, {name}!</h2>
                     <p>We have received your {message_type} query and appreciate you reaching out to us.</p>
                     <p>Our team will review your message and get back to you as soon as possible.</p>
-                    
+
                     <div style="background: white; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #2E86AB;">
                         <p><strong>Query Type:</strong> {message_type.title()}</p>
                         <p><strong>Submitted On:</strong> {datetime.now().strftime('%B %d, %Y at %I:%M %p')}</p>
                     </div>
-                    
+
                     <p>If you have any urgent concerns, please feel free to contact us directly.</p>
-                    
+
                     <p>Best regards,<br>
                     <strong>E-Vault Support Team</strong><br>
                     Sphoorthy Engineering College</p>
@@ -613,22 +613,22 @@ def send_thank_you_email(name, email, message_type):
         </body>
         </html>
         """
-        
+
         # Create message
         msg = Message(
             subject=subject,
             recipients=[email],
             html=html_body
         )
-        
+
         # Send email
         mail.send(msg)
         logger.info(f"Thank you email sent to {email}")
-        
+
     except Exception as e:
         logger.error(f"Error sending thank you email to {email}: {str(e)}")
         raise
-    
+
 
 @app.route('/admin/contacts')
 @require_location_verification
@@ -637,33 +637,33 @@ def admin_contacts():
     if session.get('user_role') != 'admin':
         flash('Access denied. Admin privileges required.', 'error')
         return redirect(url_for('dashboard'))
-    
+
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 10, type=int)
     status_filter = request.args.get('status', 'all')
-    
+
     contacts = load_json_data('contacts.json')
-    
+
     # Apply status filter
     if status_filter != 'all':
         contacts = [contact for contact in contacts if contact.get('status') == status_filter]
-    
+
     # Sort by submission date (newest first)
     contacts.sort(key=lambda x: x.get('submitted_at', ''), reverse=True)
-    
+
     total_contacts = len(contacts)
     total_pages = (total_contacts + per_page - 1) // per_page
-    
+
     if page < 1:
         page = 1
     elif page > total_pages and total_pages > 0:
         page = total_pages
-    
+
     start_idx = (page - 1) * per_page
     end_idx = start_idx + per_page
-    
+
     paginated_contacts = contacts[start_idx:end_idx]
-    
+
     # Statistics
     all_contacts = load_json_data('contacts.json')
     contact_stats = {
@@ -672,7 +672,7 @@ def admin_contacts():
         'read': len([c for c in all_contacts if c.get('status') == 'read']),
         'replied': len([c for c in all_contacts if c.get('status') == 'replied'])
     }
-    
+
     return render_template('admin_contacts.html',
                          contacts=paginated_contacts,
                          username=session.get('user_id'),
@@ -691,31 +691,31 @@ def update_contact_status():
     """Update contact message status"""
     if session.get('user_role') != 'admin':
         return jsonify({'success': False, 'message': 'Access denied'}), 403
-    
+
     data = request.get_json()
     contact_id = data.get('contact_id')
     new_status = data.get('status')
-    
+
     if not contact_id or not new_status:
         return jsonify({'success': False, 'message': 'Missing required fields'}), 400
-    
+
     if new_status not in ['new', 'read', 'replied']:
         return jsonify({'success': False, 'message': 'Invalid status'}), 400
-    
+
     try:
         contacts = load_json_data('contacts.json')
-        
+
         for contact in contacts:
             if contact['id'] == contact_id:
                 contact['status'] = new_status
                 contact['updated_at'] = datetime.now().isoformat()
                 contact['updated_by'] = session.get('user_id')
                 break
-        
+
         save_json_data('contacts.json', contacts)
-        
+
         return jsonify({'success': True, 'message': 'Status updated successfully'})
-        
+
     except Exception as e:
         logger.error(f"Error updating contact status: {str(e)}")
         return jsonify({'success': False, 'message': 'Error updating status'}), 500
@@ -726,29 +726,29 @@ def delete_contact():
     """Delete contact message"""
     if session.get('user_role') != 'admin':
         return jsonify({'success': False, 'message': 'Access denied'}), 403
-    
+
     data = request.get_json()
     contact_id = data.get('contact_id')
-    
+
     if not contact_id:
         return jsonify({'success': False, 'message': 'Contact ID required'}), 400
-    
+
     try:
         contacts = load_json_data('contacts.json')
         initial_count = len(contacts)
         contacts = [contact for contact in contacts if contact['id'] != contact_id]
-        
+
         if len(contacts) == initial_count:
             return jsonify({'success': False, 'message': 'Contact not found'}), 404
-        
+
         save_json_data('contacts.json', contacts)
-        
+
         return jsonify({'success': True, 'message': 'Contact deleted successfully'})
-        
+
     except Exception as e:
         logger.error(f"Error deleting contact: {str(e)}")
         return jsonify({'success': False, 'message': 'Error deleting contact'}), 500
-    
+
 
 
 def get_user_detailed_stats(username):
@@ -756,37 +756,37 @@ def get_user_detailed_stats(username):
     try:
         access_logs = load_json_data('access_logs.json')
         user_logs = [log for log in access_logs if log['username'] == username]
-        
+
         if not user_logs:
             return None
-        
+
         # Sort logs by timestamp
         user_logs.sort(key=lambda x: x['timestamp'])
-        
+
         # Basic info
         first_access = user_logs[0]['timestamp'][:10]
         last_access = user_logs[-1]['timestamp'][:10]
         total_logins = len([log for log in user_logs if log['action'] == 'login'])
-        
+
         # Location usage
         locations = {}
         for log in user_logs:
             location = log.get('location', 'Unknown')
             locations[location] = locations.get(location, 0) + 1
-        
+
         # Preferred access times
         access_hours = {}
         for log in user_logs:
             hour = log.get('hour', 0)
             access_hours[hour] = access_hours.get(hour, 0) + 1
-        
+
         # PDF access
         pdf_access = {}
         for log in user_logs:
             if log.get('pdf_id'):
                 pdf_id = log['pdf_id']
                 pdf_access[pdf_id] = pdf_access.get(pdf_id, 0) + 1
-        
+
         user_stats = {
             'username': username,
             'first_access': first_access,
@@ -799,13 +799,13 @@ def get_user_detailed_stats(username):
             'preferred_locations': sorted(locations.items(), key=lambda x: x[1], reverse=True)[:3],
             'preferred_hours': sorted(access_hours.items(), key=lambda x: x[1], reverse=True)[:3]
         }
-        
+
         return user_stats
-        
+
     except Exception as e:
         logger.error(f"Error getting user detailed stats: {str(e)}")
         return None
-    
+
 def update_location_verification(lat, lon, location_name):
     """Update session with new location verification"""
     session['location_verified'] = True
@@ -814,7 +814,7 @@ def update_location_verification(lat, lon, location_name):
     session['current_latitude'] = lat
     session['current_longitude'] = lon
     session['needs_location_verification'] = False
-    
+
     # Track location access if user is logged in
     if session.get('user_id'):
         track_user_access(session['user_id'], 'location_verify', location_name)
@@ -825,31 +825,47 @@ def is_point_in_polygon(lat, lon, polygon):
     """Check if a point is inside a polygon using ray casting algorithm"""
     n = len(polygon)
     inside = False
-    
+
     j = n - 1
     for i in range(n):
         if (((polygon[i][1] > lon) != (polygon[j][1] > lon)) and
-            (lat < (polygon[j][0] - polygon[i][0]) * (lon - polygon[i][1]) / 
+            (lat < (polygon[j][0] - polygon[i][0]) * (lon - polygon[i][1]) /
              (polygon[j][1] - polygon[i][1]) + polygon[i][0])):
             inside = not inside
         j = i
-    
+
     return inside
 
+
 def validate_student_credentials(username, password):
-    """Validate student credentials (rollno as username, DOB as password)"""
+    """Validate student credentials (rollno OR department code as username, DOB/password as password)"""
     users = load_json_data('users.json')
     user = next((u for u in users if u['username'] == username and u['role'] == 'student'), None)
-    
+
     if user and user['password'] == password:
         return True, user
     return False, None
+
+def is_valid_student_username(username):
+    """Check if username is valid (rollno OR department code)"""
+    # Allow roll numbers (10 alphanumeric) OR department codes (2-10 uppercase letters)
+    return bool(re.match(r'^[A-Za-z0-9]{10}$', username)) or bool(re.match(r'^[A-Z]{2,10}$', username.upper()))
+
+def is_valid_password_format(password, username):
+    """Validate password format based on username type"""
+    # If username is a department code, use the stored password directly
+    if re.match(r'^[A-Z]{2,10}$', username.upper()):
+        return True  # Department passwords are predefined, no format validation needed
+    
+    # If username is a roll number, validate as DOB
+    clean_password = ''.join(filter(str.isdigit, password))
+    return is_valid_dob(clean_password)
 
 def validate_admin_credentials(username, password):
     """Validate admin credentials"""
     users = load_json_data('users.json')
     user = next((u for u in users if u['username'] == username and u['role'] == 'admin'), None)
-    
+
     if user and user['password'] == password:
         return True, user
     return False, None
@@ -858,40 +874,330 @@ def is_valid_rollno(rollno):
     """Check if roll number is valid (alphanumeric, 10 characters)"""
     return bool(re.match(r'^[A-Za-z0-9]{10}$', rollno))
 
-def is_valid_dob(dob):
-    """Strict DOB validation (DDMMYYYY format - exactly 8 digits, no separators)"""
+
+def process_excel_users(file):
+    """Process Excel file for bulk user upload - IMPROVED date format handling"""
     try:
+        df = pd.read_excel(file)
+        required_columns = ['username', 'password', 'role', 'name']
+
+        # Check for required columns
+        missing_columns = [col for col in required_columns if col not in df.columns]
+        if missing_columns:
+            return False, f"Missing required columns: {', '.join(missing_columns)}"
+
+        # Load existing users
+        users = load_json_data('users.json')
+        new_users = []
+        errors = []
+        usernames_in_file = set()
+
+        for index, row in df.iterrows():
+            try:
+                username = str(row['username']).strip()
+                password = str(row['password']).strip()
+                role = str(row['role']).strip().lower()
+                name = str(row['name']).strip()
+
+                # Skip empty rows
+                if not username or not password or not role or not name:
+                    errors.append(f"Row {index+2}: All fields are required")
+                    continue
+
+                # Validate role
+                if role not in ['admin', 'student']:
+                    errors.append(f"Row {index+2}: Invalid role '{role}'. Must be 'admin' or 'student'")
+                    continue
+
+                # Check for duplicate username in current file
+                if username in usernames_in_file:
+                    errors.append(f"Row {index+2}: Duplicate username '{username}' within this file")
+                    continue
+                usernames_in_file.add(username)
+
+                # Check for duplicate username in existing database
+                if any(user['username'] == username for user in users):
+                    errors.append(f"Row {index+2}: Username '{username}' already exists in system")
+                    continue
+
+                if role == 'student':
+                    # Validate roll number format
+                    if not is_valid_rollno(username):
+                        errors.append(f"Row {index+2}: Invalid roll number '{username}'. Must be exactly 10 alphanumeric characters")
+                        continue
+
+                    # IMPROVED DATE FORMAT HANDLING
+                    clean_password = clean_and_validate_dob(password, index+2, errors)
+                    if clean_password is None:
+                        continue  # Error already added in the function
+
+                    # Convert to ISO format for storage (YYYY-MM-DD)
+                    password = convert_to_iso_date(clean_password)
+
+                # Create new user
+                new_user = {
+                    'id': len(users) + len(new_users) + 1,
+                    'username': username,
+                    'password': password,
+                    'role': role,
+                    'name': name,
+                    'created_at': datetime.now().isoformat(),
+                    'created_by': session.get('user_id', 'admin')
+                }
+                new_users.append(new_user)
+
+            except Exception as row_error:
+                errors.append(f"Row {index+2}: Error processing row - {str(row_error)}")
+                continue
+
+        if errors:
+            # Return first 10 errors to avoid overwhelming the user
+            error_message = "Processing errors:\n" + "\n".join(errors[:10])
+            if len(errors) > 10:
+                error_message += f"\n... and {len(errors) - 10} more errors"
+            return False, error_message
+
+        if not new_users:
+            return False, "No valid users found in the Excel file"
+
+        # Save all new users
+        users.extend(new_users)
+        save_json_data('users.json', users)
+
+        return True, f"Successfully added {len(new_users)} users. {len(errors)} rows had errors."
+
+    except Exception as e:
+        logger.error(f"Error processing Excel file: {str(e)}")
+        logger.error(traceback.format_exc())
+        return False, f"Error processing Excel file: {str(e)}"
+
+
+def clean_and_validate_dob(dob_string, row_number, errors):
+    """Clean and validate date of birth in various formats - SUPER ROBUST VERSION"""
+    try:
+        original_dob = str(dob_string).strip()
+
+        # If it's already in perfect DDMMYYYY format with 8 digits
+        if len(original_dob) == 8 and original_dob.isdigit():
+            if is_valid_dob(original_dob):
+                return original_dob
+
+        # EXTREMELY AGGRESSIVE CLEANING - extract ALL digits only
+        digits_only = ''.join(filter(str.isdigit, original_dob))
+
+        # If we have exactly 8 digits after cleaning, use that
+        if len(digits_only) == 8:
+            if is_valid_dob(digits_only):
+                return digits_only
+
+        # If we have more than 8 digits, take first 8
+        if len(digits_only) > 8:
+            first_8 = digits_only[:8]
+            if is_valid_dob(first_8):
+                return first_8
+
+        # If we have less than 8 digits but at least 6, try to pad
+        if 6 <= len(digits_only) < 8:
+            # Try padding with zeros at the end
+            padded = digits_only.ljust(8, '0')
+            if is_valid_dob(padded):
+                return padded
+
+        # SPECIAL CASE HANDLING for formats like "2006-6-800-00-00-00"
+        # Extract all number sequences and try different combinations
+        number_sequences = re.findall(r'\d+', original_dob)
+
+        if number_sequences:
+            # Try different combinations of the found numbers
+            combinations_to_try = []
+
+            # If we have at least 3 numbers, try them as YYYY, M, D in different orders
+            if len(number_sequences) >= 3:
+                year_candidate = number_sequences[0]
+                month_candidate = number_sequences[1]
+                day_candidate = number_sequences[2]
+
+                # Try YYYY-MM-DD order (most common in problematic formats)
+                if len(year_candidate) == 4:
+                    combinations_to_try.append((
+                        day_candidate.zfill(2),
+                        month_candidate.zfill(2),
+                        year_candidate
+                    ))
+                # Try DD-MM-YYYY order
+                combinations_to_try.append((
+                    day_candidate.zfill(2),
+                    month_candidate.zfill(2),
+                    year_candidate.zfill(4) if len(year_candidate) <= 4 else year_candidate[:4]
+                ))
+
+            # Also try using just the first 3 numbers we find
+            if len(number_sequences) >= 3:
+                nums = number_sequences[:3]
+                # Try different permutations
+                for day_idx, month_idx, year_idx in [(0,1,2), (1,0,2), (2,1,0)]:
+                    day = nums[day_idx].zfill(2)
+                    month = nums[month_idx].zfill(2)
+                    year = nums[year_idx]
+
+                    # Ensure year is 4 digits
+                    if len(year) == 2:
+                        year = '20' + year  # Assume 2000s
+                    elif len(year) > 4:
+                        year = year[:4]
+                    elif len(year) < 4:
+                        year = year.zfill(4)
+
+                    test_dob = day + month + year
+                    if is_valid_dob(test_dob):
+                        return test_dob
+
+            # Try each number sequence as a potential date component
+            for i, num in enumerate(number_sequences):
+                # If this looks like a year (4 digits starting with 19 or 20)
+                if len(num) == 4 and (num.startswith('19') or num.startswith('20')):
+                    year = num
+                    # Look for month and day around this year
+                    if i > 0 and len(number_sequences[i-1]) <= 2:
+                        month = number_sequences[i-1].zfill(2)
+                        if i > 1 and len(number_sequences[i-2]) <= 2:
+                            day = number_sequences[i-2].zfill(2)
+                            test_dob = day + month + year
+                            if is_valid_dob(test_dob):
+                                return test_dob
+
+                    if i < len(number_sequences) - 1 and len(number_sequences[i+1]) <= 2:
+                        month = number_sequences[i+1].zfill(2)
+                        if i < len(number_sequences) - 2 and len(number_sequences[i+2]) <= 2:
+                            day = number_sequences[i+2].zfill(2)
+                            test_dob = day + month + year
+                            if is_valid_dob(test_dob):
+                                return test_dob
+
+        # LAST RESORT: Try to parse as datetime with very lenient settings
+        try:
+            # Remove any extra zeros or dashes that might be causing issues
+            clean_for_parsing = re.sub(r'[^\d\-/\.]', '', original_dob)
+            clean_for_parsing = re.sub(r'-+', '-', clean_for_parsing)  # Remove multiple dashes
+
+            # Try to parse with dateutil parser (much more lenient)
+            try:
+                from dateutil import parser
+                parsed_date = parser.parse(clean_for_parsing, dayfirst=True, yearfirst=False)
+                formatted_dob = parsed_date.strftime('%d%m%Y')
+                if is_valid_dob(formatted_dob):
+                    return formatted_dob
+            except ImportError:
+                # dateutil not available, try manual parsing
+                pass
+
+            # Manual parsing for common problematic patterns
+            # Pattern like "2006-6-800-00-00-00" -> extract "2006-6-8"
+            if clean_for_parsing.count('-') >= 2:
+                parts = clean_for_parsing.split('-')
+                # Take only the first three parts that have numbers
+                date_parts = []
+                for part in parts:
+                    if any(c.isdigit() for c in part):
+                        # Extract only digits from each part
+                        digit_part = ''.join(filter(str.isdigit, part))
+                        if digit_part:
+                            date_parts.append(digit_part)
+                    if len(date_parts) >= 3:
+                        break
+
+                if len(date_parts) >= 3:
+                    # Assume YYYY-MM-DD format for this pattern
+                    year, month, day = date_parts[0], date_parts[1], date_parts[2]
+                    # Ensure proper lengths
+                    if len(year) == 4 and len(month) <= 2 and len(day) <= 2:
+                        test_dob = day.zfill(2) + month.zfill(2) + year
+                        if is_valid_dob(test_dob):
+                            return test_dob
+
+        except Exception as parse_error:
+            # Silently continue to next method
+            pass
+
+        # FINAL ATTEMPT: If we have any 8+ digit sequence, try subsets
+        long_digit_sequences = re.findall(r'\d{6,}', original_dob)
+        for seq in long_digit_sequences:
+            # Try first 8 digits
+            if len(seq) >= 8:
+                test_dob = seq[:8]
+                if is_valid_dob(test_dob):
+                    return test_dob
+            # Try last 8 digits
+            if len(seq) >= 8:
+                test_dob = seq[-8:]
+                if is_valid_dob(test_dob):
+                    return test_dob
+
+        # If absolutely nothing works, provide a helpful error but don't block the entire process
+        # Instead, use a default date and log the issue
+        logger.warning(f"Row {row_number}: Could not parse date '{original_dob}'. Using default date 01012000")
+        errors.append(f"Row {row_number}: Warning - Used default date for '{original_dob}'. Please verify.")
+        return "01012000"  # Default fallback date
+
+    except Exception as e:
+        # Even if everything fails, don't break the entire upload
+        logger.error(f"Row {row_number}: Critical error processing date '{dob_string}': {str(e)}")
+        errors.append(f"Row {row_number}: Used default date due to critical error")
+        return "01012000"  # Default fallback date
+
+
+def is_valid_dob(dob):
+    """More lenient DOB validation"""
+    try:
+        # Ensure exactly 8 digits
         if len(dob) != 8 or not dob.isdigit():
             return False
-        
+
         day = int(dob[:2])
         month = int(dob[2:4])
         year = int(dob[4:8])
-        
+
+        # Basic validation
         if month < 1 or month > 12:
             return False
-        
+
         if day < 1 or day > 31:
             return False
-        
-        if year < 1900 or year > datetime.now().year:
+
+        # Very lenient year range
+        current_year = datetime.now().year
+        if year < 1900 or year > (current_year + 10):  # Allow future births up to 10 years
             return False
-        
+
+        # Month-specific validation
         if month in [4, 6, 9, 11] and day > 30:
             return False
-        
+
+        # February - be lenient
         if month == 2:
-            if (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0):
-                if day > 29:
-                    return False
-            else:
-                if day > 28:
-                    return False
-        
-        datetime(year, month, day)
+            if day > 29:  # Allow Feb 29 always
+                return False
+
         return True
+
     except (ValueError, IndexError):
         return False
+
+
+def create_upload_summary(success_count, error_count, errors):
+    """Create a user-friendly upload summary"""
+    if success_count == 0:
+        return f"No users were added. {error_count} errors occurred."
+
+    if error_count == 0:
+        return f"Successfully added {success_count} users."
+
+    # Show first few errors and a summary
+    error_preview = "\n".join(errors[:5])
+    if len(errors) > 5:
+        error_preview += f"\n... and {len(errors) - 5} more errors"
+
+    return f"Added {success_count} users. {error_count} rows had issues:\n{error_preview}"
 
 def convert_to_iso_date(dob_string):
     """Convert DDMMYYYY to ISO format (YYYY-MM-DD) for storage"""
@@ -915,141 +1221,122 @@ def format_date(date_string):
     except:
         return "Unknown"
 
-def process_excel_users(file):
-    """Process Excel file for bulk user upload"""
-    try:
-        df = pd.read_excel(file)
-        required_columns = ['username', 'password', 'role', 'name']
-        
-        missing_columns = [col for col in required_columns if col not in df.columns]
-        if missing_columns:
-            return False, f"Missing columns: {', '.join(missing_columns)}"
-        
-        users = load_json_data('users.json')
-        new_users = []
-        errors = []
-        
-        for index, row in df.iterrows():
-            username = str(row['username']).strip()
-            password = str(row['password']).strip()
-            role = str(row['role']).strip().lower()
-            name = str(row['name']).strip()
-            
-            if role not in ['admin', 'student']:
-                errors.append(f"Row {index+2}: Invalid role '{role}'. Must be 'admin' or 'student'")
-                continue
-            
-            if role == 'student':
-                if not is_valid_rollno(username):
-                    errors.append(f"Row {index+2}: Invalid roll number '{username}'. Must be exactly 10 alphanumeric characters")
-                    continue
-                
-                clean_password = ''.join(filter(str.isdigit, password))
-                if not is_valid_dob(clean_password):
-                    errors.append(f"Row {index+2}: Invalid date of birth '{password}'. Use DDMMYYYY format (8 digits)")
-                    continue
-                
-                password = convert_to_iso_date(clean_password)
-            
-            if any(user['username'] == username for user in users):
-                errors.append(f"Row {index+2}: Username '{username}' already exists")
-                continue
-            
-            new_user = {
-                'id': len(users) + len(new_users) + 1,
-                'username': username,
-                'password': password,
-                'role': role,
-                'name': name,
-                'created_at': datetime.now().isoformat(),
-                'created_by': session.get('user_id', 'admin')
-            }
-            new_users.append(new_user)
-        
-        if errors:
-            return False, ";\n".join(errors)
-        
-        users.extend(new_users)
-        save_json_data('users.json', users)
-        
-        return True, f"Successfully added {len(new_users)} users"
-        
-    except Exception as e:
-        logger.error(f"Error processing Excel file: {str(e)}")
-        return False, f"Error processing Excel file: {str(e)}"
+
+
 
 def process_excel_pdfs(file):
-    """Process Excel file for bulk PDF upload"""
+    """Process Excel file for bulk PDF upload with better error handling"""
     try:
+        # Read Excel file
         df = pd.read_excel(file)
+
+        # Check required columns
         required_columns = ['title', 'drive_link']
-        
         missing_columns = [col for col in required_columns if col not in df.columns]
         if missing_columns:
-            return False, f"Missing columns: {', '.join(missing_columns)}"
-        
+            return False, f"Missing required columns: {', '.join(missing_columns)}"
+
         pdfs = load_json_data('pdfs.json')
         new_pdfs = []
         errors = []
-        
+
         for index, row in df.iterrows():
-            title = str(row['title']).strip()
-            drive_link = str(row['drive_link']).strip()
-            
-            if not title:
-                errors.append(f"Row {index+2}: Title is required")
+            try:
+                title = str(row['title']).strip()
+                drive_link = str(row['drive_link']).strip()
+
+                # Validate required fields
+                if not title:
+                    errors.append(f"Row {index+2}: Title is required")
+                    continue
+
+                if not drive_link:
+                    errors.append(f"Row {index+2}: Drive link is required")
+                    continue
+
+                # Validate drive link format
+                if not drive_link.startswith(('http://', 'https://')):
+                    errors.append(f"Row {index+2}: Invalid drive link format")
+                    continue
+
+                # Get optional fields
+                file_size = 'N/A'
+                if 'file_size' in df.columns and pd.notna(row.get('file_size')):
+                    file_size = str(row['file_size']).strip()
+
+                # Check for duplicates
+                if any(pdf['title'].lower() == title.lower() for pdf in pdfs):
+                    errors.append(f"Row {index+2}: PDF with title '{title}' already exists")
+                    continue
+
+                # Create new PDF entry
+                new_pdf = {
+                    'id': len(pdfs) + len(new_pdfs) + 1,
+                    'title': title,
+                    'drive_link': drive_link,
+                    'file_size': file_size,
+                    'uploaded_by': session.get('user_id', 'admin'),
+                    'uploaded_at': datetime.now().isoformat(),
+                    'upload_date': datetime.now().strftime('%Y-%m-%d')
+                }
+                new_pdfs.append(new_pdf)
+
+            except Exception as row_error:
+                errors.append(f"Row {index+2}: Error processing row - {str(row_error)}")
                 continue
-            
-            if not drive_link.startswith(('http://', 'https://')):
-                errors.append(f"Row {index+2}: Invalid drive link")
-                continue
-            
-            file_size = str(row['file_size']).strip() if 'file_size' in df.columns and pd.notna(row.get('file_size')) else 'N/A'
-            
-            new_pdf = {
-                'id': len(pdfs) + len(new_pdfs) + 1,
-                'title': title,
-                'drive_link': drive_link,
-                'file_size': file_size,
-                'uploaded_by': session.get('user_id', 'admin'),
-                'uploaded_at': datetime.now().isoformat(),
-                'upload_date': datetime.now().strftime('%Y-%m-%d')
-            }
-            new_pdfs.append(new_pdf)
-        
+
         if errors:
-            return False, ";\n".join(errors)
-        
+            return False, "Processing errors:\n" + "\n".join(errors[:10])  # Show first 10 errors
+
+        if not new_pdfs:
+            return False, "No valid PDFs found in the Excel file"
+
+        # Save all new PDFs
         pdfs.extend(new_pdfs)
         save_json_data('pdfs.json', pdfs)
-        
+
         return True, f"Successfully added {len(new_pdfs)} PDFs"
-        
+
     except Exception as e:
         logger.error(f"Error processing Excel file: {str(e)}")
         return False, f"Error processing Excel file: {str(e)}"
 
-# ==================== ROUTES ====================
+
+@app.errorhandler(Exception)
+def handle_unexpected_error(error):
+    """Handle unexpected errors and return JSON responses"""
+    logger.error(f"Unexpected error: {str(error)}")
+    logger.error(traceback.format_exc())
+
+    # If it's an API request, return JSON
+    if request.path.startswith('/api/') or request.path.startswith('/admin/'):
+        return jsonify({
+            'success': False,
+            'message': 'An unexpected error occurred'
+        }), 500
+
+    # Otherwise, show error page
+    return render_template('error.html'), 500
 
 @app.route('/')
 def welcome():
     """Welcome page"""
-    location_keys = ['location_verified', 'verified_location', 'last_location_check', 
+    location_keys = ['location_verified', 'verified_location', 'last_location_check',
                     'current_latitude', 'current_longitude', 'needs_location_verification',
                     'intended_url']
     for key in location_keys:
         session.pop(key, None)
-    
+
     logger.info("Welcome page accessed")
-    
+
     users = load_json_data('users.json')
     pdfs = load_json_data('pdfs.json')
-    
+
     user_stats = {
         'total_users': len(users),
         'total_pdfs': len(pdfs)
     }
-    
+
     return render_template('welcome.html', user_stats=user_stats)
 
 @app.route('/location-check', methods=['GET', 'POST'])
@@ -1059,34 +1346,34 @@ def location_check():
         intended_url = session.get('intended_url', url_for('login'))
         session.pop('intended_url', None)
         return redirect(intended_url)
-    
+
     if request.method == 'POST':
         data = request.get_json()
         user_lat = data.get('latitude')
         user_lon = data.get('longitude')
-        
+
         if user_lat is None or user_lon is None:
             return jsonify({
-                'success': False, 
+                'success': False,
                 'message': 'Location data not provided.'
             })
-        
+
         try:
             user_lat = float(user_lat)
             user_lon = float(user_lon)
         except (TypeError, ValueError):
             return jsonify({
-                'success': False, 
+                'success': False,
                 'message': 'Invalid location data.'
             })
-        
+
         allowed, location_name = is_location_allowed(user_lat, user_lon)
-        
+
         if allowed:
             update_location_verification(user_lat, user_lon, location_name)
-            
+
             logger.info(f"Location verified: {location_name}")
-            
+
             intended_url = session.get('intended_url')
             if intended_url:
                 session.pop('intended_url', None)
@@ -1096,9 +1383,9 @@ def location_check():
                     redirect_url = url_for('dashboard')
                 else:
                     redirect_url = url_for('login')
-            
+
             return jsonify({
-                'success': True, 
+                'success': True,
                 'location': location_name,
                 'redirect_url': redirect_url
             })
@@ -1106,10 +1393,10 @@ def location_check():
             logger.warning(f"Location denied: {user_lat}, {user_lon}")
             session.clear()
             return jsonify({
-                'success': False, 
+                'success': False,
                 'message': 'Access Denied: You are outside the allowed area.'
             })
-    
+
     return render_template('location_check.html')
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -1118,20 +1405,20 @@ def login():
     """Login page with location verification"""
     direct_admin = session.pop('direct_admin', False)
     direct_user = session.pop('direct_user', False)
-    
+
     direct_admin = bool(direct_admin)
     direct_user = bool(direct_user)
-    
+
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        
+
         if not username or not password:
             flash('Please fill all fields', 'error')
-            return render_template('login.html', 
-                                 direct_admin=direct_admin, 
+            return render_template('login.html',
+                                 direct_admin=direct_admin,
                                  direct_user=direct_user)
-        
+
         # Try admin login first
         is_valid_admin, admin_user = validate_admin_credentials(username, password)
         if is_valid_admin and admin_user:
@@ -1139,59 +1426,67 @@ def login():
             session['user_role'] = admin_user['role']
             session['login_time'] = datetime.now().isoformat()
             session.permanent = True
-            
+
             # Track admin login with location
             current_location = session.get('verified_location', 'Unknown')
             track_user_access(admin_user['username'], 'login', current_location)
-            
+
             logger.info(f"Admin logged in: {admin_user['username']} from {current_location}")
             flash(f'Welcome Administrator {admin_user["username"]}!', 'success')
             return redirect(url_for('admin_dashboard'))
-        
-        # Try student login
-        if is_valid_rollno(username):
-            clean_password = ''.join(filter(str.isdigit, password))
-            
-            if any(not char.isdigit() for char in password):
-                flash('Date of birth should contain only digits (DDMMYYYY format). No special characters or spaces allowed.', 'error')
-                return render_template('login.html', 
-                                     direct_admin=direct_admin, 
-                                     direct_user=direct_user)
-            
-            if not is_valid_dob(clean_password):
-                flash('Invalid date of birth. Please use DDMMYYYY format (8 digits only). Example: 15082002 for 15th August 2002.', 'error')
-                return render_template('login.html', 
-                                     direct_admin=direct_admin, 
-                                     direct_user=direct_user)
-            
-            iso_password = convert_to_iso_date(clean_password)
+
+        # Try student login (both roll numbers and department codes)
+        if is_valid_student_username(username):
+            # Check if it's a department login (uppercase letters only)
+            if re.match(r'^[A-Z]{2,10}$', username.upper()):
+                # Department login - use password as-is
+                iso_password = password
+            else:
+                # Regular student login - validate DOB format
+                clean_password = ''.join(filter(str.isdigit, password))
+
+                if any(not char.isdigit() for char in password):
+                    flash('Date of birth should contain only digits (DDMMYYYY format). No special characters or spaces allowed.', 'error')
+                    return render_template('login.html',
+                                         direct_admin=direct_admin,
+                                         direct_user=direct_user)
+
+                if not is_valid_dob(clean_password):
+                    flash('Invalid date of birth. Please use DDMMYYYY format (8 digits only). Example: 15082002 for 15th August 2002.', 'error')
+                    return render_template('login.html',
+                                         direct_admin=direct_admin,
+                                         direct_user=direct_user)
+
+                iso_password = convert_to_iso_date(clean_password)
+
+            # Validate credentials
             is_valid_student, student_user = validate_student_credentials(username, iso_password)
-            
+
             if is_valid_student and student_user:
                 session['user_id'] = student_user['username']
                 session['user_role'] = student_user['role']
                 session['login_time'] = datetime.now().isoformat()
                 session.permanent = True
-                
+
                 # Track student login with location
                 current_location = session.get('verified_location', 'Unknown')
                 track_user_access(student_user['username'], 'login', current_location)
-                
+
                 logger.info(f"Student logged in: {student_user['username']} from {current_location}")
-                flash(f'Welcome {student_user["username"]}!', 'success')
+                flash(f'Welcome {student_user["name"]}!', 'success')
                 return redirect(url_for('dashboard'))
-        
+
         # Track failed login attempt
         if username:
             track_user_access(username, 'failed_login', session.get('verified_location', 'Unknown'))
-        
+
         logger.warning(f"Failed login attempt for username: {username}")
         flash('Invalid credentials or user not found', 'error')
-    
-    return render_template('login.html', 
-                         direct_admin=direct_admin, 
-                         direct_user=direct_user)
 
+    return render_template('login.html',
+                         direct_admin=direct_admin,
+                         direct_user=direct_user)
+                         
 @app.route('/init-access-logs')
 def init_access_logs():
     """Initialize access logs file (for first-time setup)"""
@@ -1200,172 +1495,135 @@ def init_access_logs():
         return jsonify({'success': True, 'message': 'Access logs initialized'})
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)})
-    
+
+
+@app.route('/debug/pdfs')
+def debug_pdfs():
+    """Debug endpoint to check PDF data"""
+    try:
+        pdfs = load_json_data('pdfs.json')
+        return jsonify({
+            'success': True,
+            'total_pdfs': len(pdfs),
+            'pdfs': pdfs,
+            'file_exists': os.path.exists('data/pdfs.json')
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'traceback': traceback.format_exc()
+        })
+
+@app.route('/debug/check-pdf/<int:pdf_id>')
+def debug_check_pdf(pdf_id):
+    """Check if a specific PDF exists"""
+    try:
+        pdfs = load_json_data('pdfs.json')
+        pdf = next((p for p in pdfs if p['id'] == pdf_id), None)
+
+        return jsonify({
+            'success': True,
+            'pdf_id_requested': pdf_id,
+            'pdf_found': pdf is not None,
+            'pdf_details': pdf,
+            'all_pdf_ids': [p['id'] for p in pdfs],
+            'total_pdfs': len(pdfs)
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        })
+
+@app.route('/debug/all-pdfs')
+def debug_all_pdfs():
+    """Get all PDFs with full details"""
+    try:
+        pdfs = load_json_data('pdfs.json')
+        return jsonify({
+            'success': True,
+            'total_pdfs': len(pdfs),
+            'pdfs': pdfs
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        })
+
+@app.route('/debug/init-pdfs')
+def debug_init_pdfs():
+    """Initialize PDFs file if missing"""
+    try:
+        if not os.path.exists('data/pdfs.json'):
+            save_json_data('pdfs.json', [])
+            return jsonify({'success': True, 'message': 'PDFs file created'})
+        else:
+            pdfs = load_json_data('pdfs.json')
+            return jsonify({'success': True, 'message': f'PDFs file exists with {len(pdfs)} entries'})
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)})
+
 @app.route('/dashboard')
 @require_location_verification
 def dashboard():
     """PDF dashboard with location verification"""
     if not session.get('user_id'):
         return redirect(url_for('login'))
-    
+
     page = request.args.get('page', 1, type=int)
     per_page = 15
-    
+
     pdfs = load_json_data('pdfs.json')
     users = load_json_data('users.json')
-    
+
+    # Validate PDF data and fix any issues
+    pdfs = validate_and_fix_pdf_data(pdfs)
+
     current_user = next((u for u in users if u['username'] == session.get('user_id')), None)
     search_query = request.args.get('search', '')
-    
+
     filtered_pdfs = pdfs
     if search_query:
-        filtered_pdfs = [pdf for pdf in filtered_pdfs 
-                        if search_query.lower() in pdf['title'].lower() 
+        filtered_pdfs = [pdf for pdf in filtered_pdfs
+                        if search_query.lower() in pdf['title'].lower()
                         or any(search_query.lower() in tag.lower() for tag in pdf.get('tags', []))]
-    
+
     total_pdfs = len(filtered_pdfs)
     total_pages = (total_pdfs + per_page - 1) // per_page if total_pdfs > 0 else 1
-    
+
     if page < 1:
         page = 1
     elif page > total_pages and total_pages > 0:
         page = total_pages
-    
+
     start_idx = (page - 1) * per_page
     end_idx = start_idx + per_page
     paginated_pdfs = filtered_pdfs[start_idx:end_idx]
-    
+
     # Track dashboard access
     current_location = session.get('verified_location', 'Unknown')
     track_user_access(session['user_id'], 'dashboard_access', current_location)
-    
-    # Handle AJAX requests for pagination
-    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        return jsonify({
-            'success': True,
-            'pdfs_html': render_template_string('''
-                {% for pdf in pdfs %}
-                <div class="pdf-card" data-pdf-id="{{ pdf.id }}">
-                    <div class="pdf-header">
-                        <div class="pdf-icon">
-                            <i class="fas fa-file-pdf"></i>
-                        </div>
-                        <div class="pdf-info">
-                            <h3 class="pdf-title">{{ pdf.title }}</h3>
-                            <div class="pdf-meta">
-                                <span><i class="fas fa-calendar"></i> {{ pdf.upload_date }}</span>
-                            </div>
-                            {% if pdf.tags %}
-                            <div class="pdf-tags">
-                                {% for tag in pdf.tags %}
-                                <span class="pdf-tag">{{ tag }}</span>
-                                {% endfor %}
-                            </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                    <div class="pdf-actions">
-                        <button class="btn btn-primary" onclick="openPdfViewer('{{ pdf.id }}', '{{ pdf.title }}')">
-                            <i class="fas fa-eye"></i> View PDF
-                        </button>
-                    </div>
-                </div>
-                {% else %}
-                <div class="no-results">
-                    <i class="fas fa-search"></i>
-                    <h3>No documents found</h3>
-                    <p>Try adjusting your search terms or filters</p>
-                    {% if user_role == 'admin' %}
-                    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-primary" style="margin-top: 15px;">
-                        <i class="fas fa-plus"></i> Add PDFs in Admin Panel
-                    </a>
-                    {% endif %}
-                </div>
-                {% endfor %}
-            ''', pdfs=paginated_pdfs, user_role=session.get('user_role')),
-            'pagination_html': render_template_string('''
-                {% if total_pages > 1 %}
-                <div class="pagination-container">
-                    <div class="pagination-info">
-                        Showing {{ ((page - 1) * per_page) + 1 }} to {{ [page * per_page, total_pdfs]|min }} of {{ total_pdfs }} PDFs
-                    </div>
-                    <nav aria-label="PDF pagination">
-                        <ul class="pagination">
-                            <!-- Previous Page -->
-                            {% if page > 1 %}
-                            <li class="page-item">
-                                <a class="page-link" href="#" data-page="{{ page-1 }}" aria-label="Previous">
-                                    <i class="fas fa-chevron-left"></i>
-                                </a>
-                            </li>
-                            {% else %}
-                            <li class="page-item disabled">
-                                <span class="page-link"><i class="fas fa-chevron-left"></i></span>
-                            </li>
-                            {% endif %}
-                            
-                            <!-- Page Numbers -->
-                            {% set start_page = [1, page-2]|max %}
-                            {% set end_page = [start_page + 4, total_pages]|min %}
-                            
-                            {% if start_page > 1 %}
-                            <li class="page-item"><a class="page-link" href="#" data-page="1">1</a></li>
-                            {% if start_page > 2 %}
-                            <li class="page-item disabled"><span class="page-link">...</span></li>
-                            {% endif %}
-                            {% endif %}
-                            
-                            {% for page_num in range(start_page, end_page + 1) %}
-                                {% if page_num == page %}
-                                <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
-                                {% else %}
-                                <li class="page-item"><a class="page-link" href="#" data-page="{{ page_num }}">{{ page_num }}</a></li>
-                                {% endif %}
-                            {% endfor %}
-                            
-                            {% if end_page < total_pages %}
-                            {% if end_page < total_pages - 1 %}
-                            <li class="page-item disabled"><span class="page-link">...</span></li>
-                            {% endif %}
-                            <li class="page-item"><a class="page-link" href="#" data-page="{{ total_pages }}">{{ total_pages }}</a></li>
-                            {% endif %}
-                            
-                            <!-- Next Page -->
-                            {% if page < total_pages %}
-                            <li class="page-item">
-                                <a class="page-link" href="#" data-page="{{ page+1 }}" aria-label="Next">
-                                    <i class="fas fa-chevron-right"></i>
-                                </a>
-                            </li>
-                            {% else %}
-                            <li class="page-item disabled">
-                                <span class="page-link"><i class="fas fa-chevron-right"></i></span>
-                            </li>
-                            {% endif %}
-                        </ul>
-                    </nav>
-                </div>
-                {% endif %}
-            ''', page=page, per_page=per_page, total_pdfs=total_pdfs, total_pages=total_pages, search_query=search_query),
-            'pagination_data': {
-                'page': page,
-                'per_page': per_page,
-                'total_pdfs': total_pdfs,
-                'total_pages': total_pages,
-                'showing_start': (page - 1) * per_page + 1,
-                'showing_end': min(page * per_page, total_pdfs)
-            }
-        })
-    
+
+    # Create PDF data for JavaScript
+    pdf_data_js = {}
+    for pdf in pdfs:
+        pdf_data_js[pdf['id']] = {
+            'title': pdf['title'],
+            'driveLink': pdf['drive_link']
+        }
+
     user_stats = {
         'total_users': len(users),
         'total_pdfs': len(pdfs),
         'documents_viewed': session.get('documents_viewed', 0),
         'last_login': session.get('login_time', 'First time')[:10] if session.get('login_time') else 'First time'
     }
-    
-    return render_template('dashboard.html', 
+
+    return render_template('dashboard.html',
                           pdfs=paginated_pdfs,
+                          all_pdfs_data=pdf_data_js,  # Pass all PDF data for JS
                           search_query=search_query,
                           username=session.get('user_id', 'user'),
                           user_role=session.get('user_role', 'user'),
@@ -1377,7 +1635,45 @@ def dashboard():
                           total_pdfs=total_pdfs,
                           total_pages=total_pages)
 
+def validate_and_fix_pdf_data(pdfs):
+    """Validate and fix PDF data issues"""
+    if not pdfs:
+        return []
 
+    valid_pdfs = []
+    used_ids = set()
+
+    for pdf in pdfs:
+        # Ensure each PDF has required fields
+        if not pdf.get('id'):
+            # Assign a new ID if missing
+            new_id = max(used_ids) + 1 if used_ids else 1
+            pdf['id'] = new_id
+
+        # Check for duplicate IDs
+        if pdf['id'] in used_ids:
+            # Assign a new unique ID
+            new_id = max(used_ids) + 1 if used_ids else 1
+            pdf['id'] = new_id
+
+        used_ids.add(pdf['id'])
+
+        # Ensure required fields exist
+        pdf.setdefault('title', 'Untitled Document')
+        pdf.setdefault('drive_link', '')
+        pdf.setdefault('upload_date', datetime.now().strftime('%Y-%m-%d'))
+        pdf.setdefault('file_size', 'N/A')
+
+        valid_pdfs.append(pdf)
+
+    # Sort by ID to ensure consistent ordering
+    valid_pdfs.sort(key=lambda x: x['id'])
+
+    # Log any fixes made
+    if len(valid_pdfs) != len(pdfs):
+        logger.warning(f"PDF data validation: Fixed {len(pdfs) - len(valid_pdfs)} invalid entries")
+
+    return valid_pdfs
 
 @app.route('/admin')
 @require_location_verification
@@ -1386,31 +1682,31 @@ def admin_dashboard():
     if session.get('user_role') != 'admin':
         flash('Access denied. Admin privileges required.', 'error')
         return redirect(url_for('dashboard'))
-    
+
     page = request.args.get('page', 1, type=int)
     per_page = 10
-    
+
     pdfs = load_json_data('pdfs.json')
     users = load_json_data('users.json')
-    
+
     for user in users:
         user.setdefault('created_at', 'Unknown')
         user.setdefault('name', 'Unknown')
-    
+
     user_stats = {
         'total_users': len(users),
         'total_pdfs': len(pdfs)
     }
-    
+
     total_pdfs = len(pdfs)
     total_pages = (total_pdfs + per_page - 1) // per_page
-    
+
     page = max(1, min(page, total_pages))
-    
+
     start_idx = (page - 1) * per_page
     end_idx = start_idx + per_page
     pdfs_page = pdfs[start_idx:end_idx]
-    
+
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         return render_template('_pdf_table.html',
                              pdfs=pdfs_page,
@@ -1418,7 +1714,7 @@ def admin_dashboard():
                              per_page=per_page,
                              total_pdfs=total_pdfs,
                              total_pages=total_pages)
-    
+
     return render_template('admin_dashboard.html',
                          pdfs=pdfs_page,
                          users=users,
@@ -1438,35 +1734,35 @@ def admin_users():
     if session.get('user_role') != 'admin':
         flash('Access denied. Admin privileges required.', 'error')
         return redirect(url_for('dashboard'))
-    
+
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 10, type=int)
-    
+
     users = load_json_data('users.json')
-    
+
     for user in users:
         user.setdefault('created_at', 'Unknown')
         user.setdefault('name', 'Unknown')
-    
+
     total_users = len(users)
     total_pages = (total_users + per_page - 1) // per_page
-    
+
     if page < 1:
         page = 1
     elif page > total_pages and total_pages > 0:
         page = total_pages
-    
+
     start_idx = (page - 1) * per_page
     end_idx = start_idx + per_page
-    
+
     paginated_users = users[start_idx:end_idx]
-    
+
     user_stats = {
         'total_users': total_users,
         'admin_users': sum(1 for user in users if user.get('role') == 'admin'),
         'student_users': sum(1 for user in users if user.get('role') == 'student')
     }
-    
+
     return render_template('admin_users.html',
                          users=paginated_users,
                          username=session.get('user_id'),
@@ -1485,7 +1781,7 @@ def admin_location():
     if session.get('user_role') != 'admin':
         flash('Access denied. Admin privileges required.', 'error')
         return redirect(url_for('dashboard'))
-    
+
     return render_template('admin_location.html',
                          username=session.get('user_id'),
                          location=session.get('verified_location'))
@@ -1497,13 +1793,13 @@ def check_boundary():
     data = request.get_json()
     user_lat = data.get('latitude')
     user_lon = data.get('longitude')
-    
+
     if user_lat is None or user_lon is None:
         return jsonify({
             'success': False,
             'message': 'Location data required'
         }), 400
-    
+
     try:
         user_lat = float(user_lat)
         user_lon = float(user_lon)
@@ -1512,9 +1808,9 @@ def check_boundary():
             'success': False,
             'message': 'Invalid location data'
         }), 400
-    
+
     allowed, location_name = is_location_allowed(user_lat, user_lon)
-    
+
     if not allowed:
         session.clear()
         logger.warning(f"User moved outside boundary: {user_lat}, {user_lon}")
@@ -1524,9 +1820,9 @@ def check_boundary():
             'redirect': True,
             'redirect_url': url_for('welcome')
         }), 403
-    
+
     update_location_verification(user_lat, user_lon, location_name)
-    
+
     return jsonify({
         'success': True,
         'message': 'Location verified',
@@ -1536,36 +1832,34 @@ def check_boundary():
 @app.route('/admin/add-user', methods=['POST'])
 @require_location_verification
 def add_user():
-    """Add new user (Admin only)"""
+    """Add new user (Admin only) - UPDATED for DD/MM/YYYY format"""
     if session.get('user_role') != 'admin':
         return jsonify({'success': False, 'message': 'Access denied'}), 403
-    
+
     data = request.get_json()
-    
+
     required_fields = ['username', 'password', 'role', 'name']
     for field in required_fields:
         if not data.get(field):
             return jsonify({'success': False, 'message': f'Missing required field: {field}'}), 400
-    
+
     if data['role'] == 'student':
         if not is_valid_rollno(data['username']):
             return jsonify({'success': False, 'message': 'Student username must be 10-digit alphanumeric roll number'}), 400
-        
-        clean_password = ''.join(filter(str.isdigit, data['password']))
-        
-        if any(not char.isdigit() for char in data['password']):
-            return jsonify({'success': False, 'message': 'Student password should contain only digits (DDMMYYYY format). No special characters or spaces allowed.'}), 400
-        
+
+        # Handle DD/MM/YYYY format
+        clean_password = data['password'].replace('/', '').replace('\\', '').replace(' ', '')
+
         if not is_valid_dob(clean_password):
-            return jsonify({'success': False, 'message': 'Invalid date of birth format. Use DDMMYYYY (8 digits only, no separators)'}), 400
-        
+            return jsonify({'success': False, 'message': 'Invalid date of birth format. Use DD/MM/YYYY'}), 400
+
         data['password'] = convert_to_iso_date(clean_password)
-    
+
     users = load_json_data('users.json')
-    
+
     if any(user['username'] == data['username'] for user in users):
         return jsonify({'success': False, 'message': 'Username already exists'}), 400
-    
+
     new_user = {
         'id': len(users) + 1,
         'username': data['username'],
@@ -1575,10 +1869,10 @@ def add_user():
         'created_at': datetime.now().isoformat(),
         'created_by': session.get('user_id')
     }
-    
+
     users.append(new_user)
     save_json_data('users.json', users)
-    
+
     return jsonify({'success': True, 'message': 'User added successfully'})
 
 @app.route('/admin/add-pdf', methods=['POST'])
@@ -1587,16 +1881,16 @@ def add_pdf():
     """Add new PDF (Admin only)"""
     if session.get('user_role') != 'admin':
         return jsonify({'success': False, 'message': 'Access denied'}), 403
-    
+
     data = request.get_json()
-    
+
     required_fields = ['title', 'drive_link']
     for field in required_fields:
         if not data.get(field):
             return jsonify({'success': False, 'message': f'Missing required field: {field}'}), 400
-    
+
     pdfs = load_json_data('pdfs.json')
-    
+
     new_pdf = {
         'id': len(pdfs) + 1,
         'title': data['title'],
@@ -1606,10 +1900,10 @@ def add_pdf():
         'uploaded_at': datetime.now().isoformat(),
         'upload_date': datetime.now().strftime('%Y-%m-%d')
     }
-    
+
     pdfs.append(new_pdf)
     save_json_data('pdfs.json', pdfs)
-    
+
     return jsonify({'success': True, 'message': 'PDF added successfully'})
 
 @app.route('/admin/delete-user/<username>', methods=['POST'])
@@ -1618,11 +1912,11 @@ def delete_user(username):
     """Delete user (Admin only)"""
     if session.get('user_role') != 'admin':
         return jsonify({'success': False, 'message': 'Access denied'}), 403
-    
+
     users = load_json_data('users.json')
     users = [user for user in users if user['username'] != username]
     save_json_data('users.json', users)
-    
+
     return jsonify({'success': True, 'message': 'User deleted successfully'})
 
 @app.route('/admin/delete-pdf/<int:pdf_id>', methods=['POST'])
@@ -1631,50 +1925,186 @@ def delete_pdf(pdf_id):
     """Delete PDF (Admin only)"""
     if session.get('user_role') != 'admin':
         return jsonify({'success': False, 'message': 'Access denied'}), 403
-    
+
     pdfs = load_json_data('pdfs.json')
     pdfs = [pdf for pdf in pdfs if pdf['id'] != pdf_id]
     save_json_data('pdfs.json', pdfs)
-    
+
     return jsonify({'success': True, 'message': 'PDF deleted successfully'})
+
 
 @app.route('/admin/upload-users-excel', methods=['POST'])
 @require_location_verification
 def upload_users_excel():
-    """Upload users via Excel file"""
+    """Upload users via Excel file with better error handling"""
     if session.get('user_role') != 'admin':
         return jsonify({'success': False, 'message': 'Access denied'}), 403
-    
+
     if 'excel_file' not in request.files:
         return jsonify({'success': False, 'message': 'No file uploaded'}), 400
-    
+
     file = request.files['excel_file']
     if file.filename == '':
         return jsonify({'success': False, 'message': 'No file selected'}), 400
-    
-    if not file.filename.endswith(('.xlsx', '.xls')):
+
+    if not file.filename.lower().endswith(('.xlsx', '.xls')):
         return jsonify({'success': False, 'message': 'Please upload an Excel file (.xlsx or .xls)'}), 400
-    
-    file.seek(0, 2)
-    file_size = file.tell()
-    file.seek(0)
-    
-    if file_size > 50 * 1024 * 1024:
-        return jsonify({'success': False, 'message': 'File size too large. Maximum 50MB allowed.'}), 400
-    
-    start_time = time.time()
-    success, message = process_excel_users(file)
-    processing_time = time.time() - start_time
-    
-    logger.info(f"Bulk user upload completed in {processing_time:.2f} seconds")
-    
-    if success:
+
+    try:
+        # Check file size
+        file.seek(0, 2)  # Seek to end
+        file_size = file.tell()
+        file.seek(0)  # Reset seek position
+
+        if file_size > 50 * 1024 * 1024:  # 50MB
+            return jsonify({'success': False, 'message': 'File size too large. Maximum 50MB allowed.'}), 400
+
+        if file_size == 0:
+            return jsonify({'success': False, 'message': 'File is empty'}), 400
+
+        start_time = time.time()
+        success, message = process_excel_users(file)
+        processing_time = time.time() - start_time
+
+        logger.info(f"Bulk user upload completed in {processing_time:.2f} seconds - Success: {success}")
+
+        if success:
+            return jsonify({
+                'success': True,
+                'message': f"{message}. Processing time: {processing_time:.2f}s"
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'message': message
+            }), 400
+
+    except Exception as e:
+        logger.error(f"Error in upload_users_excel: {str(e)}")
+        logger.error(traceback.format_exc())
         return jsonify({
-            'success': True, 
-            'message': f"{message}. Processing time: {processing_time:.2f}s"
+            'success': False,
+            'message': f'Server error while processing file: {str(e)}'
+        }), 500
+
+@app.route('/admin/upload-pdf', methods=['POST'])
+@require_location_verification
+def upload_pdf():
+    """Handle PDF file uploads"""
+    if session.get('user_role') != 'admin':
+        return jsonify({'success': False, 'message': 'Access denied'}), 403
+
+    try:
+        # Check if file was uploaded
+        if 'pdf_file' not in request.files:
+            return jsonify({'success': False, 'message': 'No file uploaded'}), 400
+
+        file = request.files['pdf_file']
+
+        # Check if file was selected
+        if file.filename == '':
+            return jsonify({'success': False, 'message': 'No file selected'}), 400
+
+        # Validate file type
+        if not file.filename.lower().endswith('.pdf'):
+            return jsonify({'success': False, 'message': 'Only PDF files are allowed'}), 400
+
+        # Validate file size (e.g., 50MB limit)
+        file.seek(0, 2)  # Seek to end
+        file_size = file.tell()
+        file.seek(0)  # Reset seek position
+
+        if file_size > 50 * 1024 * 1024:  # 50MB
+            return jsonify({'success': False, 'message': 'File size too large. Maximum 50MB allowed.'}), 400
+
+        # Get form data
+        title = request.form.get('title', '').strip()
+        drive_link = request.form.get('drive_link', '').strip()
+
+        if not title:
+            return jsonify({'success': False, 'message': 'Title is required'}), 400
+
+        # Load existing PDFs
+        pdfs = load_json_data('pdfs.json')
+
+        # Create new PDF entry
+        new_pdf = {
+            'id': len(pdfs) + 1,
+            'title': title,
+            'drive_link': drive_link,
+            'file_size': f"{(file_size / 1024 / 1024):.2f} MB",
+            'filename': file.filename,
+            'uploaded_by': session.get('user_id'),
+            'uploaded_at': datetime.now().isoformat(),
+            'upload_date': datetime.now().strftime('%Y-%m-%d')
+        }
+
+        # Save file if needed (optional - since you're using drive links)
+        # You can choose to save the file locally or just store the metadata
+        if app.config['UPLOAD_FOLDER']:
+            try:
+                os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+                filename = secure_filename(file.filename)
+                file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                file.save(file_path)
+                new_pdf['local_path'] = file_path
+            except Exception as e:
+                logger.error(f"Error saving file: {str(e)}")
+                # Continue even if file save fails
+
+        pdfs.append(new_pdf)
+        save_json_data('pdfs.json', pdfs)
+
+        logger.info(f"PDF uploaded successfully: {title} by {session.get('user_id')}")
+
+        return jsonify({
+            'success': True,
+            'message': 'PDF uploaded successfully',
+            'pdf_id': new_pdf['id']
         })
-    else:
-        return jsonify({'success': False, 'message': message}), 400
+
+    except Exception as e:
+        logger.error(f"Error uploading PDF: {str(e)}")
+        logger.error(traceback.format_exc())
+        return jsonify({
+            'success': False,
+            'message': f'Error uploading PDF: {str(e)}'
+        }), 500
+
+
+
+@app.route('/admin/upload-pdfs-bulk', methods=['POST'])
+@require_location_verification
+def upload_pdfs_bulk():
+    """Handle bulk PDF uploads via Excel"""
+    if session.get('user_role') != 'admin':
+        return jsonify({'success': False, 'message': 'Access denied'}), 403
+
+    try:
+        if 'excel_file' not in request.files:
+            return jsonify({'success': False, 'message': 'No file uploaded'}), 400
+
+        file = request.files['excel_file']
+        if file.filename == '':
+            return jsonify({'success': False, 'message': 'No file selected'}), 400
+
+        if not file.filename.lower().endswith(('.xlsx', '.xls')):
+            return jsonify({'success': False, 'message': 'Please upload an Excel file (.xlsx or .xls)'}), 400
+
+        # Process the Excel file
+        success, message = process_excel_pdfs(file)
+
+        if success:
+            return jsonify({'success': True, 'message': message})
+        else:
+            return jsonify({'success': False, 'message': message}), 400
+
+    except Exception as e:
+        logger.error(f"Error in bulk PDF upload: {str(e)}")
+        return jsonify({
+            'success': False,
+            'message': f'Error processing upload: {str(e)}'
+        }), 500
 
 @app.route('/admin/upload-pdfs-excel', methods=['POST'])
 @require_location_verification
@@ -1682,69 +2112,158 @@ def upload_pdfs_excel():
     """Upload PDFs via Excel file"""
     if session.get('user_role') != 'admin':
         return jsonify({'success': False, 'message': 'Access denied'}), 403
-    
+
     if 'excel_file' not in request.files:
         return jsonify({'success': False, 'message': 'No file uploaded'}), 400
-    
+
     file = request.files['excel_file']
     if file.filename == '':
         return jsonify({'success': False, 'message': 'No file selected'}), 400
-    
+
     if not file.filename.endswith(('.xlsx', '.xls')):
         return jsonify({'success': False, 'message': 'Please upload an Excel file (.xlsx or .xls)'}), 400
-    
+
     file.seek(0, 2)
     file_size = file.tell()
     file.seek(0)
-    
+
     if file_size > 50 * 1024 * 1024:
         return jsonify({'success': False, 'message': 'File size too large. Maximum 50MB allowed.'}), 400
-    
+
     start_time = time.time()
     success, message = process_excel_pdfs(file)
     processing_time = time.time() - start_time
-    
+
     logger.info(f"Bulk PDF upload completed in {processing_time:.2f} seconds")
-    
+
     if success:
         return jsonify({
-            'success': True, 
+            'success': True,
             'message': f"{message}. Processing time: {processing_time:.2f}s"
         })
     else:
         return jsonify({'success': False, 'message': message}), 400
 
+
 @app.route('/admin/download-users-template')
 @require_location_verification
 def download_users_template():
-    """Download Users template Excel file"""
+    """Download Users template Excel file - CLEAR date format instructions"""
     if session.get('user_role') != 'admin':
         flash('Access denied. Admin privileges required.', 'error')
         return redirect(url_for('dashboard'))
-    
-    df = pd.DataFrame(columns=['username', 'password', 'role', 'name'])
-    
+
+    # Create sample data with only the required columns
     examples = [
-        {'username': '23N81A62B0', 'password': '15082002', 'role': 'student', 'name': 'Rajesh Kumar'},
-        {'username': '22M91A12C5', 'password': '23112001', 'role': 'student', 'name': 'Priya Sharma'},
-        {'username': 'admin2', 'password': 'securepassword123', 'role': 'admin', 'name': 'Library Manager'}
+        {
+            'username': '23N81A62B0',
+            'password': '15/08/2002',
+            'role': 'student',
+            'name': 'Rajesh Kumar'
+        },
+        {
+            'username': '22M91A12C5',
+            'password': '23/11/2001',
+            'role': 'student',
+            'name': 'Priya Sharma'
+        },
+        {
+            'username': 'admin2',
+            'password': 'securepassword123',
+            'role': 'admin',
+            'name': 'Library Manager'
+        }
     ]
-    
-    df = pd.concat([df, pd.DataFrame(examples)], ignore_index=True)
-    
+
+    df = pd.DataFrame(examples)
+
     buffer = BytesIO()
-    
+
     with pd.ExcelWriter(buffer, engine='openpyxl') as writer:
+        # Write the main template data
         df.to_excel(writer, sheet_name='Users Template', index=False)
-    
+
+        # Get the worksheet
+        worksheet = writer.sheets['Users Template']
+
+        # Add instructions as separate rows
+        instructions = [
+            "=== IMPORTANT: DATE FORMAT INSTRUCTIONS ===",
+            "For STUDENT date of birth (password field), use ANY of these formats:",
+            "• DD/MM/YYYY (Recommended) - e.g., 15/08/2002",
+            "• DD-MM-YYYY - e.g., 15-08-2002",
+            "• YYYY-MM-DD - e.g., 2002-08-15",
+            "• DDMMYYYY (no separators) - e.g., 15082002",
+            "",
+            "The system will automatically convert to the correct format.",
+            "",
+            "OTHER INSTRUCTIONS:",
+            "• For students: username must be 10-digit roll number",
+            "• For admins: username and password can be any values",
+            "• Role must be either 'student' or 'admin'",
+            "• All fields are required",
+            "",
+            "IMPORTANT:",
+            "- Duplicate usernames are not allowed",
+            "- Password can be same for multiple users",
+            "- Keep the exact column order and names"
+        ]
+
+        # Add instructions starting from row after the data
+        start_row = len(examples) + 3
+        for i, instruction in enumerate(instructions):
+            cell = f'A{start_row + i}'
+            worksheet[cell] = instruction
+
+            # Style important lines
+            if any(keyword in instruction for keyword in ["IMPORTANT", "====", "Recommended"]):
+                worksheet[cell].font = Font(bold=True, color="FF0000" if "====" in instruction else "000000")
+
     buffer.seek(0)
-    
+
     return send_file(
         buffer,
         as_attachment=True,
-        download_name='users_template.xlsx',
+        download_name='users_upload_template.xlsx',
         mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
+
+
+@app.route('/admin/debug-upload', methods=['POST'])
+def debug_upload():
+    """Debug endpoint to check upload issues"""
+    try:
+        if 'excel_file' not in request.files:
+            return jsonify({'error': 'No file uploaded'}), 400
+
+        file = request.files['excel_file']
+        if file.filename == '':
+            return jsonify({'error': 'No file selected'}), 400
+
+        # Read and return basic file info
+        file.seek(0, 2)
+        file_size = file.tell()
+        file.seek(0)
+
+        # Try to read the Excel file
+        try:
+            df = pd.read_excel(file)
+            file_info = {
+                'filename': file.filename,
+                'size': file_size,
+                'columns': list(df.columns),
+                'shape': df.shape,
+                'first_rows': df.head(2).to_dict('records')
+            }
+            return jsonify({'success': True, 'file_info': file_info})
+        except Exception as e:
+            return jsonify({'error': f'Cannot read Excel file: {str(e)}'}), 400
+
+    except Exception as e:
+        return jsonify({'error': f'Server error: {str(e)}'}), 500
+
+
+
 
 @app.route('/admin/download-pdfs-template')
 @require_location_verification
@@ -1753,31 +2272,31 @@ def download_pdfs_template():
     if session.get('user_role') != 'admin':
         flash('Access denied. Admin privileges required.', 'error')
         return redirect(url_for('dashboard'))
-    
+
     df = pd.DataFrame(columns=['title', 'drive_link', 'file_size'])
-    
+
     examples = [
         {
-            'title': 'Advanced Python Programming', 
+            'title': 'Advanced Python Programming',
             'drive_link': 'https://drive.google.com/file/d/python_advanced_2023/view',
             'file_size': '15.2 MB'
         },
         {
-            'title': 'Machine Learning Fundamentals', 
+            'title': 'Machine Learning Fundamentals',
             'drive_link': 'https://drive.google.com/file/d/ml_fundamentals_2023/view',
             'file_size': '8.7 MB'
         }
     ]
-    
+
     df = pd.concat([df, pd.DataFrame(examples)], ignore_index=True)
-    
+
     buffer = BytesIO()
-    
+
     with pd.ExcelWriter(buffer, engine='openpyxl') as writer:
         df.to_excel(writer, sheet_name='PDFs Template', index=False)
-    
+
     buffer.seek(0)
-    
+
     return send_file(
         buffer,
         as_attachment=True,
@@ -1793,18 +2312,18 @@ def save_boundary():
         if session.get('user_role') != 'admin':
             logger.warning(f"Unauthorized access attempt by user: {session.get('user_id')}")
             return jsonify({'success': False, 'message': 'Access denied. Admin privileges required.'}), 403
-        
+
         data = request.get_json()
         if not data:
             return jsonify({'success': False, 'message': 'No data provided'}), 400
-        
+
         logger.info(f"Received boundary data: {data}")
-        
+
         required_fields = ['name', 'type']
         for field in required_fields:
             if not data.get(field):
                 return jsonify({'success': False, 'message': f'Missing required field: {field}'}), 400
-        
+
         if data['type'] == 'circle':
             circle_fields = ['latitude', 'longitude', 'radius_km']
             for field in circle_fields:
@@ -1814,7 +2333,7 @@ def save_boundary():
                     data[field] = float(data[field])
                 except (ValueError, TypeError):
                     return jsonify({'success': False, 'message': f'Invalid {field} value: {data[field]}'}), 400
-        
+
         elif data['type'] == 'rectangle':
             rect_fields = ['north', 'south', 'east', 'west']
             for field in rect_fields:
@@ -1824,7 +2343,7 @@ def save_boundary():
                     data[field] = float(data[field])
                 except (ValueError, TypeError):
                     return jsonify({'success': False, 'message': f'Invalid {field} value: {data[field]}'}), 400
-        
+
         elif data['type'] == 'polygon':
             if 'coordinates' not in data or not data['coordinates']:
                 return jsonify({'success': False, 'message': 'Missing polygon coordinates'}), 400
@@ -1835,18 +2354,18 @@ def save_boundary():
                     data['coordinates'][i] = [float(coord[0]), float(coord[1])]
             except (ValueError, TypeError) as e:
                 return jsonify({'success': False, 'message': f'Invalid coordinate format: {str(e)}'}), 400
-        
+
         else:
             return jsonify({'success': False, 'message': f'Invalid boundary type: {data["type"]}'}), 400
-        
+
         try:
             boundaries = load_json_data('boundaries.json')
         except Exception as e:
             logger.warning(f"Could not load boundaries, starting fresh: {str(e)}")
             boundaries = []
-        
+
         existing_index = next((i for i, b in enumerate(boundaries) if b['name'] == data['name']), -1)
-        
+
         if existing_index >= 0:
             boundaries[existing_index] = {
                 **boundaries[existing_index],
@@ -1866,17 +2385,17 @@ def save_boundary():
             boundaries.append(new_boundary)
             message = 'Boundary saved successfully'
             action = 'created'
-        
+
         save_json_data('boundaries.json', boundaries)
-        
+
         logger.info(f"Boundary '{data['name']}' {action} successfully. Total boundaries: {len(boundaries)}")
         return jsonify({'success': True, 'message': message})
-        
+
     except Exception as e:
         logger.error(f"Error saving boundary: {str(e)}")
         logger.error(traceback.format_exc())
         return jsonify({
-            'success': False, 
+            'success': False,
             'message': f'Server error while saving boundary: {str(e)}'
         }), 500
 
@@ -1887,16 +2406,16 @@ def get_boundaries():
     try:
         if session.get('user_role') != 'admin':
             return jsonify({'success': False, 'message': 'Access denied'}), 403
-        
+
         boundaries = load_json_data('boundaries.json')
         logger.info(f"Loaded {len(boundaries)} boundaries")
         return jsonify({'success': True, 'boundaries': boundaries})
-        
+
     except Exception as e:
         logger.error(f"Error loading boundaries: {str(e)}")
         logger.error(traceback.format_exc())
         return jsonify({
-            'success': False, 
+            'success': False,
             'message': f'Error loading boundaries: {str(e)}',
             'boundaries': []
         }), 500
@@ -1908,30 +2427,30 @@ def delete_boundary():
     try:
         if session.get('user_role') != 'admin':
             return jsonify({'success': False, 'message': 'Access denied'}), 403
-        
+
         data = request.get_json()
         boundary_name = data.get('name')
-        
+
         if not boundary_name:
             return jsonify({'success': False, 'message': 'Boundary name required'}), 400
-        
+
         boundaries = load_json_data('boundaries.json')
         initial_count = len(boundaries)
         boundaries = [b for b in boundaries if b['name'] != boundary_name]
-        
+
         if len(boundaries) == initial_count:
             return jsonify({'success': False, 'message': 'Boundary not found'}), 404
-        
+
         save_json_data('boundaries.json', boundaries)
-        
+
         logger.info(f"Boundary '{boundary_name}' deleted successfully. Remaining boundaries: {len(boundaries)}")
         return jsonify({'success': True, 'message': 'Boundary deleted successfully'})
-        
+
     except Exception as e:
         logger.error(f"Error deleting boundary: {str(e)}")
         logger.error(traceback.format_exc())
         return jsonify({
-            'success': False, 
+            'success': False,
             'message': f'Error deleting boundary: {str(e)}'
         }), 500
 
@@ -1941,7 +2460,7 @@ def api_pdfs():
     """API endpoint for PDF data"""
     if not session.get('user_id'):
         return jsonify({'error': 'Authentication required'}), 401
-    
+
     pdfs = load_json_data('pdfs.json')
     return jsonify(pdfs)
 
@@ -1951,17 +2470,17 @@ def api_search_pdfs():
     """API endpoint for searching PDFs"""
     if not session.get('user_id'):
         return jsonify({'error': 'Authentication required'}), 401
-    
+
     query = request.args.get('q', '')
-    
+
     pdfs = load_json_data('pdfs.json')
-    
+
     filtered_pdfs = pdfs
     if query:
-        filtered_pdfs = [pdf for pdf in filtered_pdfs 
-                        if query.lower() in pdf['title'].lower() 
+        filtered_pdfs = [pdf for pdf in filtered_pdfs
+                        if query.lower() in pdf['title'].lower()
                         or any(query.lower() in tag.lower() for tag in pdf.get('tags', []))]
-    
+
     return jsonify(filtered_pdfs[:50])
 
 @app.route('/api/stats')
@@ -1970,7 +2489,7 @@ def api_stats():
     try:
         users = load_json_data('users.json')
         pdfs = load_json_data('pdfs.json')
-        
+
         stats = {
             'total_users': len(users),
             'total_pdfs': len(pdfs),
@@ -1978,7 +2497,7 @@ def api_stats():
             'total_admins': len([user for user in users if user.get('role') == 'admin']),
             'total_students': len([user for user in users if user.get('role') == 'student'])
         }
-        
+
         return jsonify({'success': True, 'stats': stats})
     except Exception as e:
         logger.error(f"Error getting stats: {str(e)}")
@@ -1988,24 +2507,24 @@ def api_stats():
 def admin_direct_access():
     """Special route for direct admin access via keyboard shortcut"""
     secret_key = request.args.get('key', '')
-    
+
     if secret_key == app.config.get('ADMIN_DIRECT_ACCESS_KEY', 'ctrl_j_secret'):
         session['direct_admin'] = True
         session['direct_access_timestamp'] = datetime.now().isoformat()
         return redirect(url_for('login'))
-    
+
     return redirect(url_for('login'))
 
 @app.route('/user-direct-access')
 def user_direct_access():
     """Special route for direct user access via keyboard shortcut"""
     secret_key = request.args.get('key', '')
-    
+
     if secret_key == app.config.get('USER_DIRECT_ACCESS_KEY', 'ctrl_k_secret'):
         session['direct_user'] = True
         session['direct_access_timestamp'] = datetime.now().isoformat()
         return redirect(url_for('login'))
-    
+
     return redirect(url_for('login'))
 
 @app.route('/debug/boundaries')
@@ -2031,15 +2550,15 @@ def debug_save_test():
     try:
         data = request.get_json()
         logger.info(f"Received data: {data}")
-        
+
         test_data = {
             'test': True,
             'timestamp': datetime.now().isoformat(),
             'received_data': data
         }
-        
+
         save_json_data('test.json', [test_data])
-        
+
         return jsonify({
             'success': True,
             'message': 'Test save successful',
@@ -2063,5 +2582,5 @@ def logout():
 if __name__ == '__main__':
     # Create data directory if it doesn't exist
     os.makedirs('data', exist_ok=True)
-    
+
     app.run(debug=True, host='0.0.0.0', port=5001)

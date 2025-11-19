@@ -1611,10 +1611,12 @@
                         <div class="mb-3">
                             <label for="usersExcelFile" class="form-label">Select Excel File</label>
                             <input type="file" class="form-control" id="usersExcelFile" name="excel_file" accept=".xlsx,.xls" required>
-                            <div class="form-text">
-                                Required columns: username, password, role, name<br>
-                                For students: username must be 10-digit roll number, password must be DOB (DD/MM/YYYY)
-                            </div>
+                     <div class="form-text">
+    Required columns: username, password, role, name<br>
+    • For students: username=10-digit roll number, password=DOB (DD/MM/YYYY)<br>
+    • For admins: username and password can be any values<br>
+    • Download the template for examples
+</div>
                         </div>
                         <button type="submit" class="btn btn-success">
                             <i class="fas fa-upload"></i> Upload Users
@@ -1679,7 +1681,7 @@
                         <div class="mb-3">
                             <label class="form-label" id="usernameLabel">Username</label>
                             <input type="text" class="form-control" name="username" required>
-                            <div class="form-text" id="usernameHelp">For students: 10-digit roll number</div>
+                           <div class="form-text" id="passwordHelp">For students: Date of Birth (DD/MM/YYYY)</div>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Password</label>
@@ -1752,6 +1754,43 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+// Excel Upload functionality with better error handling
+document.getElementById('uploadUsersForm')?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    
+    // Show loading state
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+    submitBtn.disabled = true;
+    
+    try {
+        const response = await fetch('/admin/upload-users-excel', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            alert('✅ ' + result.message);
+            location.reload();
+        } else {
+            // Show detailed error message
+            alert('❌ ' + result.message);
+        }
+    } catch (error) {
+        console.error('Upload error:', error);
+        alert('❌ Network error: Failed to upload file. Please try again.');
+    } finally {
+        // Reset button state
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    }
+});
+
 
 // Search Users functionality
 function searchUsers() {
