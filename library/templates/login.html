@@ -525,6 +525,17 @@
             margin-top: 40px;
         }
 
+        /* Password Format Info */
+        .password-format-info {
+            margin-top: 8px;
+            padding: 8px 12px;
+            background: rgba(46, 134, 171, 0.05);
+            border-radius: 6px;
+            border-left: 3px solid var(--primary);
+            text-align: left;
+            animation: fadeIn 0.5s ease;
+        }
+
         /* Animation Keyframes */
         @keyframes fadeIn {
             from {
@@ -610,6 +621,16 @@
             .monkey-container {
                 right: 45px;
             }
+            
+            .developer-section {
+                padding: 20px;
+                margin: 30px auto;
+            }
+            
+            .developer-logo {
+                width: 100px;
+                height: 100px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -644,23 +665,87 @@
             }
             
             .developer-logo {
-                width: 100px;
-                height: 100px;
+                width: 90px;
+                height: 90px;
             }
             
             .monkey-container {
                 right: 40px;
             }
+            
+            .developer-links {
+                gap: 15px;
+            }
+            
+            .dev-social-link {
+                width: 45px;
+                height: 45px;
+                font-size: 1.3rem;
+            }
         }
-        .password-format-info {
-    margin-top: 8px;
-    padding: 8px 12px;
-    background: rgba(46, 134, 171, 0.05);
-    border-radius: 6px;
-    border-left: 3px solid var(--primary);
-    text-align: left;
-    animation: fadeIn 0.5s ease;
-}
+        
+        /* Small devices (phones, less than 576px) */
+        @media (max-width: 575px) {
+            body {
+                padding: 15px;
+            }
+            
+            .container {
+                padding: 0 10px;
+            }
+            
+            header {
+                padding: 60px 10px 15px;
+            }
+            
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            .subtitle {
+                font-size: 0.85rem;
+                margin-bottom: 20px;
+            }
+            
+            .login-container {
+                margin: 10px auto;
+            }
+            
+            .password-format-info {
+                font-size: 0.8rem;
+                padding: 6px 10px;
+            }
+            
+            .form-control {
+                padding: 10px 12px;
+                font-size: 0.9rem;
+            }
+            
+            .toggle-password {
+                right: 12px;
+                font-size: 1rem;
+            }
+            
+            .monkey-container {
+                right: 35px;
+                width: 25px;
+            }
+            
+            .monkey {
+                font-size: 1.2rem;
+            }
+            
+            .session-info {
+                padding: 10px;
+                font-size: 0.8rem;
+            }
+            
+            footer {
+                padding: 15px;
+                font-size: 0.8rem;
+                margin-top: 30px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -728,6 +813,10 @@
                             <label for="username" class="form-label">Username</label>
                             <input type="text" class="form-control" id="username" name="username" required
                                    placeholder="Enter your username" value="{{ request.form.username if request.form.username }}">
+                            <small class="text-muted d-block mt-1 text-left">
+                                <i class="fas fa-info-circle"></i> 
+                                Student: Use roll number (e.g., 20A91A05B1) | Department: Use code (e.g., CSE)
+                            </small>
                         </div>
                         
                         <div class="mb-3">
@@ -744,13 +833,13 @@
                                     <i class="fas fa-eye"></i>
                                 </button>
                             </div>
-                            <!-- Add this inside the password field section, right after the password requirements -->
-<div class="password-format-info" id="passwordFormatInfo">
-    <small class="text-muted">
-        <i class="fas fa-info-circle me-1"></i>
-        For students: Use your date of birth in <strong>DDMMYYYY</strong> or <strong>MMDDYYYY</strong> format
-    </small>
-</div>
+                            
+                            <div class="password-format-info" id="passwordFormatInfo">
+                                <small class="text-muted">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    For students: Use your date of birth in <strong>DDMMYYYY</strong> format
+                                </small>
+                            </div>
                             
                             <!-- Password Requirements for Students -->
                             <div class="password-requirements" id="passwordRequirements">
@@ -816,372 +905,399 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
- <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const togglePassword = document.getElementById('togglePassword');
-        const passwordInput = document.getElementById('password');
-        const monkeyClosed = document.getElementById('monkeyClosed');
-        const monkeyOpen = document.getElementById('monkeyOpen');
-        const monkeyWrong = document.getElementById('monkeyWrong');
-        const loginForm = document.getElementById('loginForm');
-        const loginButton = document.getElementById('loginButton');
-        const usernameInput = document.getElementById('username');
-        const passwordRequirements = document.getElementById('passwordRequirements');
-        
-        let wrongAttempts = 0;
-        let isPasswordVisible = false;
-        
-
-
-
-        
-        function updatePasswordHint(username) {
-    const passwordHint = document.getElementById('passwordHint');
-    if (/^[A-Z]+$/.test(username)) {
-        passwordHint.textContent = 'For departments: Use your assigned department password';
-    } else {
-        passwordHint.textContent = 'For students: Use date of birth in DDMMYYYY format';
-    }
-}
-
-        // Initialize monkeys
-        monkeyClosed.classList.add('visible');
-        
-     usernameInput.addEventListener('input', function() {
-    const username = this.value.trim();
-    
-    // Check if it's a department code (all uppercase letters)
-    if (username.length > 0 && /^[A-Z]+$/.test(username)) {
-        // Department login - no password restrictions
-        this.value = username.toUpperCase();
-        
-        // Hide student-specific password requirements
-        passwordRequirements.classList.remove('show');
-        passwordInput.removeAttribute('maxlength');
-        passwordInput.removeAttribute('pattern');
-        passwordInput.removeAttribute('title');
-        passwordInput.setAttribute('placeholder', 'Enter department password');
-        
-    } else if (username.length > 0 && /^[2]/.test(username)) {
-        
-                
-                // Show student-specific password requirements
-                passwordRequirements.classList.add('show');
-                passwordInput.setAttribute('maxlength', '8');
-                passwordInput.setAttribute('pattern', '\\d{8}');
-                passwordInput.setAttribute('title', 'Enter 8-digit date of birth (DDMMYYYY)');
-                passwordInput.setAttribute('placeholder', 'Date of Birth (DDMMYYYY)');
-                
-            } else if (username.length > 0 && /^\d/.test(username)) {
-                // For other numbers starting with digits (potential student)
-                // Auto-capitalize any letters
-                this.value = username.toUpperCase();
-                
-                // Limit to 10 characters
-                if (username.length > 10) {
-                    this.value = username.substring(0, 10);
-                }
-                
-                // Show student-specific password requirements
-                passwordRequirements.classList.add('show');
-                passwordInput.setAttribute('maxlength', '8');
-                passwordInput.setAttribute('pattern', '\\d{8}');
-                passwordInput.setAttribute('title', 'Enter 8-digit date of birth (DDMMYYYY)');
-                passwordInput.setAttribute('placeholder', 'Date of Birth (DDMMYYYY)');
-                
-            } else {
-                // For admin or other usernames - no restrictions
-                // Remove student-specific restrictions
-                passwordRequirements.classList.remove('show');
-                passwordInput.removeAttribute('maxlength');
-                passwordInput.removeAttribute('pattern');
-                passwordInput.removeAttribute('title');
-                passwordInput.setAttribute('placeholder', 'Enter your password');
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const togglePassword = document.getElementById('togglePassword');
+            const passwordInput = document.getElementById('password');
+            const monkeyClosed = document.getElementById('monkeyClosed');
+            const monkeyOpen = document.getElementById('monkeyOpen');
+            const monkeyWrong = document.getElementById('monkeyWrong');
+            const loginForm = document.getElementById('loginForm');
+            const loginButton = document.getElementById('loginButton');
+            const usernameInput = document.getElementById('username');
+            const passwordRequirements = document.getElementById('passwordRequirements');
+            const passwordFormatInfo = document.getElementById('passwordFormatInfo');
+            
+            let isPasswordVisible = false;
+            
+            // Initialize monkeys
+            monkeyClosed.classList.add('visible');
+            
+            // Function to auto-capitalize only alphabetic characters in student roll numbers
+            function autoCapitalizeStudentRollNumber(text) {
+                return text.replace(/[A-Z]/gi, function(char) {
+                    return char.toUpperCase();
+                });
             }
             
-            handlePasswordInput();
-        });
-        
-        // Prevent non-alphanumeric characters for student roll numbers
-        usernameInput.addEventListener('keydown', function(e) {
-            const username = this.value;
-            
-            // If it starts with a digit (likely student), restrict to alphanumeric
-            if (username.length > 0 && /^\d/.test(username)) {
-                // Allow alphanumeric, backspace, delete, arrow keys, etc.
-                if (!/^[a-zA-Z0-9]$/.test(e.key) && 
-                    !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Tab'].includes(e.key)) {
-                    e.preventDefault();
-                }
-            }
-        });
-        
-        // Handle paste event to clean up pasted text
-        usernameInput.addEventListener('paste', function(e) {
-            e.preventDefault();
-            const pastedText = (e.clipboardData || window.clipboardData).getData('text');
-            
-            let cleanedText = pastedText.trim();
-            
-            // If it starts with a digit, treat as student roll number
-            if (/^\d/.test(cleanedText)) {
-                // Clean and capitalize
-                cleanedText = cleanedText.toUpperCase().replace(/[^A-Z0-9]/g, '');
+            // Handle username input with selective auto-capitalization
+            usernameInput.addEventListener('input', function() {
+                let username = this.value;
                 
-                // Limit to 10 characters
-                if (cleanedText.length > 10) {
-                    cleanedText = cleanedText.substring(0, 10);
-                }
-            }
-            
-            // Insert the cleaned text
-            const start = this.selectionStart;
-            const end = this.selectionEnd;
-            this.value = this.value.substring(0, start) + cleanedText + this.value.substring(end);
-            
-            // Trigger input event to apply other formatting
-            this.dispatchEvent(new Event('input'));
-        });
-        
-        // Toggle password visibility
-        togglePassword.addEventListener('click', function() {
-            isPasswordVisible = !isPasswordVisible;
-            
-            if (isPasswordVisible) {
-                passwordInput.type = 'text';
-                togglePassword.innerHTML = '<i class="fas fa-eye-slash"></i>';
-                monkeyClosed.classList.remove('visible');
-                monkeyClosed.classList.add('hidden');
-                monkeyOpen.classList.remove('hidden');
-                monkeyOpen.classList.add('visible');
-            } else {
-                passwordInput.type = 'password';
-                togglePassword.innerHTML = '<i class="fas fa-eye"></i>';
-                monkeyOpen.classList.remove('visible');
-                monkeyOpen.classList.add('hidden');
-                monkeyClosed.classList.remove('hidden');
-                monkeyClosed.classList.add('visible');
-            }
-        });
-
-        // Close mobile navbar when a nav link is clicked
-        const navLinks = document.querySelectorAll('.nav-link');
-        const navbarToggler = document.querySelector('.navbar-toggler');
-        const navbarCollapse = document.querySelector('.navbar-collapse');
-        
-        navLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                // Check if navbar is collapsed (mobile view)
-                if (navbarCollapse.classList.contains('show')) {
-                    // Trigger click on navbar toggler to close it
-                    navbarToggler.click();
-                }
-            });
-        });
-        
-        // Student password validation
-        function validateStudentPassword(password) {
-            const cleanPassword = password.replace(/\D/g, '');
-            const requirements = {
-                length: cleanPassword.length === 8,
-                digits: /^\d+$/.test(cleanPassword),
-                format: false
-            };
-            
-            // Validate date format
-            if (requirements.length && requirements.digits) {
-                try {
-                    const day = parseInt(cleanPassword.substring(0, 2));
-                    const month = parseInt(cleanPassword.substring(2, 4));
-                    const year = parseInt(cleanPassword.substring(4, 8));
+                // Check if username starts with digits (student roll number)
+                if (username.length > 0 && /^\d/.test(username)) {
+                    // Auto-capitalize ONLY alphabetic characters, keep digits as is
+                    username = autoCapitalizeStudentRollNumber(username);
                     
-                    // Basic date validation
-                    if (month >= 1 && month <= 12 && day >= 1 && day <= 31 && year >= 1900 && year <= new Date().getFullYear()) {
-                        requirements.format = true;
+                    // Remove any non-alphanumeric characters
+                    username = username.replace(/[^A-Z0-9]/gi, '');
+                    
+                    // For student roll numbers, we can allow 8-10 characters
+                    if (username.length > 10) {
+                        username = username.substring(0, 10);
                     }
-                } catch (e) {
-                    requirements.format = false;
-                }
-            }
-            
-            return requirements;
-        }
-        
-        function updatePasswordRequirements(requirements) {
-            const reqLength = document.getElementById('reqLength');
-            const reqDigits = document.getElementById('reqDigits');
-            const reqFormat = document.getElementById('reqFormat');
-            
-            if (requirements.length) {
-                reqLength.classList.remove('invalid');
-                reqLength.classList.add('valid');
-                reqLength.innerHTML = '<i class="fas fa-check-circle"></i><span>Exactly 8 digits ✓</span>';
-            } else {
-                reqLength.classList.remove('valid');
-                reqLength.classList.add('invalid');
-                reqLength.innerHTML = '<i class="fas fa-circle"></i><span>Exactly 8 digits</span>';
-            }
-            
-            if (requirements.digits) {
-                reqDigits.classList.remove('invalid');
-                reqDigits.classList.add('valid');
-                reqDigits.innerHTML = '<i class="fas fa-check-circle"></i><span>Numbers only ✓</span>';
-            } else {
-                reqDigits.classList.remove('valid');
-                reqDigits.classList.add('invalid');
-                reqDigits.innerHTML = '<i class="fas fa-circle"></i><span>Numbers only (no letters or special characters)</span>';
-            }
-            
-            if (requirements.format) {
-                reqFormat.classList.remove('invalid');
-                reqFormat.classList.add('valid');
-                reqFormat.innerHTML = '<i class="fas fa-check-circle"></i><span>Valid DDMMYYYY format ✓</span>';
-            } else {
-                reqFormat.classList.remove('valid');
-                reqFormat.classList.add('invalid');
-                reqFormat.innerHTML = '<i class="fas fa-circle"></i><span>Valid DDMMYYYY format</span>';
-            }
-        }
-        
-        function handlePasswordInput() {
-            const username = usernameInput.value.trim();
-            const isLikelyStudent = /^[A-Z0-9]{10}$/.test(username) && /^\d/.test(username);
-            
-            if (isLikelyStudent && passwordInput) {
-                // Show requirements
-                passwordRequirements.classList.add('show');
-                
-                // Auto-remove non-digit characters and limit to 8 digits
-                const cleanValue = passwordInput.value.replace(/\D/g, '').slice(0, 8);
-                passwordInput.value = cleanValue;
-                
-                // Validate password
-                if (cleanValue.length > 0) {
-                    const requirements = validateStudentPassword(cleanValue);
-                    updatePasswordRequirements(requirements);
-                } else {
-                    updatePasswordRequirements({ length: false, digits: false, format: false });
-                }
-            } else {
-                passwordRequirements.classList.remove('show');
-            }
-        }
-        
-        // Event listeners for student validation
-        if (passwordInput) {
-            passwordInput.addEventListener('input', handlePasswordInput);
-            passwordInput.addEventListener('focus', function() {
-                const username = usernameInput.value.trim();
-                const isLikelyStudent = /^[A-Z0-9]{10}$/.test(username) && /^\d/.test(username);
-                if (isLikelyStudent) {
+                    
+                    this.value = username;
+                    
+                    // Show student-specific password requirements
                     passwordRequirements.classList.add('show');
-                    passwordInput.setAttribute('maxlength', '8');
-                    passwordInput.setAttribute('pattern', '\\d{8}');
-                    passwordInput.setAttribute('title', 'Enter 8-digit date of birth (DDMMYYYY)');
-                }
-            });
-            passwordInput.addEventListener('blur', function() {
-                setTimeout(() => {
-                    if (!passwordInput.matches(':focus')) {
-                        passwordRequirements.classList.remove('show');
+                    passwordFormatInfo.style.display = 'block';
+                    
+                    if (passwordInput) {
+                        passwordInput.setAttribute('maxlength', '8');
+                        passwordInput.setAttribute('pattern', '\\d{8}');
+                        passwordInput.setAttribute('title', 'Enter 8-digit date of birth (DDMMYYYY)');
+                        passwordInput.setAttribute('placeholder', 'Date of Birth (DDMMYYYY)');
                     }
-                }, 200);
+                    
+                } else if (username.length > 0 && /^[A-Z]+$/i.test(username)) {
+                    // Department login (all letters) - NO auto-capitalization
+                    // Remove any non-alphabetic characters
+                    username = username.replace(/[^A-Z]/gi, '');
+                    
+                    // Keep the original case (as user typed it)
+                    // This allows "cse", "CSE", "Cse" etc.
+                    
+                    this.value = username;
+                    
+                    // Hide student-specific password requirements
+                    passwordRequirements.classList.remove('show');
+                    passwordFormatInfo.style.display = 'none';
+                    
+                    if (passwordInput) {
+                        passwordInput.removeAttribute('maxlength');
+                        passwordInput.removeAttribute('pattern');
+                        passwordInput.removeAttribute('title');
+                        passwordInput.setAttribute('placeholder', 'Enter department password');
+                    }
+                    
+                } else if (username.length > 0) {
+                    // For admin or other usernames (mixed or starts with letter)
+                    // NO auto-capitalization - keep user's original typing
+                    // Only clean non-alphanumeric characters
+                    username = username.replace(/[^A-Za-z0-9]/g, '');
+                    
+                    this.value = username;
+                    
+                    // Remove student-specific restrictions
+                    passwordRequirements.classList.remove('show');
+                    passwordFormatInfo.style.display = 'none';
+                    
+                    if (passwordInput) {
+                        passwordInput.removeAttribute('maxlength');
+                        passwordInput.removeAttribute('pattern');
+                        passwordInput.removeAttribute('title');
+                        passwordInput.setAttribute('placeholder', 'Enter your password');
+                    }
+                }
+                
+                handlePasswordInput();
             });
-        }
-
-        // Form submission
-        loginForm.addEventListener('submit', function(e) {
-            const username = usernameInput.value.trim();
-            const password = passwordInput.value;
-            const isLikelyStudent = /^[A-Z0-9]{10}$/.test(username) && /^\d/.test(username);
             
-            // Student validation
-            if (isLikelyStudent && passwordInput) {
-                const cleanPassword = password.replace(/\D/g, '');
+            // Prevent non-alphanumeric characters for student roll numbers
+            usernameInput.addEventListener('keydown', function(e) {
+                const username = this.value;
                 
-                if (cleanPassword.length !== 8) {
-                    e.preventDefault();
-                    showError('Please enter exactly 8 digits for date of birth (DDMMYYYY)');
-                    passwordInput.focus();
-                    return;
+                // If it starts with a digit (likely student), restrict to alphanumeric
+                if (username.length > 0 && /^\d/.test(username)) {
+                    // Allow alphanumeric, backspace, delete, arrow keys, etc.
+                    if (!/^[a-zA-Z0-9]$/.test(e.key) && 
+                        !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Tab', 'Enter'].includes(e.key)) {
+                        e.preventDefault();
+                    }
+                }
+            });
+            
+            // Handle paste event to clean up pasted text
+            usernameInput.addEventListener('paste', function(e) {
+                e.preventDefault();
+                const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+                
+                let cleanedText = pastedText.trim();
+                
+                // If it starts with a digit, treat as student roll number
+                if (/^\d/.test(cleanedText)) {
+                    // Clean and capitalize ONLY alphabetic characters
+                    cleanedText = autoCapitalizeStudentRollNumber(cleanedText);
+                    cleanedText = cleanedText.replace(/[^A-Z0-9]/gi, '');
+                    
+                    // Limit to 10 characters for student roll numbers
+                    if (cleanedText.length > 10) {
+                        cleanedText = cleanedText.substring(0, 10);
+                    }
+                } else if (/^[A-Z]+$/i.test(cleanedText)) {
+                    // For department codes (alphabetic) - keep original case
+                    cleanedText = cleanedText.replace(/[^A-Z]/gi, '');
+                } else {
+                    // For other usernames - keep original case, just clean
+                    cleanedText = cleanedText.replace(/[^A-Za-z0-9]/g, '');
                 }
                 
-                if (!/^\d+$/.test(cleanPassword)) {
-                    e.preventDefault();
-                    showError('Date of birth should contain only digits. No letters or special characters allowed.');
-                    passwordInput.focus();
-                    return;
-                }
+                // Insert the cleaned text
+                const start = this.selectionStart;
+                const end = this.selectionEnd;
+                this.value = this.value.substring(0, start) + cleanedText + this.value.substring(end);
                 
-                // Validate date format
-                const requirements = validateStudentPassword(cleanPassword);
-                if (!requirements.format) {
-                    e.preventDefault();
-                    showError('Invalid date format. Please enter a valid date in DDMMYYYY format. Example: 15082002 for 15th August 2002');
-                    passwordInput.focus();
-                    return;
-                }
-            }
+                // Trigger input event to apply other formatting
+                this.dispatchEvent(new Event('input'));
+            });
             
-            // Show loading state
-            loginButton.innerHTML = '<i class="fas fa-spinner spinner"></i> Authenticating...';
-            loginButton.disabled = true;
-            
-            // The form will now submit normally to the Flask backend
-            // Backend will handle authentication and redirect accordingly
-        });
-        
-        function showError(message) {
-            // Remove any existing alerts
-            const existingAlert = document.querySelector('.alert');
-            if (existingAlert) {
-                existingAlert.remove();
-            }
-            
-            // Create new alert
-            const alertDiv = document.createElement('div');
-            alertDiv.className = 'alert alert-danger';
-            alertDiv.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${message}`;
-            
-            // Insert alert after the form
-            loginForm.parentNode.insertBefore(alertDiv, loginForm.nextSibling);
-            
-            // Auto remove after 5 seconds
-            setTimeout(() => {
-                if (alertDiv.parentNode) {
-                    alertDiv.remove();
-                }
-            }, 5000);
-            
-            // Show monkey wrong animation
-            monkeyClosed.classList.remove('visible');
-            monkeyClosed.classList.add('hidden');
-            monkeyOpen.classList.remove('visible');
-            monkeyOpen.classList.add('hidden');
-            monkeyWrong.classList.remove('hidden');
-            monkeyWrong.classList.add('visible');
-            monkeyWrong.classList.add('shaking');
-            
-            // Reset monkey after animation
-            setTimeout(() => {
-                monkeyWrong.classList.remove('shaking');
+            // Toggle password visibility
+            togglePassword.addEventListener('click', function() {
+                isPasswordVisible = !isPasswordVisible;
+                
                 if (isPasswordVisible) {
+                    passwordInput.type = 'text';
+                    togglePassword.innerHTML = '<i class="fas fa-eye-slash"></i>';
+                    monkeyClosed.classList.remove('visible');
+                    monkeyClosed.classList.add('hidden');
                     monkeyOpen.classList.remove('hidden');
                     monkeyOpen.classList.add('visible');
-                    monkeyWrong.classList.remove('visible');
-                    monkeyWrong.classList.add('hidden');
                 } else {
+                    passwordInput.type = 'password';
+                    togglePassword.innerHTML = '<i class="fas fa-eye"></i>';
+                    monkeyOpen.classList.remove('visible');
+                    monkeyOpen.classList.add('hidden');
                     monkeyClosed.classList.remove('hidden');
                     monkeyClosed.classList.add('visible');
-                    monkeyWrong.classList.remove('visible');
-                    monkeyWrong.classList.add('hidden');
                 }
-            }, 1000);
-        }
-        
-        // Set current year in footer
-        document.getElementById('year').textContent = new Date().getFullYear();
-    });
-</script>
+            });
+
+            // Close mobile navbar when a nav link is clicked
+            const navLinks = document.querySelectorAll('.nav-link');
+            const navbarToggler = document.querySelector('.navbar-toggler');
+            const navbarCollapse = document.querySelector('.navbar-collapse');
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    // Check if navbar is collapsed (mobile view)
+                    if (navbarCollapse.classList.contains('show')) {
+                        // Trigger click on navbar toggler to close it
+                        navbarToggler.click();
+                    }
+                });
+            });
+            
+            // Student password validation
+            function validateStudentPassword(password) {
+                const cleanPassword = password.replace(/\D/g, '');
+                const requirements = {
+                    length: cleanPassword.length === 8,
+                    digits: /^\d+$/.test(cleanPassword),
+                    format: false
+                };
+                
+                // Validate date format
+                if (requirements.length && requirements.digits) {
+                    try {
+                        const day = parseInt(cleanPassword.substring(0, 2));
+                        const month = parseInt(cleanPassword.substring(2, 4));
+                        const year = parseInt(cleanPassword.substring(4, 8));
+                        
+                        // Basic date validation
+                        if (month >= 1 && month <= 12 && day >= 1 && day <= 31 && year >= 1900 && year <= new Date().getFullYear()) {
+                            requirements.format = true;
+                        }
+                    } catch (e) {
+                        requirements.format = false;
+                    }
+                }
+                
+                return requirements;
+            }
+            
+            function updatePasswordRequirements(requirements) {
+                const reqLength = document.getElementById('reqLength');
+                const reqDigits = document.getElementById('reqDigits');
+                const reqFormat = document.getElementById('reqFormat');
+                
+                if (requirements.length) {
+                    reqLength.classList.remove('invalid');
+                    reqLength.classList.add('valid');
+                    reqLength.innerHTML = '<i class="fas fa-check-circle"></i><span>Exactly 8 digits ✓</span>';
+                } else {
+                    reqLength.classList.remove('valid');
+                    reqLength.classList.add('invalid');
+                    reqLength.innerHTML = '<i class="fas fa-circle"></i><span>Exactly 8 digits</span>';
+                }
+                
+                if (requirements.digits) {
+                    reqDigits.classList.remove('invalid');
+                    reqDigits.classList.add('valid');
+                    reqDigits.innerHTML = '<i class="fas fa-check-circle"></i><span>Numbers only ✓</span>';
+                } else {
+                    reqDigits.classList.remove('valid');
+                    reqDigits.classList.add('invalid');
+                    reqDigits.innerHTML = '<i class="fas fa-circle"></i><span>Numbers only (no letters or special characters)</span>';
+                }
+                
+                if (requirements.format) {
+                    reqFormat.classList.remove('invalid');
+                    reqFormat.classList.add('valid');
+                    reqFormat.innerHTML = '<i class="fas fa-check-circle"></i><span>Valid DDMMYYYY format ✓</span>';
+                } else {
+                    reqFormat.classList.remove('valid');
+                    reqFormat.classList.add('invalid');
+                    reqFormat.innerHTML = '<i class="fas fa-circle"></i><span>Valid DDMMYYYY format</span>';
+                }
+            }
+            
+            function handlePasswordInput() {
+                const username = usernameInput.value.trim();
+                // Check if it's a student roll number (starts with digit and is 8-10 alphanumeric chars)
+                const isLikelyStudent = /^\d[A-Z0-9]{7,9}$/i.test(username);
+                
+                if (isLikelyStudent && passwordInput) {
+                    // Show requirements
+                    passwordRequirements.classList.add('show');
+                    
+                    // Auto-remove non-digit characters and limit to 8 digits
+                    const cleanValue = passwordInput.value.replace(/\D/g, '').slice(0, 8);
+                    passwordInput.value = cleanValue;
+                    
+                    // Validate password
+                    if (cleanValue.length > 0) {
+                        const requirements = validateStudentPassword(cleanValue);
+                        updatePasswordRequirements(requirements);
+                    } else {
+                        updatePasswordRequirements({ length: false, digits: false, format: false });
+                    }
+                } else {
+                    passwordRequirements.classList.remove('show');
+                }
+            }
+            
+            // Event listeners for student validation
+            if (passwordInput) {
+                passwordInput.addEventListener('input', handlePasswordInput);
+                passwordInput.addEventListener('focus', function() {
+                    const username = usernameInput.value.trim();
+                    const isLikelyStudent = /^\d[A-Z0-9]{7,9}$/i.test(username);
+                    if (isLikelyStudent) {
+                        passwordRequirements.classList.add('show');
+                        passwordInput.setAttribute('maxlength', '8');
+                        passwordInput.setAttribute('pattern', '\\d{8}');
+                        passwordInput.setAttribute('title', 'Enter 8-digit date of birth (DDMMYYYY)');
+                    }
+                });
+                passwordInput.addEventListener('blur', function() {
+                    setTimeout(() => {
+                        if (!passwordInput.matches(':focus')) {
+                            passwordRequirements.classList.remove('show');
+                        }
+                    }, 200);
+                });
+            }
+
+            // Form submission
+            loginForm.addEventListener('submit', function(e) {
+                const username = usernameInput.value.trim();
+                const password = passwordInput.value;
+                const isLikelyStudent = /^\d[A-Z0-9]{7,9}$/i.test(username);
+                
+                // Student validation
+                if (isLikelyStudent && passwordInput) {
+                    const cleanPassword = password.replace(/\D/g, '');
+                    
+                    if (cleanPassword.length !== 8) {
+                        e.preventDefault();
+                        showError('Please enter exactly 8 digits for date of birth (DDMMYYYY)');
+                        passwordInput.focus();
+                        return;
+                    }
+                    
+                    if (!/^\d+$/.test(cleanPassword)) {
+                        e.preventDefault();
+                        showError('Date of birth should contain only digits. No letters or special characters allowed.');
+                        passwordInput.focus();
+                        return;
+                    }
+                    
+                    // Validate date format
+                    const requirements = validateStudentPassword(cleanPassword);
+                    if (!requirements.format) {
+                        e.preventDefault();
+                        showError('Invalid date format. Please enter a valid date in DDMMYYYY format. Example: 15082002 for 15th August 2002');
+                        passwordInput.focus();
+                        return;
+                    }
+                }
+                
+                // Show loading state
+                loginButton.innerHTML = '<i class="fas fa-spinner spinner"></i> Authenticating...';
+                loginButton.disabled = true;
+                
+                // The form will now submit normally to the Flask backend
+                // Backend will handle authentication and redirect accordingly
+            });
+            
+            function showError(message) {
+                // Remove any existing alerts
+                const existingAlert = document.querySelector('.alert');
+                if (existingAlert) {
+                    existingAlert.remove();
+                }
+                
+                // Create new alert
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-danger';
+                alertDiv.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${message}`;
+                
+                // Insert alert after the form
+                loginForm.parentNode.insertBefore(alertDiv, loginForm.nextSibling);
+                
+                // Auto remove after 5 seconds
+                setTimeout(() => {
+                    if (alertDiv.parentNode) {
+                        alertDiv.remove();
+                    }
+                }, 5000);
+                
+                // Show monkey wrong animation
+                monkeyClosed.classList.remove('visible');
+                monkeyClosed.classList.add('hidden');
+                monkeyOpen.classList.remove('visible');
+                monkeyOpen.classList.add('hidden');
+                monkeyWrong.classList.remove('hidden');
+                monkeyWrong.classList.add('visible');
+                monkeyWrong.classList.add('shaking');
+                
+                // Reset monkey after animation
+                setTimeout(() => {
+                    monkeyWrong.classList.remove('shaking');
+                    if (isPasswordVisible) {
+                        monkeyOpen.classList.remove('hidden');
+                        monkeyOpen.classList.add('visible');
+                        monkeyWrong.classList.remove('visible');
+                        monkeyWrong.classList.add('hidden');
+                    } else {
+                        monkeyClosed.classList.remove('hidden');
+                        monkeyClosed.classList.add('visible');
+                        monkeyWrong.classList.remove('visible');
+                        monkeyWrong.classList.add('hidden');
+                    }
+                }, 1000);
+            }
+            
+            // Set current year in footer
+            document.getElementById('year').textContent = new Date().getFullYear();
+            
+            // Add some example text to show the behavior
+            console.log("Auto-capitalization rules:");
+            console.log("1. If username starts with digits (e.g., '20a91a05b1') -> Auto-capitalize to '20A91A05B1'");
+            console.log("2. If username starts with letters (e.g., 'admin', 'cse') -> Keep original case");
+            console.log("3. Mixed usernames starting with letters (e.g., 'johnDoe123') -> Keep original case");
+        });
+    </script>
 </body>
 </html>

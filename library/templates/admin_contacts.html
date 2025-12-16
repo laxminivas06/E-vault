@@ -875,7 +875,7 @@
     </style>
 </head>
 <body>
-    <!-- Navigation -->
+     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('welcome') }}">
@@ -886,21 +886,30 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('dashboard') }}"><i class="fas fa-home me-1"></i>User Dashboard</a>
-                    </li>
+                    
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('admin_dashboard') }}"><i class="fas fa-file-pdf me-1"></i>PDF Management</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('admin_users') }}"><i class="fas fa-users me-1"></i>User Management</a>
+                     <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin_users') }}">
+                            <i class="fas fa-users me-1"></i>
+                            User Management
+                        </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('admin_statistics') }}"><i class="fas fa-chart-line me-1"></i>Statistics</a>
-                    </li>
-                       
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('admin_location') }}"><i class="fas fa-map-marker-alt me-1"></i>Location Settings</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin_statistics') }}">
+                            <i class="fas fa-chart-line me-2"></i>
+                            Statistics
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin_contacts') }}">
+                            <i class="fas fa-envelope me-1"></i>
+                            Contacts
+                        </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt me-1"></i>Logout</a>
@@ -1163,8 +1172,8 @@
             <div class="developer-section">
                 <div class="developer-info">
                     <p style="font-size: 1.1rem;">E-Vault System developed by</p> 
-                    <strong>Laxmi Nivas Morishetty</strong>
-                    <p style="font-size: 0.9rem; color: rgba(255,255,255,0.9);"> Founder & CEO @Smart N Light Innovations</p>
+                    
+                    <p style="font-size: 0.9rem; color: rgba(255,255,255,0.9);"><b>Team Smart N Light Innovations</b></p>
                 </div>
                 
                 <!-- SmartNLight Innovation Logo -->
@@ -1172,18 +1181,8 @@
                     <img src="/static/images/4.png" alt="SmartNLight Innovation Logo">
                 </a>
                 
-                <!-- Developer Contact Links -->
-                <div class="developer-links">
-                    <a href="https://www.linkedin.com/in/laxmi-nivas-morishetty-02468m/" target="_blank" class="dev-social-link">
-                        <i class="fab fa-linkedin"></i>
-                    </a>
-                    <a href="https://laxminivasmorishetty.netlify.app" target="_blank" class="dev-social-link">
-                        <i class="fas fa-globe"></i>
-                    </a>
-                    <a href="https://instagram.com/laxminivasmorishetty" target="_blank" class="dev-social-link">
-                        <i class="fab fa-instagram"></i>
-                    </a>
-                </div>
+              
+                
             </div>
         </div>
     </div>

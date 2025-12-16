@@ -21355,5 +21355,2624 @@
     "uploaded_by": "admin",
     "uploaded_at": "2025-11-11T13:23:09.743717",
     "upload_date": "2025-11-11"
+  },
+  {
+    "id": 2374,
+    "title": "quantum-computing-for-everyone_compress.pdf",
+    "drive_link": "https://drive.google.com/file/d/1jOO-BXT37LbLJVmQYDpU7g2ZDYFO7ZaS/view?usp=drivesdk",
+    "file_size": "4.51",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.024213",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2375,
+    "title": "machine-learning-with-quantum-computers_compress.pdf",
+    "drive_link": "https://drive.google.com/file/d/1tq3fEx4iRJ0B-y6MEA9DKRmU8Tut2fpo/view?usp=drivesdk",
+    "file_size": "7.6",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.024786",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2376,
+    "title": "Fluid Mechanics and Hydraulic Machines By BS Publications.pdf",
+    "drive_link": "https://drive.google.com/file/d/1idq8ZOjWSxsTOhMQ0cQ8hdzF_vE84QiV/view?usp=drivesdk",
+    "file_size": "9.8",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.025307",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2377,
+    "title": "Copy of zlib.pub_python-programming.pdf",
+    "drive_link": "https://drive.google.com/file/d/1EVuHveEPOKxC57IH7gGG5vF4KuXmHM4P/view?usp=drivesdk",
+    "file_size": "8.39",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.025794",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2378,
+    "title": "Copy of zlib.pub_web-services-essentials.pdf",
+    "drive_link": "https://drive.google.com/file/d/1KtpRYCbEes3OCfnOpCVxuDSz80Lbfv6K/view?usp=drivesdk",
+    "file_size": "3.95",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.026282",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2379,
+    "title": "Copy of zlib.pub_the-web-application-hackers-handbook.pdf",
+    "drive_link": "https://drive.google.com/file/d/1Smb49Y1RKdmDRsYW9HBUqc4E4c75Fdj_/view?usp=drivesdk",
+    "file_size": "13.52",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.026789",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2380,
+    "title": "Copy of zlib.pub_the-handbook-of-privacy-studies-an-interdisciplinary-introduction.pdf",
+    "drive_link": "https://drive.google.com/file/d/1_c-LbEbN4qnmJlGPUTl0FWd9jgg_iHky/view?usp=drivesdk",
+    "file_size": "3.74",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.027332",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2381,
+    "title": "Copy of zlib.pub_speech-and-language-processing-an-introduction-to-natural-language-processing-computational-linguistics-and-speech-recognition.pdf",
+    "drive_link": "https://drive.google.com/file/d/1cUsEAT98-AOOcnIduIJHGxX4fZn8ZAny/view?usp=drivesdk",
+    "file_size": "100.21",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.027985",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2382,
+    "title": "Copy of zlib.pub_words-that-change-minds-the-14-patterns-for-mastering-the-language-of-influence.pdf",
+    "drive_link": "https://drive.google.com/file/d/1fc68kaLwkXBcO1NQVfwmDwi451_pptav/view?usp=drivesdk",
+    "file_size": "6.56",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.028547",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2383,
+    "title": "Copy of zlib.pub_research-methodology-methods-and-techniques.pdf",
+    "drive_link": "https://drive.google.com/file/d/1kN0qVi43eQjEeCcA-ZB13jOnR94xJ8Dh/view?usp=drivesdk",
+    "file_size": "1.84",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.029010",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2384,
+    "title": "Copy of zlib.pub_you-can-win-winners-dont-do-different-things-they-do-things-differently-a-step-by-step-tool-for-top-achievers.pdf",
+    "drive_link": "https://drive.google.com/file/d/1m0UhZqaxyEetmyhyBpnWqGWFQfnhY7Ni/view?usp=drivesdk",
+    "file_size": "1.97",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.029524",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2385,
+    "title": "Copy of zlib.pub_python-for-beginners-2-books-in-1-coding-for-beginners-using-python-python-crash-course.pdf",
+    "drive_link": "https://drive.google.com/file/d/1pMjy1nbTkfUhMv5dSDRjVWOxcTuZNE2-/view?usp=drivesdk",
+    "file_size": "3.06",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.030020",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2386,
+    "title": "Copy of zlib.pub_supercharged-python-take-your-code-to-the-next-level.pdf",
+    "drive_link": "https://drive.google.com/file/d/1takVZ3bdiB8YQDzM_puvRhI7hZguD4gB/view?usp=drivesdk",
+    "file_size": "51.66",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.030496",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2387,
+    "title": "Copy of zlib.pub_learning-python.pdf",
+    "drive_link": "https://drive.google.com/file/d/17Q-LwUT-ywfDwK9ms2yMP-wFCsd5OVMm/view?usp=drivesdk",
+    "file_size": "5.19",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.030934",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2388,
+    "title": "Copy of zlib.pub_introduction-to-python-programming.pdf",
+    "drive_link": "https://drive.google.com/file/d/1K3UisQyw5sRs6gbMmP6XhOE1aZNYdPJq/view?usp=drivesdk",
+    "file_size": "14.11",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.031393",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2389,
+    "title": "Copy of zlib.pub_pattern-recognition-and-machine-learning.pdf",
+    "drive_link": "https://drive.google.com/file/d/1Oxrq24wU_-IDm-k_wGmKSXlLWhCMG-2c/view?usp=drivesdk",
+    "file_size": "5.53",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.031853",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2390,
+    "title": "Copy of zlib.pub_natural-language-processing.pdf",
+    "drive_link": "https://drive.google.com/file/d/1TzAwahqSP-RRGIZ7ZTqJ-sVEEbRz1M7k/view?usp=drivesdk",
+    "file_size": "43.22",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.032304",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2391,
+    "title": "Copy of zlib.pub_head-first-servlets-and-jsp (1).pdf",
+    "drive_link": "https://drive.google.com/file/d/1U7_zaAfhSic_hoKQ3G2OEtLGtV5d5MYh/view?usp=drivesdk",
+    "file_size": "63.71",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.032757",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2392,
+    "title": "Copy of zlib.pub_mcqs-in-computer-science.pdf",
+    "drive_link": "https://drive.google.com/file/d/1UzkgtlaaaqMkOTcfpKmNjGJRkYqunOyM/view?usp=drivesdk",
+    "file_size": "4.6",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.033201",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2393,
+    "title": "Copy of zlib.pub_pointers-in-c.pdf",
+    "drive_link": "https://drive.google.com/file/d/1Y_CkmFtQDm69MvHke8eNzGk_YOggXudS/view?usp=drivesdk",
+    "file_size": "4.51",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.033636",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2394,
+    "title": "Copy of zlib.pub_industry-40-the-industrial-internet-of-things.pdf",
+    "drive_link": "https://drive.google.com/file/d/1jqALRB6MsVdJxi1wiOOg5S7bD4b4xzF5/view?usp=drivesdk",
+    "file_size": "2.03",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.034096",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2395,
+    "title": "Copy of zlib.pub_introduction-to-languages-and-the-theory-of-computation.pdf",
+    "drive_link": "https://drive.google.com/file/d/1y20W0cQkOGnoO4VJqkOj-dYCmpeg_V1c/view?usp=drivesdk",
+    "file_size": "21.9",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.034576",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2396,
+    "title": "Copy of zlib.pub_oracle-pl-sql-by-example-fifth-edition.pdf",
+    "drive_link": "https://drive.google.com/file/d/1yN4pPtLfQzN6BTa4AbMr4xYzvYWZN-xT/view?usp=drivesdk",
+    "file_size": "13.0",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.035051",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2397,
+    "title": "Copy of zlib.pub_beginning-xml.pdf",
+    "drive_link": "https://drive.google.com/file/d/1-FmXRtyb46KhviomdSdwcfhhWVpfI5K5/view?usp=drivesdk",
+    "file_size": "19.5",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.035501",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2398,
+    "title": "Copy of zlib.pub_c-how-to-program.pdf",
+    "drive_link": "https://drive.google.com/file/d/15CQN7wPw-1b9jtwAXpgoBqYReaqqrTGY/view?usp=drivesdk",
+    "file_size": "5.43",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.035949",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2399,
+    "title": "Copy of zlib.pub_an-introduction-to-object-oriented-programming.pdf",
+    "drive_link": "https://drive.google.com/file/d/1Ee84ifpTClNWwCLy25h4afzpIkjcJTni/view?usp=drivesdk",
+    "file_size": "50.29",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.036395",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2400,
+    "title": "Copy of zlib.pub_data-structures-using-c (1).pdf",
+    "drive_link": "https://drive.google.com/file/d/1H5Uzhq4QG79wfCtpTfV6aVDfnZLk5lzb/view?usp=drivesdk",
+    "file_size": "3.86",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.036816",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2401,
+    "title": "Copy of zlib.pub_data-analytics-using-r-paperback-jan-01-2018-seema-acharya.pdf",
+    "drive_link": "https://drive.google.com/file/d/1KTIckw0JpccuoNfjlJsIoqBdRAcZWF8j/view?usp=drivesdk",
+    "file_size": "23.56",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.037256",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2402,
+    "title": "Copy of zlib.pub_all-of-statistics.pdf",
+    "drive_link": "https://drive.google.com/file/d/1N4hpBkxH3sARzOws0CzIlREbK2LPqbg0/view?usp=drivesdk",
+    "file_size": "13.04",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.037679",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2403,
+    "title": "Copy of zlib.pub_decision-support-and-business-intelligence-systems.pdf",
+    "drive_link": "https://drive.google.com/file/d/1b0C7yjAa-qj-K0X754YtMZcyVo5FlGY3/view?usp=drivesdk",
+    "file_size": "7.31",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.038114",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2404,
+    "title": "Copy of zlib.pub_computer-networks.pdf",
+    "drive_link": "https://drive.google.com/file/d/1bJRa1zVXZdwKKz4ZoAGlxXEI_XpYJ84h/view?usp=drivesdk",
+    "file_size": "7.37",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.038524",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2405,
+    "title": "Copy of zlib.pub_computer-networks-mcqs (1).pdf",
+    "drive_link": "https://drive.google.com/file/d/1o2K1UWfVY9JUjbFmPmhfOGJW91eGHNwQ/view?usp=drivesdk",
+    "file_size": "1.32",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.038954",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2406,
+    "title": "Copy of web-security-privacy-commerce_compress.pdf",
+    "drive_link": "https://drive.google.com/file/d/1-e8QsWphvPZ7cXsnruMykNaYFk6_cF9Z/view?usp=drivesdk",
+    "file_size": "19.76",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.039379",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2407,
+    "title": "Copy of Utilization-of-Electrical-Energy.pdf",
+    "drive_link": "https://drive.google.com/file/d/12lXSxrIqkP6YzcoNaq_ymbnLeA36WBxu/view?usp=drivesdk",
+    "file_size": "1.22",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.039803",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2408,
+    "title": "Copy of zlib.pub_academic-writing-a-handbook-for-international-students.pdf",
+    "drive_link": "https://drive.google.com/file/d/14EqNg90rxN90O3gWbwZFe4mChExVnrQ6/view?usp=drivesdk",
+    "file_size": "7.95",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.040239",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2409,
+    "title": "Copy of Wish I Could Tell You.pdf",
+    "drive_link": "https://drive.google.com/file/d/16hnZjE7TH8wCJQardcR8SFyLc8mKYm5X/view?usp=drivesdk",
+    "file_size": "1.07",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.040644",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2410,
+    "title": "Copy of vdoc.pub_handbook-of-natural-computing.pdf",
+    "drive_link": "https://drive.google.com/file/d/1CaeYPvY__qSSW7xAfa4wyyJYy0Z6f22D/view?usp=drivesdk",
+    "file_size": "42.43",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.041068",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2411,
+    "title": "Copy of UG_Mathematics (Calculus and Linear Algebra) For Non-Computer Science Engineering Branches _English.pdf",
+    "drive_link": "https://drive.google.com/file/d/1Guz-JZ9_rpiN-aWws74QuGzzAZgf89XA/view?usp=drivesdk",
+    "file_size": "1.34",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.041532",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2412,
+    "title": "Copy of wren-and-martin-english-grammar-243.pdf",
+    "drive_link": "https://drive.google.com/file/d/1MT5Ves7Ts_Lk0CG9r83XGSO_OratOGWC/view?usp=drivesdk",
+    "file_size": "2.88",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.041946",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2413,
+    "title": "Copy of UG_Mathematics (Calculus and Linear Algebra) For Non-Computer Science Engineering Branches _English (1).pdf",
+    "drive_link": "https://drive.google.com/file/d/1Na17IBa-QyFrabSG-zdYEFirN3JX2Lnt/view?usp=drivesdk",
+    "file_size": "1.26",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.042396",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2414,
+    "title": "Copy of You can; a collection of brief - Adams, George Matthew.pdf",
+    "drive_link": "https://drive.google.com/file/d/1jsn5m0x4VnWdIWi5Gzp2mldyq19TnDJH/view?usp=drivesdk",
+    "file_size": "2.48",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.042802",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2415,
+    "title": "Copy of why-i-am-a-hindu_compress (1).pdf",
+    "drive_link": "https://drive.google.com/file/d/1s7TdGivOXpEnK8BNhRuov9i4dWwU5xxe/view?usp=drivesdk",
+    "file_size": "1.14",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.043188",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2416,
+    "title": "Copy of The-secret-book-pdf-free-download-booksfree.org_.pdf",
+    "drive_link": "https://drive.google.com/file/d/12zCL9vRESJslP92EWJ4NEmvy8Pk8utEX/view?usp=drivesdk",
+    "file_size": "1.28",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.043595",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2417,
+    "title": "Copy of Three Thousand Stitches by Sudha Murthy.pdf",
+    "drive_link": "https://drive.google.com/file/d/14b8_G-NO8RJfaadry94T5zo1xtgtibB6/view?usp=drivesdk",
+    "file_size": "0.83",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.044039",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2418,
+    "title": "Copy of the-semantic-web-a-guide-to-the-future-of-xml-web-services-and-knowledge-management_compress.pdf",
+    "drive_link": "https://drive.google.com/file/d/15-fa-Juq34O2Oh8Bvl-UccIQnr6AIOTr/view?usp=drivesdk",
+    "file_size": "4.41",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.044506",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2419,
+    "title": "Copy of the-elements-of-statistical-learning.pdf",
+    "drive_link": "https://drive.google.com/file/d/18fY4GhEkZdF_MaAanEfqy-Rz7_QAr6t5/view?usp=drivesdk",
+    "file_size": "47.4",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.044923",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2420,
+    "title": "Copy of the-design-and-analysis-of-computer-algorithms_compress - Copy.pdf",
+    "drive_link": "https://drive.google.com/file/d/1B9D1ZFQWBBuH8xJ7PHQTi4t6N6GfRELS/view?usp=drivesdk",
+    "file_size": "26.39",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.045334",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2421,
+    "title": "Copy of the devops handbook.pdf",
+    "drive_link": "https://drive.google.com/file/d/1RmwH2QBdifSmt-g7pV3nu9lKN2w3_wut/view?usp=drivesdk",
+    "file_size": "4.02",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.045715",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2422,
+    "title": "Copy of tools-for-teaching_compress.pdf",
+    "drive_link": "https://drive.google.com/file/d/1WXhTNNiIJjUCGl3fKQNV4K3PQW2YjWuB/view?usp=drivesdk",
+    "file_size": "3.2",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.046106",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2423,
+    "title": "Copy of The-Official-Guide-to-the-GRE-General-Test.pdf",
+    "drive_link": "https://drive.google.com/file/d/1de2s1Dpuc94YX724qApIl6dJlVjtVUGH/view?usp=drivesdk",
+    "file_size": "15.44",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.046508",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2424,
+    "title": "Copy of the-design-and-analysis-of-computer-algorithms_compress.pdf",
+    "drive_link": "https://drive.google.com/file/d/1he2cHO_B4EorBvVW3e9P8y7kCtJxVj7h/view?usp=drivesdk",
+    "file_size": "26.39",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.046912",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2425,
+    "title": "Copy of total-quality-management.pdf",
+    "drive_link": "https://drive.google.com/file/d/1xvGKyA-oftUfQOtGiIlKvQE33sBtLstp/view?usp=drivesdk",
+    "file_size": "4.68",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.047296",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2426,
+    "title": "Copy of tcp-ip-protocol-suite_compress.pdf",
+    "drive_link": "https://drive.google.com/file/d/1-286pV5OwtPaM67sSHoLvzHiKfnRRxIc/view?usp=drivesdk",
+    "file_size": "17.96",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.047690",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2427,
+    "title": "Copy of Security and Privacy in Internet of Things (IoTs)_ Models, Algorithms, and Implementations (1).pdf",
+    "drive_link": "https://drive.google.com/file/d/1EFuqZnXAfCjlMwpYfwVwCMBPrmJznGin/view?usp=drivesdk",
+    "file_size": "11.92",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.048127",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2428,
+    "title": "Copy of STUCOR_CS8351-AJ.pdf",
+    "drive_link": "https://drive.google.com/file/d/1IQ_yT5nU0ymsgQqpYDPKhbbCTn6srJFx/view?usp=drivesdk",
+    "file_size": "3.79",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.048511",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2429,
+    "title": "Copy of Switching Theory-anand kumar.pdf",
+    "drive_link": "https://drive.google.com/file/d/1LFIUHK82YT2jLy181Bbsm3yS0DhzUzMg/view?usp=drivesdk",
+    "file_size": "32.18",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.048898",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2430,
+    "title": "Copy of software-testing-techniques-finding-the-defects-that-matter_compress.pdf",
+    "drive_link": "https://drive.google.com/file/d/1S8pVKFxJ7Vq4HOWzy5asnmVzutP0fkhB/view?usp=drivesdk",
+    "file_size": "18.87",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.049328",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2431,
+    "title": "Copy of The Basics of Digital Forensics - John Sammons.pdf",
+    "drive_link": "https://drive.google.com/file/d/1YvXeh3O9cx6RG0R_Vw3LlAR1ZZyclIaW/view?usp=drivesdk",
+    "file_size": "12.29",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.049733",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2432,
+    "title": "Copy of switching-theory-and-logic-design_compress.pdf",
+    "drive_link": "https://drive.google.com/file/d/1fCPf_4YvnY6fVgLlCTqXlHJpl8HBGd5c/view?usp=drivesdk",
+    "file_size": "2.56",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.050117",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2433,
+    "title": "Copy of The Art of Decoding Microservices An In-Depth Exploration of Modern Software Architecture (Sumit Bhatnagar, Roshan Mahant).pdf",
+    "drive_link": "https://drive.google.com/file/d/1ul8I25239wH2W7_4kUThMm6OeJI2LRaC/view?usp=drivesdk",
+    "file_size": "2.52",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.050549",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2434,
+    "title": "Copy of silo.tips_solid-waste-engineering.pdf",
+    "drive_link": "https://drive.google.com/file/d/1vmXPyjiV5JXFw7Jgs22R1iX-59PP1-kr/view?usp=drivesdk",
+    "file_size": "4.44",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.050919",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2435,
+    "title": "Copy of switching-theory-and-logic-design-for-jntuk_compress.pdf",
+    "drive_link": "https://drive.google.com/file/d/1yNOp4tSow7RqaFNRSO5g1NA3Rqs9kBLx/view?usp=drivesdk",
+    "file_size": "12.53",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.051302",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2436,
+    "title": "Copy of Robert Waggoner - Lucid Dreaming_ Gateway to the Inner Self (2008).pdf",
+    "drive_link": "https://drive.google.com/file/d/19-yPCW362ZDmwHuF75aw2znuaXSUBFHx/view?usp=drivesdk",
+    "file_size": "3.0",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.051694",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2437,
+    "title": "Copy of PYTHON Examples Coding Exercises, Coding Interview (Ray Yao) (Z-Library).pdf",
+    "drive_link": "https://drive.google.com/file/d/1ES5H66jHzSVXl2G_VBpe9w6DlS8IsMQP/view?usp=drivesdk",
+    "file_size": "0.49",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.052104",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2438,
+    "title": "Copy of python-crash-course_compress.pdf",
+    "drive_link": "https://drive.google.com/file/d/1GCGzJ-Zidhqv3a-D7xOeoz9xJ4a5S5oJ/view?usp=drivesdk",
+    "file_size": "5.99",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.052472",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2439,
+    "title": "Copy of rich-dad-poor-dad-what-the-rich-teach-their-kids-about-money-that-the-poor-and-middle-class-do-not_compress.pdf",
+    "drive_link": "https://drive.google.com/file/d/1ID7c66jcDK5txDTEcLCZviUp2351OAxX/view?usp=drivesdk",
+    "file_size": "11.03",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.052901",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2440,
+    "title": "Copy of Red Hat, Inc - Red Hat Linux 6.1 _ the official Red Hat Linux reference guide (1999, Red Hat ) - libgen.li.pdf",
+    "drive_link": "https://drive.google.com/file/d/1TjhUoJCQEN5NdzEnO4jv0s2o_JhcaUvc/view?usp=drivesdk",
+    "file_size": "4.82",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.053328",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2441,
+    "title": "Copy of Python Programming by Example (PDF).pdf",
+    "drive_link": "https://drive.google.com/file/d/1ZCcnEtDzMUCzOx0mOIRmHCTfQQ6uwbA0/view?usp=drivesdk",
+    "file_size": "3.41",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.053703",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2442,
+    "title": "Copy of r_tutorial.pdf",
+    "drive_link": "https://drive.google.com/file/d/1em4i2JM0levQHnP2OVFoiPNTgjcXRRzW/view?usp=drivesdk",
+    "file_size": "1.04",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.054060",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2443,
+    "title": "Copy of Renewable Energy Resources ( PDFDrive ) (1).pdf",
+    "drive_link": "https://drive.google.com/file/d/1kTjomzAJTKhDaHjl4kte-2eFuVFCH2P0/view?usp=drivesdk",
+    "file_size": "10.51",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.054446",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2444,
+    "title": "Copy of python playground python playground (PDF).pdf",
+    "drive_link": "https://drive.google.com/file/d/1liwjELs_rr5Zk2w8jOACWWuM9wwaE1vB/view?usp=drivesdk",
+    "file_size": "12.35",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.054824",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2445,
+    "title": "Copy of PYTHON DATA SCIENCE HANDBOOK.pdf",
+    "drive_link": "https://drive.google.com/file/d/1pCt0bgiwMvO4f9xS2QN3m9TBMsWKUCr3/view?usp=drivesdk",
+    "file_size": "21.27",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.055197",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2446,
+    "title": "Copy of Practical Security for Agile and DevOps.pdf",
+    "drive_link": "https://drive.google.com/file/d/13_tPZjwvY2aacTrW-RMmKFYt0T8kJNTj/view?usp=drivesdk",
+    "file_size": "10.92",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.055593",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2447,
+    "title": "Copy of power-plant-engineering_compress.pdf",
+    "drive_link": "https://drive.google.com/file/d/17iDr85TUwdMkEZhbSu0K_CF3NqxZEzeA/view?usp=drivesdk",
+    "file_size": "30.06",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.055955",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2448,
+    "title": "Copy of predictive-analytics-the-power-to-predict-who-will-click-buy-lie-or-die-revised-and-updated_compress.pdf",
+    "drive_link": "https://drive.google.com/file/d/1MocSdgRavx7qDf5v0L8oGwLn1a1IXcNl/view?usp=drivesdk",
+    "file_size": "26.02",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.056373",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2449,
+    "title": "Copy of Python Basics A Practical Introduction to Python 3 (Real Python) (Z-Library).pdf",
+    "drive_link": "https://drive.google.com/file/d/1XJ7zK7TUkIBdYQKqBKxg7bVHJbFdwOqi/view?usp=drivesdk",
+    "file_size": "5.81",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.056783",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2450,
+    "title": "Copy of Privacy-Preserving Data Mining_ Models and Algorithms [Aggarwal & Yu 2008-07-07].pdf",
+    "drive_link": "https://drive.google.com/file/d/1_0z6rZRDdTQb5QE3eJyI7Gfacsqb1m35/view?usp=drivesdk",
+    "file_size": "5.6",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.057181",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2451,
+    "title": "Copy of probability and statistics textbook.pdf",
+    "drive_link": "https://drive.google.com/file/d/1exj02E_ELbFdzofESJjW4jELzJo5AKVo/view?usp=drivesdk",
+    "file_size": "14.73",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.057541",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2452,
+    "title": "Copy of professional-android-4-application-development_compress.pdf",
+    "drive_link": "https://drive.google.com/file/d/1gp_JSL9lT49C9tyLV26w8VdbbhgTwCt_/view?usp=drivesdk",
+    "file_size": "20.69",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.057911",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2453,
+    "title": "Copy of Practical DevOps (Joakim Verona) (z-lib.org).pdf",
+    "drive_link": "https://drive.google.com/file/d/1lh_BlaXbdjVgK8y9LYsrLGtd2J25bPhz/view?usp=drivesdk",
+    "file_size": "3.85",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.058280",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2454,
+    "title": "Copy of Practical Everyday English_ Advanced Vocabulary, Phrasal Verbs, Idioms and Expressions ( PDFDrive ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1r59eqvZO3hEnUej_-eXYDfCqPVUoCeu1/view?usp=drivesdk",
+    "file_size": "65.39",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.058679",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2455,
+    "title": "Copy of paper-delivered-test-practice-book.pdf",
+    "drive_link": "https://drive.google.com/file/d/1wqiYuMO3rsZ-_b5W7gSMmugeIxS78AH2/view?usp=drivesdk",
+    "file_size": "3.06",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.059037",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2456,
+    "title": "Copy of oracle-database-12c-pl-sql-programming_compress.pdf",
+    "drive_link": "https://drive.google.com/file/d/14eQyK4K375pONDMA8SY7tXu_S4IRTC-R/view?usp=drivesdk",
+    "file_size": "5.17",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.059406",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2457,
+    "title": "Copy of Measurement system by  Doeblin.pdf",
+    "drive_link": "https://drive.google.com/file/d/17SHBoYHrRC6HhLbckOtXg9Ma9Hf3-FxN/view?usp=drivesdk",
+    "file_size": "36.1",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.059758",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2458,
+    "title": "Copy of mastering-cloud-computing_compress.pdf",
+    "drive_link": "https://drive.google.com/file/d/1CFvTwD4OyfybCUZ_6rvsx5BiU6ZBL8pc/view?usp=drivesdk",
+    "file_size": "10.82",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.060103",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2459,
+    "title": "Copy of oop with JAVA.pdf",
+    "drive_link": "https://drive.google.com/file/d/1CSJBkOs8kTwgdmXO6-1eui3fA3fvsYiu/view?usp=drivesdk",
+    "file_size": "9.58",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.060469",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2460,
+    "title": "Copy of Nazima ferrose - Applied Grammer_ A Contemporary Approach With Comparative Study For English Grammer (Volume Book 1) - libgen.li.pdf",
+    "drive_link": "https://drive.google.com/file/d/1DJAnKd3f7kh-rRlMx0wZhG3SU-wy3sFs/view?usp=drivesdk",
+    "file_size": "1.02",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.060893",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2461,
+    "title": "Copy of multilingual  100 pages  only.pdf",
+    "drive_link": "https://drive.google.com/file/d/1ItiD69d9aidzcP6n1lq_2gJkFahFk-3k/view?usp=drivesdk",
+    "file_size": "9.0",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.061251",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2462,
+    "title": "Copy of Michael Cross - Social Media Security_ Leveraging Social Networking While Mitigating Risk (2013, Syngress) - libgen.li.pdf",
+    "drive_link": "https://drive.google.com/file/d/1Pc7p2BQn2ciU-BubaC6C1eqfftlRx028/view?usp=drivesdk",
+    "file_size": "3.54",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.061648",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2463,
+    "title": "Copy of mattering-to-india-the-shashi-tharoor-campaign_compress.pdf",
+    "drive_link": "https://drive.google.com/file/d/1RZDSDbkKkrbWgmRX-bV3Uqp-fPYgyfn7/view?usp=drivesdk",
+    "file_size": "7.66",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.062003",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2464,
+    "title": "Copy of Organizational Behavior _ An Evidence-Based Approach , Twelfth Edition (2010, McGraw-Hill_Irwin) - libgen.li.pdf",
+    "drive_link": "https://drive.google.com/file/d/1mmNiGPrT5ddJFX7rZmBoXCUd2iPhCQ-s/view?usp=drivesdk",
+    "file_size": "9.24",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.062401",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2465,
+    "title": "Copy of mastering-internet-of-things_compress.pdf",
+    "drive_link": "https://drive.google.com/file/d/1xz0UdnHSzDPjkTs_3loB7u2LRYXpGOKi/view?usp=drivesdk",
+    "file_size": "6.3",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.062751",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2466,
+    "title": "Copy of JSP complete reference - Copy.pdf",
+    "drive_link": "https://drive.google.com/file/d/1-oNbBrd3evJNRZv0cucA_eZDcMfKt_sD/view?usp=drivesdk",
+    "file_size": "6.88",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.063105",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2467,
+    "title": "Copy of M. J. Usher (auth.) - Sensors and Transducers (1985, Macmillan Education UK) [10.1007_978-1-349-18052-3] - libgen.li.pdf",
+    "drive_link": "https://drive.google.com/file/d/13a_81_DBUL7-FrmtMivtkMsRnhg6esfw/view?usp=drivesdk",
+    "file_size": "12.65",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.063502",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2468,
+    "title": "Copy of machine-learning-a-bayesian-and-optimization-perspective_compress.pdf",
+    "drive_link": "https://drive.google.com/file/d/199SYL69h9nDvIcdpewSnwq6sUn0N35e1/view?usp=drivesdk",
+    "file_size": "21.41",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.063869",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2469,
+    "title": "Copy of Machine Learning_ An Algorithmic Perspective (2nd ed.) [Marsland 2014-10-08].pdf",
+    "drive_link": "https://drive.google.com/file/d/1ERKXPN8-l0_EeqRZZDmayNuJPEGleFc-/view?usp=drivesdk",
+    "file_size": "6.65",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.064253",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2470,
+    "title": "Copy of javascript-a-beginners-guide_compress.pdf",
+    "drive_link": "https://drive.google.com/file/d/1Ievt6fnFzGHszNgFH41QaLPpRQAO-EM7/view?usp=drivesdk",
+    "file_size": "19.51",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.064609",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2471,
+    "title": "Copy of Mark Grabowski, Eric P. Robinson - Cyber Law and Ethics_ Regulation of the Connected World-Routledge (2021).pdf",
+    "drive_link": "https://drive.google.com/file/d/1Rpf6HlDwGcvlwQABNT4VdQoaiwrxz9qz/view?usp=drivesdk",
+    "file_size": "36.27",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.065006",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2472,
+    "title": "Copy of latest-pax-indica-shashi-tharoor.pdf",
+    "drive_link": "https://drive.google.com/file/d/1UesLRqS2dKeKX088POUzFqrruf9dTWu-/view?usp=drivesdk",
+    "file_size": "1.4",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.065351",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2473,
+    "title": "Copy of L6a-Pointers.pdf",
+    "drive_link": "https://drive.google.com/file/d/1rtVLgau4qED1fP6kPUK4qfNObp_epAS3/view?usp=drivesdk",
+    "file_size": "0.26",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.065681",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2474,
+    "title": "Copy of Mark Grabowski, Eric P. Robinson - Cyber Law and Ethics_ Regulation of the Connected World-Routledge (2021) - Copy.pdf",
+    "drive_link": "https://drive.google.com/file/d/1loo8HCW1T_wqG1aHkupQUHkPrrRhWK9v/view?usp=drivesdk",
+    "file_size": "36.27",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.066082",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2475,
+    "title": "Copy of JSP complete reference.pdf",
+    "drive_link": "https://drive.google.com/file/d/1pwUkeSr9JZjH2EETujTabZgkwBjoV4dH/view?usp=drivesdk",
+    "file_size": "6.88",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.066420",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2476,
+    "title": "Copy of IOP JOURNALS-0424-2024-catalogue.pdf",
+    "drive_link": "https://drive.google.com/file/d/1Ey1JELMvujQpPjh0hRApkbTxNSsRETlW/view?usp=drivesdk",
+    "file_size": "7.09",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.066763",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2477,
+    "title": "Copy of IPR - Digital Notes.pdf",
+    "drive_link": "https://drive.google.com/file/d/1QaMc2sjlRQ1VO-bgn_zwrP2XI82QCIrz/view?usp=drivesdk",
+    "file_size": "1.18",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.067097",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2478,
+    "title": "Copy of internet-of-things_compress.pdf",
+    "drive_link": "https://drive.google.com/file/d/1RFQYYq8uVRT5hIIGpgxhlw_Y4PODKqup/view?usp=drivesdk",
+    "file_size": "17.26",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.067437",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2479,
+    "title": "Copy of internet-of-things-a-hands-on-approach-arshdeep-bahga-vijay-madisetti_compress.pdf",
+    "drive_link": "https://drive.google.com/file/d/1V4ny99YhlJuAjYwo8QcxlmooK4JPHwfP/view?usp=drivesdk",
+    "file_size": "0.06",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.067821",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2480,
+    "title": "Copy of Introduction to Data Science.pdf",
+    "drive_link": "https://drive.google.com/file/d/1f_jGwlR-42oeXDlFhpSdwmIFqjHINXr1/view?usp=drivesdk",
+    "file_size": "6.15",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.068150",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2481,
+    "title": "Copy of Introduction to Java Programming by Nagaraj Rao, John Yoon.pdf",
+    "drive_link": "https://drive.google.com/file/d/1fzZ5nXuZZEO5EYuUP1jsJxNI44vyImA7/view?usp=drivesdk",
+    "file_size": "20.5",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.068511",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2482,
+    "title": "Copy of introduction-to-algorithms_compress.pdf",
+    "drive_link": "https://drive.google.com/file/d/1mTMDGhh98w5_Av2BlPVbJDKl1b0XEJl_/view?usp=drivesdk",
+    "file_size": "5.34",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.068845",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2483,
+    "title": "Copy of introduction-to-indian-cyber-law.pdf",
+    "drive_link": "https://drive.google.com/file/d/1oMhG2mCvo-Gs4fo_kresK3eAvfUaGP0i/view?usp=drivesdk",
+    "file_size": "0.09",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.069191",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2484,
+    "title": "Copy of iot-projects-with-bluetooth-low-energy-1nbsped-9781788399449.pdf",
+    "drive_link": "https://drive.google.com/file/d/1qxQHc9oc5cd3ZYj7zyALkUReII49VcMg/view?usp=drivesdk",
+    "file_size": "19.45",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.069539",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2485,
+    "title": "Copy of introduction-to-indian-cyber-law - Copy.pdf",
+    "drive_link": "https://drive.google.com/file/d/1v89Jgf9-XmZzNVKceyJ-tJLHkgTtm_pn/view?usp=drivesdk",
+    "file_size": "0.09",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.069879",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2486,
+    "title": "Copy of instapdf.in-i-dont-love-you-anymore-155.pdf",
+    "drive_link": "https://drive.google.com/file/d/18k39kr0rA5D5dN_hXP86tSUiHTVQ5QOt/view?usp=drivesdk",
+    "file_size": "0.99",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.070235",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2487,
+    "title": "Copy of Improve Your English_ English in Everyday Life ( PDFDrive ) - Copy.pdf",
+    "drive_link": "https://drive.google.com/file/d/1Ao1evQjtEQNR1hVk-ccc8AiksmUV4C2c/view?usp=drivesdk",
+    "file_size": "3.05",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.070586",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2488,
+    "title": "Copy of INDIAN CONSTITUTION TELUGU.pdf",
+    "drive_link": "https://drive.google.com/file/d/1BgUxqk1yTBu_VEf_ok-5FFWcJOOwuVT2/view?usp=drivesdk",
+    "file_size": "2.61",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.070914",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2489,
+    "title": "Copy of Internet & World Wide Web - How To Program 5e.pdf",
+    "drive_link": "https://drive.google.com/file/d/1DP0yhkELMO55YOe4e8uOjF7JZL-U9nfz/view?usp=drivesdk",
+    "file_size": "26.22",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.071256",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2490,
+    "title": "Copy of Information Storage and Retrieval Systems_ Theory and Implementation (The Information Retrieval Series, Vol. 8) ( PDFDrive ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1ENFkiw-Qrsf2J2d50Wsd-HpiwothRS9j/view?usp=drivesdk",
+    "file_size": "7.74",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.071643",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2491,
+    "title": "Copy of Improve Your English_ English in Everyday Life ( PDFDrive ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1J2D1KOtXeRbooKIJgXqC4OU3S9F6JQXJ/view?usp=drivesdk",
+    "file_size": "3.05",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.071995",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2492,
+    "title": "Copy of Internet of things (IoT) _ technologies, applications, challenges and solutions ( PDFDrive ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1K3Kjb5hpvDMcrC_CKKJhp3qv6ZtBiVOO/view?usp=drivesdk",
+    "file_size": "14.39",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.072366",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2493,
+    "title": "Copy of INDIA SHASTRA _Reflections on the Nation in our Time ( PDFDrive ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1QfTyHUsUFgncU7Zj_ha2mTU-2F7c6z_n/view?usp=drivesdk",
+    "file_size": "2.36",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.072717",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2494,
+    "title": "Copy of Inglorious Empire_ What the British Did to India ( PDFDrive ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1nGGcWMUTi1GpR_PCaUnFvIaY2UT6D4Dm/view?usp=drivesdk",
+    "file_size": "1.05",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.073065",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2495,
+    "title": "Copy of Internet of Things By Arshdeep Bahga.pdf",
+    "drive_link": "https://drive.google.com/file/d/1wn7MLmA5x6zyrvradJpBakGq3v182tBe/view?usp=drivesdk",
+    "file_size": "54.51",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.073403",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2496,
+    "title": "Copy of Handbook Of Natural Language Processing, Second Edition Chapman & Hall Crc Machine Learning & Pattern Recognition 2010.pdf",
+    "drive_link": "https://drive.google.com/file/d/178EI4nuag29yN93OitDmOL_xdMFofu3v/view?usp=drivesdk",
+    "file_size": "8.34",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.073776",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2497,
+    "title": "Copy of Ian Sinclair - Sensors and Transducers, Third Edition (2001) - libgen.li.pdf",
+    "drive_link": "https://drive.google.com/file/d/19FaFd7mR4CQFsDp8eyHL5h0iw-CDTNX2/view?usp=drivesdk",
+    "file_size": "2.04",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.074129",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2498,
+    "title": "Copy of Getting Started with Bluetooth Low Energy.pdf",
+    "drive_link": "https://drive.google.com/file/d/1FKwX46wePsgF-Mf_h7cGYJfg6AgKy3fy/view?usp=drivesdk",
+    "file_size": "20.7",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.074465",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2499,
+    "title": "Copy of hopcroft-motwani-ullman-introduction-to-automata-theory-languages-and-computations-3rd-edition.pdf",
+    "drive_link": "https://drive.google.com/file/d/1PhoRvg8LjMnrRmKIMY7uITWXg8LxZ6HW/view?usp=drivesdk",
+    "file_size": "5.67",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.074830",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2500,
+    "title": "Copy of IELTS Interactive self-study_ 200 Advanced Vocabulary Questions_ Book 2. A powerful method to learn the vocabulary you need. ( PDFDrive ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1Qo29bAsHwJ6FEHIQS0Ze9yOMxJemRzEq/view?usp=drivesdk",
+    "file_size": "1.0",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.075209",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2501,
+    "title": "Copy of HAND BOOK OF NATURE INSPIRED.pdf",
+    "drive_link": "https://drive.google.com/file/d/1RDkD2uzdMOT1jA5yIJrZZuJD0xekGZDD/view?usp=drivesdk",
+    "file_size": "6.53",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.075526",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2502,
+    "title": "Copy of handbook-on-parallel-and-distributed-processing-with-22-tables-supported-by-project-crit-2-and-kbn-grant-no-8t11f02516_compress.pdf",
+    "drive_link": "https://drive.google.com/file/d/1d54CjQqngFsxn3K6mA7mZqN9EIbi78ad/view?usp=drivesdk",
+    "file_size": "19.01",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.075899",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2503,
+    "title": "Copy of IELTS Advantage. Writing Skills.pdf",
+    "drive_link": "https://drive.google.com/file/d/1haB5lPaSbz2sVTDSfrndNUOPHW8CgPuy/view?usp=drivesdk",
+    "file_size": "71.56",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.076217",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2504,
+    "title": "Copy of Getting Started with SQL.pdf",
+    "drive_link": "https://drive.google.com/file/d/1zdxXRurFEGWN9eqgkyavscchbLtVBiVJ/view?usp=drivesdk",
+    "file_size": "8.67",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.076532",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2505,
+    "title": "Copy of Engineering Principles of Ground Modification ( PDFDrive ).pdf",
+    "drive_link": "https://drive.google.com/file/d/15XMDzY9B8yBDeYGTPQTYObwplwplLZt1/view?usp=drivesdk",
+    "file_size": "33.21",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.076866",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2506,
+    "title": "Copy of Domain-Driven Design_ Tackling Complexity in the Heart of Software.pdf",
+    "drive_link": "https://drive.google.com/file/d/1H_n2JRi7_933pUH8BbU1DQXbobAfL5CU/view?usp=drivesdk",
+    "file_size": "8.54",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.077218",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2507,
+    "title": "Copy of Fundamentals of Big Data Analytics.pdf",
+    "drive_link": "https://drive.google.com/file/d/1I5nQPw9y-1-qt6FwkDbX0aDalVCuG3Ba/view?usp=drivesdk",
+    "file_size": "1.67",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.077560",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2508,
+    "title": "Copy of Doing Data Science Straight Talk from the Frontline ( PDFDrive ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1L-dM1RPy6KlDCy9DsQB2ii-3ctPfJy7C/view?usp=drivesdk",
+    "file_size": "13.08",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.077916",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2509,
+    "title": "Copy of Essential Words for the GRE_ Your Vocabulary for Success on the GRE General Test ( PDFDrive ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1LXbdkCPalQ81A8oP6O_X1YluohJQVHZW/view?usp=drivesdk",
+    "file_size": "7.76",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.078271",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2510,
+    "title": "Copy of Fundamentals of Python_ Data Structures.pdf",
+    "drive_link": "https://drive.google.com/file/d/1LiVFXZn2RHdL_vx08izOZ76OZACHSjKV/view?usp=drivesdk",
+    "file_size": "3.49",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.078600",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2511,
+    "title": "Copy of fundamentals-of-natural-computing-basic-concepts-algorithms-and-applications_compress.pdf",
+    "drive_link": "https://drive.google.com/file/d/1PVeJiIAzBdfq9n9Ny8rVcLqSj68yEBTv/view?usp=drivesdk",
+    "file_size": "9.23",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.078950",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2512,
+    "title": "Copy of ebook_Haykin09.pdf",
+    "drive_link": "https://drive.google.com/file/d/1XG0oIbxnLGyzOJO46_O_7HjuheRhCc2j/view?usp=drivesdk",
+    "file_size": "8.43",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.079266",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2513,
+    "title": "Copy of Forward_Secure_Conjunctive-Keyword_Searchable_Encryption.pdf",
+    "drive_link": "https://drive.google.com/file/d/1ZaTaMH2c1_CKn5YIeaH5X26mNqbniGaN/view?usp=drivesdk",
+    "file_size": "4.53",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.079602",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2514,
+    "title": "Copy of epdf.tips_software-quality-engineering-testing-quality-assur.pdf",
+    "drive_link": "https://drive.google.com/file/d/1ygAdoYzzLAieoDnLopPG1ASDne0LPCSp/view?usp=drivesdk",
+    "file_size": "27.02",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.079937",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2515,
+    "title": "Copy of deborah_e-_bouchoux_intellectual_property_the_lbookzz-org.pdf",
+    "drive_link": "https://drive.google.com/file/d/1-pWTnVknhyouh0D5Y-mINnHTm3YXokdQ/view?usp=drivesdk",
+    "file_size": "18.31",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.080273",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2516,
+    "title": "Copy of Deep learning_ adaptive computation and machine learning ( PDFDrive ).pdf",
+    "drive_link": "https://drive.google.com/file/d/17eyp2_FIigrSTc72yOXQC4YdygsD50vE/view?usp=drivesdk",
+    "file_size": "18.39",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.080625",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2517,
+    "title": "Copy of Discrete Mathematical Stru.pdf",
+    "drive_link": "https://drive.google.com/file/d/1Gz_Ka7go3lAYteOZS7s1bAKKutoTSDX9/view?usp=drivesdk",
+    "file_size": "12.52",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.080941",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2518,
+    "title": "Copy of data-analytics_compress.pdf",
+    "drive_link": "https://drive.google.com/file/d/1NCPiA8DVTRdTef_6ZmmdAwE-7Kc0gfAo/view?usp=drivesdk",
+    "file_size": "5.37",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.081254",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2519,
+    "title": "Copy of Data Structures Using C++.pdf",
+    "drive_link": "https://drive.google.com/file/d/1Ruk9i3u6mHvNObARoze8en3cu36CVe8k/view?usp=drivesdk",
+    "file_size": "5.28",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.081563",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2520,
+    "title": "Copy of Diploma_Fundamentals of Electrical and Electronics Engineering_English.pdf",
+    "drive_link": "https://drive.google.com/file/d/1_rRvKrADmjvmffg5LZ66L4Iy1a3fM-en/view?usp=drivesdk",
+    "file_size": "1.25",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.081907",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2521,
+    "title": "Copy of DISCRETE MATHEMATICS NOTES.pdf",
+    "drive_link": "https://drive.google.com/file/d/1h24qDvKlCny4X755tR0DuupWssoo7r0o/view?usp=drivesdk",
+    "file_size": "2.39",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.082217",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2522,
+    "title": "Copy of DevOps_ A Software Architect's Perspective (SEI Series in Software Engineering).pdf",
+    "drive_link": "https://drive.google.com/file/d/1mmm0NMkenXY_onPITHRvExscBkQc9Vhm/view?usp=drivesdk",
+    "file_size": "6.37",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.082567",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2523,
+    "title": "Copy of Diploma_Introduction to IT Systems_English.pdf",
+    "drive_link": "https://drive.google.com/file/d/1scvXV8iXWO_s2tqTe3RQf8oYwpmY6mFh/view?usp=drivesdk",
+    "file_size": "1.86",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.082889",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2524,
+    "title": "Copy of Diploma_Engineering Graphic_English.pdf",
+    "drive_link": "https://drive.google.com/file/d/1t02iQ6D9nLbyKrtjB6nPrI-4jaInMB67/view?usp=drivesdk",
+    "file_size": "1.79",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.083201",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2525,
+    "title": "Copy of COI_2.pdf",
+    "drive_link": "https://drive.google.com/file/d/1EeLHsuYTxHvYB_jk6VN-ctiRIPGsLcz7/view?usp=drivesdk",
+    "file_size": "2.61",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.083497",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2526,
+    "title": "Copy of computer-networks-a-systems-approach_compress.pdf",
+    "drive_link": "https://drive.google.com/file/d/1T3CuRRvFgDFIZscU8DrhtvlEmxzh7vf4/view?usp=drivesdk",
+    "file_size": "35.76",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.083819",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2527,
+    "title": "Copy of Cyber_Crime_Law_and_Practice - Copy.pdf",
+    "drive_link": "https://drive.google.com/file/d/1THG3S7HDAPtx2_pSgtNz1ZStHeQudB3v/view?usp=drivesdk",
+    "file_size": "1.1",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.084132",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2528,
+    "title": "Copy of Data Structures and Algorithms in Python.pdf",
+    "drive_link": "https://drive.google.com/file/d/1TV2WqSECgmmMyqP15r_vMoLe4i0_CHYA/view?usp=drivesdk",
+    "file_size": "5.98",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.084451",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2529,
+    "title": "Copy of Computer System Design_ System-on-Chip ( PDFDrive ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1_299inHT84Ggzpfh_ceaP6urXbYrw9mp/view?usp=drivesdk",
+    "file_size": "4.94",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.084775",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2530,
+    "title": "Copy of Computer and Machine Vision_ Theory, Algorithms, Practicalities ( PDFDrive ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1g2Eaoveav3WD3QIAAdPW-8pagcFr6z9X/view?usp=drivesdk",
+    "file_size": "22.17",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.085123",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2531,
+    "title": "Copy of Data Communications and Networking with TCPIP Protocol Suite (Behrouz A. Forouzan) (Z-Library).pdf",
+    "drive_link": "https://drive.google.com/file/d/1galEAC8OkWNLFP2UYwmMNWnRwMQ4UhRx/view?usp=drivesdk",
+    "file_size": "32.16",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.085475",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2532,
+    "title": "Copy of Computer Fundamentals ( PDFDrive ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1jx-oQ-gr3O10gH0mHizm2bCi3R3ICPmD/view?usp=drivesdk",
+    "file_size": "3.66",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.085837",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2533,
+    "title": "Copy of Cyber_Crime_Law_and_Practice.pdf",
+    "drive_link": "https://drive.google.com/file/d/1mDvfJaSZIGJeYqhHcPLCJ_ItnLiKyVQW/view?usp=drivesdk",
+    "file_size": "1.1",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.086154",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2534,
+    "title": "Copy of Competitive Programming 3.pdf",
+    "drive_link": "https://drive.google.com/file/d/1u6wJFGUoGZz8CR8ac_Jant9Uyevh3VqH/view?usp=drivesdk",
+    "file_size": "17.68",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.086465",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2535,
+    "title": "Copy of Cloud Security_ Attacks, Techniques, Tools, and Challenges.pdf",
+    "drive_link": "https://drive.google.com/file/d/1DAicAo-BjoJHRK1rw5XoW-fw7gGHoCvl/view?usp=drivesdk",
+    "file_size": "7.64",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.086790",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2536,
+    "title": "Copy of Bluetooth Low Energy The Developer-'s Handbook(低功耗蓝牙开发权威指南英文版).pdf",
+    "drive_link": "https://drive.google.com/file/d/1Myt14RpW1gQhvCL-lC0J3Ew2DXoUT2cB/view?usp=drivesdk",
+    "file_size": "7.03",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.087682",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2537,
+    "title": "Copy of Ben Horowitz - The Hard Thing About Hard Things_ Building a Business When There Are No Easy Answers (2014, HarperBusiness) - libgen.li (1).pdf",
+    "drive_link": "https://drive.google.com/file/d/1QAKwY0c8pJ9E7_jebfPOk5tPc7lcR8MC/view?usp=drivesdk",
+    "file_size": "1.26",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.088043",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2538,
+    "title": "Copy of Book Grammar For IELTS ( PDFDrive ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1YLBBxtBuX4uy8_2a7GZF0LUSb_R4aNzA/view?usp=drivesdk",
+    "file_size": "41.38",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.088350",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2539,
+    "title": "Copy of Behave_ The Biology of Humans at Our Best and Worst ( PDFDrive ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1amf5zBSD_TdGsPIN76AyixffYC1bsiDR/view?usp=drivesdk",
+    "file_size": "17.18",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.088673",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2540,
+    "title": "Copy of Check Your English Vocabulary for IELTS_ Essential words and phrases to help you maximise your IELTS score ( PDFDrive ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1dNvOGoQUCxkzwtCpLbhI7KwKYDYYwzYz/view?usp=drivesdk",
+    "file_size": "2.42",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.089044",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2541,
+    "title": "Copy of BIG DATA ANALYSIS NOTES.pdf",
+    "drive_link": "https://drive.google.com/file/d/1e7AM_OX5KDg8TaEhqmG82P-z1cG_SCUm/view?usp=drivesdk",
+    "file_size": "3.38",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.089341",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2542,
+    "title": "Copy of Ben Horowitz - What You Do Is Who You Are_ How to Create Your Business Culture (2019, HarperCollins Publishers) - libgen.li.pdf",
+    "drive_link": "https://drive.google.com/file/d/1iosFSeBuOf78TxaNmzm9hwVwCKE7gMeu/view?usp=drivesdk",
+    "file_size": "4.24",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.089693",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2543,
+    "title": "Copy of CLOUD COMPUTING Principles and Paradigms.pdf",
+    "drive_link": "https://drive.google.com/file/d/1tIl9HQYDZSTS-J1ysX3R0MPSvcufQ81m/view?usp=drivesdk",
+    "file_size": "12.32",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.090004",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2544,
+    "title": "Copy of applied-predictive-analytics_compress.pdf",
+    "drive_link": "https://drive.google.com/file/d/12JMnesNup_BTOJf0vD1LWMTm_Xhhe-h0/view?usp=drivesdk",
+    "file_size": "12.17",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.090312",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2545,
+    "title": "Copy of art_of_ml.pdf",
+    "drive_link": "https://drive.google.com/file/d/1KVOSh-hF4HBZQW3Og7rdhXufHEgYJ77P/view?usp=drivesdk",
+    "file_size": "9.27",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.090604",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2546,
+    "title": "Copy of associate-analytics-reference-notes.pdf",
+    "drive_link": "https://drive.google.com/file/d/1MC1V98oYdIC3Y_Jz8-c3T4J1pibH1do_/view?usp=drivesdk",
+    "file_size": "4.95",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.090909",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2547,
+    "title": "Copy of basic statistics fo mgmt..pdf",
+    "drive_link": "https://drive.google.com/file/d/1PTHQDTvwam1y7Mj3iTSxZdZL8XJSSBun/view?usp=drivesdk",
+    "file_size": "2.83",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.091208",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2548,
+    "title": "Copy of An Era of Darkness.pdf",
+    "drive_link": "https://drive.google.com/file/d/1Qz6KJ63En-uqvACm3n_KhRY-lyb50RGw/view?usp=drivesdk",
+    "file_size": "7.63",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.091518",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2549,
+    "title": "Copy of Artificial Intelligence.pdf",
+    "drive_link": "https://drive.google.com/file/d/1Xc--5Zzi1yFIaikog2pvmLTJxNc4VHGJ/view?usp=drivesdk",
+    "file_size": "12.22",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.091824",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2550,
+    "title": "Copy of Applications_of_Internet_of_Things.pdf",
+    "drive_link": "https://drive.google.com/file/d/1ZsWX5hhzQQCRYj0ND3QQ_P2xggDmviTy/view?usp=drivesdk",
+    "file_size": "8.36",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.092128",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2551,
+    "title": "Copy of ARM system-on-chip architecture ( PDFDrive ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1iKX8CqDx9YSdXdR2jTKyIF8EmcnL8QNg/view?usp=drivesdk",
+    "file_size": "17.5",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.092441",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2552,
+    "title": "Copy of Artificial Intelligence - A Modern Approach (3rd Edition).pdf",
+    "drive_link": "https://drive.google.com/file/d/1kRY8znQ4CsxS4h3XUuDkOahHJO9bMLm3/view?usp=drivesdk",
+    "file_size": "19.91",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.092759",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2553,
+    "title": "Copy of Algorithm Design - Jon Kleinberg and Eva Tardos, Tsinghua University Press (2005).pdf",
+    "drive_link": "https://drive.google.com/file/d/1swPNd5EIlbEe8VsBAUeQSgBo53TM77J-/view?usp=drivesdk",
+    "file_size": "3.31",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.093100",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2554,
+    "title": "Copy of 20240716890312078.pdf",
+    "drive_link": "https://drive.google.com/file/d/11R5QbasAhKmz9bbyuDZDEvcYIiaLcfFB/view?usp=drivesdk",
+    "file_size": "2.3",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.093400",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2555,
+    "title": "Copy of Alfreda Dudley, James Braman, Giovanni Vincenti - Investigating Cyber Law and Cyber Ethics_ Issues, Impacts and Practices-Igi Global (2011).pdf",
+    "drive_link": "https://drive.google.com/file/d/16pqxesrilItn-NTX0lH8vs_2Q6-AJn8b/view?usp=drivesdk",
+    "file_size": "2.18",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.093784",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2556,
+    "title": "Copy of ai-for-everyone.pdf",
+    "drive_link": "https://drive.google.com/file/d/1I151HJc_9HP4_QtAT4cJxxrEvBO5uRMh/view?usp=drivesdk",
+    "file_size": "2.79",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.094099",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2557,
+    "title": "Copy of 3fdef5_610be5ddd5fb41698c31587f752a1a2a.pdf",
+    "drive_link": "https://drive.google.com/file/d/1Suv28eCnUxIzmupPkLo4knn0_4amLygE/view?usp=drivesdk",
+    "file_size": "0.54",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.094418",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2558,
+    "title": "Copy of 04_Book_ Python Programming (1).pdf",
+    "drive_link": "https://drive.google.com/file/d/1TIKCaTXwUGMzzxHeUgFqgtuChwFScFT8/view?usp=drivesdk",
+    "file_size": "3.93",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.094724",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2559,
+    "title": "Copy of [Amazon web services] Jeffrey Barr - Host your web site in the cloud _ amazon web services made easy (2010, SitePoint ) - libgen.lc.pdf",
+    "drive_link": "https://drive.google.com/file/d/1bkojv3wgMpi4FSDmzcq8dpimPB8BM1xm/view?usp=drivesdk",
+    "file_size": "20.41",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.095095",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2560,
+    "title": "Copy of [Unsupervised and Semi-Supervised Learning] Michael W. Berry, Azlinah Mohamed,.pdf",
+    "drive_link": "https://drive.google.com/file/d/1cQOesOdZXFX8-9-De0LizOddrgVJkqII/view?usp=drivesdk",
+    "file_size": "4.15",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.095439",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2561,
+    "title": "Copy of 2020-1342.pdf",
+    "drive_link": "https://drive.google.com/file/d/1l0_nT6UkInExj_6jwPfQ5WSQjj4uXFt6/view?usp=drivesdk",
+    "file_size": "0.79",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.095733",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2562,
+    "title": "Copy of Alfreda Dudley, James Braman, Giovanni Vincenti - Investigating Cyber Law and Cyber Ethics_ Issues, Impacts and Practices-Igi Global (2011) - Copy.pdf",
+    "drive_link": "https://drive.google.com/file/d/1lF6oAdp7EWxs2Cc85lOF1Tz9XXOn50so/view?usp=drivesdk",
+    "file_size": "2.18",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.096100",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2563,
+    "title": "Copy of 3fdef5_610be5ddd5fb41698c31587f752a1a2a - Copy.pdf",
+    "drive_link": "https://drive.google.com/file/d/1v8NlEQw3KMIifu-pXklD5u9NMupkVyew/view?usp=drivesdk",
+    "file_size": "0.54",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.096416",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2564,
+    "title": "01_Data Structures Book.pdf",
+    "drive_link": "https://drive.google.com/file/d/1RwIqWDMhWZxMN5KM5cKtrMes95B7g4IY/view?usp=drivesdk",
+    "file_size": "13.63",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.096709",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2565,
+    "title": "04_Book_ Python Programming.pdf",
+    "drive_link": "https://drive.google.com/file/d/1NS_wNQycQ8u0UPKrTEAFDuvUj9yliKPu/view?usp=drivesdk",
+    "file_size": "6.41",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.097005",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2566,
+    "title": "Introduction to DBMS Theory and Practicals.pdf",
+    "drive_link": "https://drive.google.com/file/d/1WCaYdxsMQcVDBj5WOwRM60lnOBiNYrQg/view?usp=drivesdk",
+    "file_size": "9.32",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.097312",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2567,
+    "title": "Final_Diploma-Computer System Organization (Small size).pdf",
+    "drive_link": "https://drive.google.com/file/d/1hkyA51D6DDNmHfN7RVDnNwRujSqaLzUr/view?usp=drivesdk",
+    "file_size": "16.46",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.097632",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2568,
+    "title": "DIP125EN_Mathematics-II 28-02-2022.pdf",
+    "drive_link": "https://drive.google.com/file/d/1k7Sfq1qHZuT3GH4if_FqQphaVMrROque/view?usp=drivesdk",
+    "file_size": "5.78",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.097933",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2569,
+    "title": "Algorithms_Book_Complete-Final.pdf",
+    "drive_link": "https://drive.google.com/file/d/1njXqAbeM4gavNYyjgUQoub2pn4LS7uH1/view?usp=drivesdk",
+    "file_size": "7.74",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.098231",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2570,
+    "title": "Final-Computer Networks (Theory & Practicals).pdf",
+    "drive_link": "https://drive.google.com/file/d/1FW-vo3s8XS7gHolDZ9sHwBVRLb7yV3F0/view?usp=drivesdk",
+    "file_size": "5.66",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.098540",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2571,
+    "title": "35957954-ed0c-4c03-9772-f1b2a3dfc756 - Copy.pdf",
+    "drive_link": "https://drive.google.com/file/d/1cZGQV-KB1bAco9uUEbgmA7qKvfqtRFLw/view?usp=drivesdk",
+    "file_size": "30.5",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.098850",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2572,
+    "title": "discrete maths.pdf",
+    "drive_link": "https://drive.google.com/file/d/1oNuOGvzC1SlsNVJuWyX_M1LGrDhw661I/view?usp=drivesdk",
+    "file_size": "30.5",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.099139",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2573,
+    "title": "htmlcheatsheet.pdf",
+    "drive_link": "https://drive.google.com/file/d/1x56Mfm7UG6zE5N8KE-e7lpHVujA7D4gs/view?usp=drivesdk",
+    "file_size": "0.24",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.099428",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2574,
+    "title": "Introduction to Java Programming ( PDFDrive ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1k-iXHnnCJEmp2QycErGt8WhwRs3QCjF7/view?usp=drivesdk",
+    "file_size": "9.96",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.099744",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2575,
+    "title": "Operating Systems (3).pdf",
+    "drive_link": "https://drive.google.com/file/d/1muBu88F_J-PDA4a4ZDbhC0bCbcNCiLsg/view?usp=drivesdk",
+    "file_size": "10.12",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.100050",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2576,
+    "title": "Getting_Started_with_Raspberry_Pi.pdf",
+    "drive_link": "https://drive.google.com/file/d/1EqB74FcdUAJr-TnBACx41CeZDPq4BzFJ/view?usp=drivesdk",
+    "file_size": "33.92",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.100358",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2577,
+    "title": "Computer System Design System-on-Chip by Michael J. Flynn, Wayne Luk(auth.) (z-lib.org).pdf",
+    "drive_link": "https://drive.google.com/file/d/1vK62MjtPqRpwz0cYrwj5dKYWuQPCv393/view?usp=drivesdk",
+    "file_size": "4.94",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.100708",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2578,
+    "title": "ARM system-on-chip architecture ( PDFDrive ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1iaCAdswm6exONNGMvIcolcWNqjLZYfsT/view?usp=drivesdk",
+    "file_size": "17.59",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.101026",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2579,
+    "title": "George-Coulouris-Distributed-Systems-Concepts-and-Design-5th-Edition.pdf",
+    "drive_link": "https://drive.google.com/file/d/1hMz7RRe5td5_U8TaTzv71HimsQsXDrWg/view?usp=drivesdk",
+    "file_size": "9.7",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.101352",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2580,
+    "title": "pdfcoffee.com_org-behavior-fred-luthans-pdf-free.pdf",
+    "drive_link": "https://drive.google.com/file/d/1TO6L-5EdQP40VkEkqPI63y5AQoLpvLHn/view?usp=drivesdk",
+    "file_size": "9.24",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.101672",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2581,
+    "title": "Industrial-Engg-Mgmnt-O-P-khanna ( PDFDrive ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1-rxEQfHnmAYwA56pjtjltfeiUwS86PqA/view?usp=drivesdk",
+    "file_size": "46.57",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.101989",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2582,
+    "title": "Multilingual Natural Language Processing Applications_ From Theory to Practice.pdf",
+    "drive_link": "https://drive.google.com/file/d/1LCT3TAs4sQFgQJDaQ6LXHX9-zBMi550j/view?usp=drivesdk",
+    "file_size": "1.85",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.102334",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2583,
+    "title": "Horowitz and Sahani, Fundamentals of Computer Algorithms, 2ND Edition ( PDFDrive ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1DwpfsBRLyszmho_tX3DKIvFjybPwmYzk/view?usp=drivesdk",
+    "file_size": "28.55",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.102720",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2584,
+    "title": "04_Book_ Python Programming (1).pdf",
+    "drive_link": "https://drive.google.com/file/d/1o7XElCyX9v2YDNFy3S5qq3viNqtiwBIw/view?usp=drivesdk",
+    "file_size": "3.93",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.103027",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2585,
+    "title": "barronstheleaderintestpreparation.pdf",
+    "drive_link": "https://drive.google.com/file/d/1JOFr9phzHuCzdQ8X0IuqMzINY14JOLSA/view?usp=drivesdk",
+    "file_size": "6.92",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.103354",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2586,
+    "title": "computer system architecture.pdf",
+    "drive_link": "https://drive.google.com/file/d/1X6bhH0r4d1zLqNiTCFTlu2p2gg_uP77d/view?usp=drivesdk",
+    "file_size": "28.83",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.103660",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2587,
+    "title": "Core Python programming, 2nd Edition by Wesley Chun (z-lib.org).pdf",
+    "drive_link": "https://drive.google.com/file/d/1sWfvviTAoVhsVXn99msOVxZhHzDKAVsn/view?usp=drivesdk",
+    "file_size": "15.81",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.103982",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2588,
+    "title": "Introduction to Algorithms, Third Edition ( PDFDrive ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1wxivZZe2Q0htPwICxaEEE8ViMBQV6MTS/view?usp=drivesdk",
+    "file_size": "5.21",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.104307",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2589,
+    "title": "Gray Hat Hacking, 3rd Edition.pdf ( PDFDrive ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1loapMdYOOcn89sfWG0POP0gm4-4Rr-6Q/view?usp=drivesdk",
+    "file_size": "12.76",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.104624",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2590,
+    "title": "Advanced Engineering Mathematics, 7th ed. ( PDFDrive ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1nXlhexmUpq8xmTiSUovqvmIvE_rpRvXD/view?usp=drivesdk",
+    "file_size": "23.54",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.104944",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2591,
+    "title": "B.S Grewal - Higher Engineering Mathematics By Dr. B.S. Grewal (KHANNA PUBLISHERS) - libgen.li.pdf",
+    "drive_link": "https://drive.google.com/file/d/1LipM7_QMVcQwKNl_t8L5qzfSbBYLW8pa/view?usp=drivesdk",
+    "file_size": "86.94",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.105291",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2592,
+    "title": "Problem Solving and Program Design in C 7th Ed by Hanly ( PDFDrive ).pdf",
+    "drive_link": "https://drive.google.com/file/d/15zotuGe_m8Lf6nFPC5kkWr8WnJC1xIIT/view?usp=drivesdk",
+    "file_size": "6.61",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.105637",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2593,
+    "title": "Invitation to Computer Science ( PDFDrive ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1t3Tg0sh2GvHHf5HNCW06Rco0BTSTC34o/view?usp=drivesdk",
+    "file_size": "305.81",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.105950",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2594,
+    "title": "Practical DevOps (Joakim Verona) (z-lib.org).pdf",
+    "drive_link": "https://drive.google.com/file/d/1hRpXlB6H6tkTE4m7v2fp6ioqMBEiBVy2/view?usp=drivesdk",
+    "file_size": "3.85",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.106267",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2595,
+    "title": "Hands-On Ethical Hacking and Network Defense (Michael T. Simpson, Kent Backman etc.) (z-lib.org).pdf",
+    "drive_link": "https://drive.google.com/file/d/1WWVE6DO-aWs8jdKcKg3wix8g2XtFBqWe/view?usp=drivesdk",
+    "file_size": "83.36",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.106610",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2596,
+    "title": "Parag Himanshu Dave, Himanshu Bhalchandra Dave - Design and Analysis of Algorithms (2007, Pearson Education) - libgen.lc.pdf",
+    "drive_link": "https://drive.google.com/file/d/1-b2aUqf-LBpdi74f03zDNrQHvC4ktM1N/view?usp=drivesdk",
+    "file_size": "9.65",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.106980",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2597,
+    "title": "John Goerzen - Foundations of Python network programming.pdf",
+    "drive_link": "https://drive.google.com/file/d/1iRGCCqd2CySHUlfd9nm6qcm8F4cb1Lg4/view?usp=drivesdk",
+    "file_size": "17.03",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.107303",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2598,
+    "title": "R Programming for Bioinformatics Robert Gentleman  CRC Press .pdf",
+    "drive_link": "https://drive.google.com/file/d/1oOEstsr9bzsInKvHiVBU-SEzK83l7ABF/view?usp=drivesdk",
+    "file_size": "1.48",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.107639",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2599,
+    "title": "applied-mathematics-by-example-theory.pdf",
+    "drive_link": "https://drive.google.com/file/d/13HuxYT6S515mqFrxAYmoC5L3hC5hUXuw/view?usp=drivesdk",
+    "file_size": "2.65",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.107957",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2600,
+    "title": "chemical-reaction-engineering-with-ipython-part-i.pdf",
+    "drive_link": "https://drive.google.com/file/d/1BCUjddzgqSjQKkixdAcpRxjquORlEMQA/view?usp=drivesdk",
+    "file_size": "8.95",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.108276",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2601,
+    "title": "exercises-within-drilling-fluid-engineering.pdf",
+    "drive_link": "https://drive.google.com/file/d/1bg2v2iAGwu8iXxPs8Ho9RtO3NBLZU7tN/view?usp=drivesdk",
+    "file_size": "5.92",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.108589",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2602,
+    "title": "exercises-in-pressure-control-during-drilling.pdf",
+    "drive_link": "https://drive.google.com/file/d/1eMvMGGJILr5lCgUWE5SvIbhS4Cg_JPnJ/view?usp=drivesdk",
+    "file_size": "5.73",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.108906",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2603,
+    "title": "college-physics-i-notes-and-exercises.pdf",
+    "drive_link": "https://drive.google.com/file/d/1_2c5Scwk0BMT6fX1MHQnEdO-qoYDd3ek/view?usp=drivesdk",
+    "file_size": "3.94",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.109216",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2604,
+    "title": "T. Pradeep - A Textbook of Nanoscience and Nanotechnology (2012, Tata McGraw Hill Education Private Limited) - libgen.lc.pdf",
+    "drive_link": "https://drive.google.com/file/d/11-gnzSMLMT37FFAcTDFsD_MRmsJMSSmh/view?usp=drivesdk",
+    "file_size": "27.79",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.109579",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2605,
+    "title": "B.S. Murty, P. Shankar, Baldev Raj, B B Rath, James Murday (auth.) - Textbook of Nanoscience and Nanotechnology (2013, Springer-Verlag Berlin Heidelberg) - libgen.lc.pdf",
+    "drive_link": "https://drive.google.com/file/d/17cwaYIG-S5YWgDCQsgNqzbsvzsrqROwl/view?usp=drivesdk",
+    "file_size": "9.33",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.109962",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2606,
+    "title": "Richard J. Schonberger - World class manufacturing_ the lessons of simplicity applied (1986, The Free Press) - libgen.lc (1).pdf",
+    "drive_link": "https://drive.google.com/file/d/1Xv7cnHgSBJmP6ffPDSA04Q74W6ABV5Ag/view?usp=drivesdk",
+    "file_size": "23.46",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.110321",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2607,
+    "title": "Ron Moore - Making Common Sense Common Practice_ Models for Manufacturing Excellence (2002) - libgen.lc.pdf",
+    "drive_link": "https://drive.google.com/file/d/11rrUC7yhHDV5r_5CiMMzyJNH5O9p7GNW/view?usp=drivesdk",
+    "file_size": "2.7",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.110715",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2608,
+    "title": "Ron Moore - Making Common Sense Common Practice_ Models for Manufacturing Excellence (2004, Butterworth-Heinemann) - libgen.lc.pdf",
+    "drive_link": "https://drive.google.com/file/d/1OCGXzDJhtBSQqNT_A1gkmDmeFLGu0zfv/view?usp=drivesdk",
+    "file_size": "3.95",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.111083",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2609,
+    "title": "Richard J. Schonberger - World class manufacturing_ the lessons of simplicity applied (1986, The Free Press) - libgen.lc.pdf",
+    "drive_link": "https://drive.google.com/file/d/197v46Y9469LbJZjrAFcUdKkz1RYDMm0n/view?usp=drivesdk",
+    "file_size": "23.46",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.111449",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2610,
+    "title": "Michael Umble, Moukshagundam L. Srikanth - Synchronous manufacturing_ principles for world class excellence (1990, South-Western Publishing Co.) - libgen.lc.pdf",
+    "drive_link": "https://drive.google.com/file/d/1--tSTCMFbaCgqM8SeUcwWIselIzM5AU2/view?usp=drivesdk",
+    "file_size": "22.29",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.111847",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2611,
+    "title": "Betsi Harris Ehrlich - Transactional Six Sigma and Lean Servicing_ Leveraging Manufacturing Concepts to Achieve World-Class Service (2002, CRC Press) - libgen.lc.pdf",
+    "drive_link": "https://drive.google.com/file/d/1e6m-1eUWHbGOWKneEJklEUBiWInqytjw/view?usp=drivesdk",
+    "file_size": "4.91",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.112225",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2612,
+    "title": "Robert L. Mott, Edward M. Vavrek, Jyhwen Wang - Machine Elements in Mechanical Design (2018, Pearson) - libgen.lc (1).pdf",
+    "drive_link": "https://drive.google.com/file/d/1Dytz_tFnjH0XYP2XjzBhoSY8glpA3k15/view?usp=drivesdk",
+    "file_size": "34.51",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.112589",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2613,
+    "title": "M. F. Spotts - Design of machine elements (1961, Prentice Hall) - libgen.lc (1).pdf",
+    "drive_link": "https://drive.google.com/file/d/1LsG5BlLOMeFRHAC1igEwN5atz9ve6FvH/view?usp=drivesdk",
+    "file_size": "36.75",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.112934",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2614,
+    "title": "M. F. Spotts - Design of machine elements (1961, Prentice Hall) - libgen.lc.pdf",
+    "drive_link": "https://drive.google.com/file/d/1TZRZLCsDKerWeDqeGQ8AnYgzT5t10DA0/view?usp=drivesdk",
+    "file_size": "36.75",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.113268",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2615,
+    "title": "Robert L. Mott, Edward M. Vavrek, Jyhwen Wang - Machine Elements in Mechanical Design (2018, Pearson) - libgen.lc.pdf",
+    "drive_link": "https://drive.google.com/file/d/1_jQ7Tq4Pq4mCa8wiQbnYSALO08j2tC7L/view?usp=drivesdk",
+    "file_size": "34.51",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.113630",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2616,
+    "title": "P K NAG - Power Plant Engineering (2014, MC GRAW HILL INDIA) - libgen.lc.pdf",
+    "drive_link": "https://drive.google.com/file/d/1exp-G9nMo5wyFxDSV5GAdY6lDocESQXP/view?usp=drivesdk",
+    "file_size": "43.99",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.113959",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2617,
+    "title": "Nag, P. K. - Power Plant Engineering. (2007, Tata McGraw-Hill) - libgen.lc.pdf",
+    "drive_link": "https://drive.google.com/file/d/1z2ATuMb0txxYgi6P9ofxXO681SK0U2D1/view?usp=drivesdk",
+    "file_size": "30.06",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.114294",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2618,
+    "title": "Ethirajan Rathakrishnan - Fundamentals of Engineering Thermodynamics (2006, Prentice Hall India Learning Private Limited) - libgen.li.pdf",
+    "drive_link": "https://drive.google.com/file/d/1W81f2ojXc8r_i8Rb1jXgtKGMyIRA7Qm2/view?usp=drivesdk",
+    "file_size": "44.78",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.114662",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2619,
+    "title": "H.I.H. Saravanamuttoo, G.F.C. Rogers, Paul Straznicky, H. Cohen, A.C.Nix - Gas Turbine Theory (2017, Pearson) - libgen.lc.pdf",
+    "drive_link": "https://drive.google.com/file/d/1EFF4paeLMUzbYrMYKqAieBkG_98yUDGL/view?usp=drivesdk",
+    "file_size": "12.87",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.115026",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2620,
+    "title": "GANESAN - Gas Turbines (2010, MC GRAW HILL INDIA) - libgen.lc.pdf",
+    "drive_link": "https://drive.google.com/file/d/1FuN14JSOw10ChnyECG5PH1MzwWyRdhLT/view?usp=drivesdk",
+    "file_size": "25.52",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.115349",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2621,
+    "title": "Mahesh M Rathore - Thermal Engineering-I (2018, McGraw-Hill Education) - libgen.lc.pdf",
+    "drive_link": "https://drive.google.com/file/d/1pGmH6ooDlZPzzvugcryHvjVMlpkqrZAt/view?usp=drivesdk",
+    "file_size": "23.17",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.115696",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2622,
+    "title": "Jr. William D. Callister_ David G. Rethwisch - Materials science and engineering _ an introduction (2018, Wiley) - libgen.li.pdf",
+    "drive_link": "https://drive.google.com/file/d/18DNEzcZJnzd2OQ6KXKvSbrZ1dWXwGNfK/view?usp=drivesdk",
+    "file_size": "68.27",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.116055",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2623,
+    "title": "Avner, Sidney H. - Introduction to physical metallurgy (1974, McGraw-Hill Inc) - libgen.lc.pdf",
+    "drive_link": "https://drive.google.com/file/d/1POOGe7RW6zguuI3cSoy0r7jfv4feta0Y/view?usp=drivesdk",
+    "file_size": "23.04",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.116406",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2624,
+    "title": "Essentials of Materials Science & Engineering-Donald R. Askeland - SI Version (2009, Cengage Learning) -.pdf",
+    "drive_link": "https://drive.google.com/file/d/1mRsPqyfww_54mZuwiHZZGozRBRrsSUrf/view?usp=drivesdk",
+    "file_size": "98.03",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.116755",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2625,
+    "title": "Material Science and Metallurgy by Parashivamurthy K. I. (z-lib.org).pdf",
+    "drive_link": "https://drive.google.com/file/d/1PqRbkEFTta5hLzrrvpfg_MTywU7DfT78/view?usp=drivesdk",
+    "file_size": "15.8",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.117082",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2626,
+    "title": "Digital & Analog Communication.pdf",
+    "drive_link": "https://drive.google.com/file/d/1bwHZd6DJ1lOuBOf5mkktph6a9vAPusFa/view?usp=drivesdk",
+    "file_size": "5.47",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.117387",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2627,
+    "title": "Principles of Information Security ( PDFDrive.com ) (1).pdf",
+    "drive_link": "https://drive.google.com/file/d/1AMv26LIyuvV1xLCNKyb7qKgqz-YHPISI/view?usp=drivesdk",
+    "file_size": "20.19",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.117711",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2628,
+    "title": "Principles of Information Security ( PDFDrive.com ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1hj34j1uwOIQdxBVBVQuCQPpdBCp_mnoX/view?usp=drivesdk",
+    "file_size": "20.19",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.118032",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2629,
+    "title": "Information Security - The Complete Reference ( PDFDrive.com ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1yBJ7URf6POEb68ZntKEDWMt5EEUtLTyZ/view?usp=drivesdk",
+    "file_size": "24.15",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.118358",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2630,
+    "title": "Cyber_Security_Essentials.pdf",
+    "drive_link": "https://drive.google.com/file/d/1QrMIdeyLX2NCNJ8Ypb2aeOggTl20AMW8/view?usp=drivesdk",
+    "file_size": "5.68",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.118662",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2631,
+    "title": "Anti-Hacker Tool Kit ( PDFDrive.com ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1ZLA2PyMEZHMP4g-mOaulpBMpPgv8wRpK/view?usp=drivesdk",
+    "file_size": "36.19",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.118970",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2632,
+    "title": "Cyber Security_ Analytics, Technology and Automation ( PDFDrive.com ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1f-s2Rhzbf7uyunPZtbZ9_c5N6J93bc87/view?usp=drivesdk",
+    "file_size": "5.83",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.119296",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2633,
+    "title": "Introduction to Modern Cryptography, Second Edition ( PDFDrive.com ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1gfnWNzAWSZDwgaWmPajCm64Y5PKmwBos/view?usp=drivesdk",
+    "file_size": "7.49",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.119647",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2634,
+    "title": "Introduction to Cryptography_ Principles and Applications, 2nd Edition (Information Security and Cryptography) ( PDFDrive.com ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1T46lYITNnkDtEX75ZupaUhhtmKDgtb8v/view?usp=drivesdk",
+    "file_size": "2.27",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.120025",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2635,
+    "title": "Guide to Computer Forensics and Investigations 6th Edition ( PDFDrive.com ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1u51jOdO3_n1_c-MBb1G8zGzcSCvB9omk/view?usp=drivesdk",
+    "file_size": "29.76",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.120374",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2636,
+    "title": "An Introduction to Cryptography, Second Edition ( PDFDrive.com ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1LnC5pWg50gcvwJHZP9zRuvvHX6KqOeQj/view?usp=drivesdk",
+    "file_size": "3.62",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.120697",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2637,
+    "title": "Forensic Computing ( PDFDrive.com ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1XdSD3Egvvno3gn5q2GZeujqPJxtyJc71/view?usp=drivesdk",
+    "file_size": "5.17",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.121027",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2638,
+    "title": "Computer Forensics_ Computer Crime Scene Investigation _ 2nd Edition (Networking Series) ( PDFDrive.com ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1OAGRDMxFEvzUdpm8tDwpvgBsSn7g0QQW/view?usp=drivesdk",
+    "file_size": "2.82",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.121380",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2639,
+    "title": "Computer Evidence - Collection and Preservation ( PDFDrive.com ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1CdDlZTNNxq8MT0R9EDO-XWiGmOIDqBso/view?usp=drivesdk",
+    "file_size": "5.1",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.121703",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2640,
+    "title": "Blockchain_ Blueprint for a New Economy ( PDFDrive.com ).pdf",
+    "drive_link": "https://drive.google.com/file/d/15nBay8A2GyFQPTsZ9Rb3TDMUBPrXqfpa/view?usp=drivesdk",
+    "file_size": "3.24",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.122037",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2641,
+    "title": "Blockchain Basics_ A Non-Technical Introduction in 25 Steps ( PDFDrive.com ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1_pNVV0OS8Yxz5E2DzHgRrBL4YJLvl2zs/view?usp=drivesdk",
+    "file_size": "2.7",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.122389",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2642,
+    "title": "HANDBOOK OF WIRELESS NETWORKS AND MOBILE COMPUTING Handbook of Wireless ... ( PDFDrive ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1rs_33NUL-OtzEh8ab1QxzqM8TYz9ugss/view?usp=drivesdk",
+    "file_size": "5.53",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.122737",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2643,
+    "title": "Ad Hoc Wireless Networks Architectures and Protocols C. Siva Ram Murthy BS Manoj ( PDFDrive ) (1).pdf",
+    "drive_link": "https://drive.google.com/file/d/15wAvff71WO199DBYCS6OVoW4THDaBQ6I/view?usp=drivesdk",
+    "file_size": "16.05",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.123080",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2644,
+    "title": "Storage Area Networking Essentials_ A Complete Guide to Understanding & Implementing SANs ( PDFDrive ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1Fy3RwkPwuJgzoGOJlleDpAhrAxi5yt0d/view?usp=drivesdk",
+    "file_size": "5.57",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.123428",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2645,
+    "title": "Semantic Web Technologies ( PDFDrive ).pdf",
+    "drive_link": "https://drive.google.com/file/d/10UnYk2jE6V2HxaV9bLrDCg2OhbI6d5tv/view?usp=drivesdk",
+    "file_size": "4.36",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.123739",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2646,
+    "title": "Introduction to the Semantic  Web and Semantic Web Services ( PDFDrive ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1UBZf0EnrNxjXtok_qtdvIv4YtbcnlVVn/view?usp=drivesdk",
+    "file_size": "8.74",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.124067",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2647,
+    "title": "TCP_IP Illustrated TCP_IP Illustrated, Volume 1 ( PDFDrive ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1rpS_SQdM1SQpUu03I0FvRBvlprOssUvw/view?usp=drivesdk",
+    "file_size": "2.72",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.124396",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2648,
+    "title": "Internetworking with TCP IP Vol.1_ Principles, Protocols, and Architecture (4th Edition) ( PDFDrive ).pdf",
+    "drive_link": "https://drive.google.com/file/d/17jDF2HqLGcZ0AQPQnNdnbfqOYdVhEEYo/view?usp=drivesdk",
+    "file_size": "36.97",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.124750",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2649,
+    "title": "TCP & IP Protocol Suit.pdf",
+    "drive_link": "https://drive.google.com/file/d/1U6xr6gET4Lemq0q5QSeaKP5SMQsMVGJs/view?usp=drivesdk",
+    "file_size": "8.79",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.125051",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2650,
+    "title": "Computer Networking Principles.pdf",
+    "drive_link": "https://drive.google.com/file/d/1Rhn3XwJ-42oKsYrzqmFY9jqTBquEz0nZ/view?usp=drivesdk",
+    "file_size": "9.24",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.125355",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2651,
+    "title": "Mobile ad hoc networks _ current status and future trends ( PDFDrive ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1_8NjJphPhiLyretNsSEPSp5h6_RZgqNN/view?usp=drivesdk",
+    "file_size": "26.46",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.125682",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2652,
+    "title": "Ad Hoc Wireless Networks Architectures and Protocols C. Siva Ram Murthy BS Manoj ( PDFDrive ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1gPXYaK8G6VCSHpW4VITxWqJaU_DF-bR-/view?usp=drivesdk",
+    "file_size": "16.05",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.126022",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2653,
+    "title": "Predictive Analytics  Microsoft Excel, Second Editio ( PDFDrive.com ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1J3HHttNvUh5Y4jqs_rZN7zXsirjexJwD/view?usp=drivesdk",
+    "file_size": "8.98",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.126354",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2654,
+    "title": "Learning Predictive Analytics with R_ Get to grips with key data visualization and predictive analytic skills using R ( PDFDrive.com ).pdf",
+    "drive_link": "https://drive.google.com/file/d/13AM861NZe_32hYG0dKdrrjIqBjG5Igfp/view?usp=drivesdk",
+    "file_size": "3.96",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.126717",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2655,
+    "title": "Associate_Analytics_M3_final.pdf",
+    "drive_link": "https://drive.google.com/file/d/1ZllDS-igBEvUylBmstweF9Pu15qr4-8j/view?usp=drivesdk",
+    "file_size": "5.34",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.127021",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2656,
+    "title": "An Introduction to Statistical Learning  with Applications in R ( PDFDrive.com ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1J5NMXexYqGMB3mPrur-oRtbjUDHASNN9/view?usp=drivesdk",
+    "file_size": "10.35",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.127366",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2657,
+    "title": "INTRODUCTION TO ANALYTICS (ASSOCIATE ANALYTICS -I).pdf",
+    "drive_link": "https://drive.google.com/file/d/1mpA6ociJomuxQPdMfOZSKcTdxGBqgvWV/view?usp=drivesdk",
+    "file_size": "0.39",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.127690",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2658,
+    "title": "Applied Statistics and Probability for Engineers, 6th Edition ( PDFDrive.com ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1dPtscvokiOkarFsDzLooj2YyGeeImSaa/view?usp=drivesdk",
+    "file_size": "15.43",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.128053",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2659,
+    "title": "IA.pdf",
+    "drive_link": "https://drive.google.com/file/d/1Wiw2nzZPGHtKSlaw4Q7qGAUqPBcGeMAf/view?usp=drivesdk",
+    "file_size": "3.24",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.128386",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2660,
+    "title": "Principles of Distributed Database Systems, Third Edition ( PDFDrive.com ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1GXOn3hZxcnWuD2hFYEPX7JICNzWfjEv8/view?usp=drivesdk",
+    "file_size": "7.28",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.128717",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2661,
+    "title": "Distributed Systems Principles and Paradigms.pdf ( PDFDrive.com ).pdf",
+    "drive_link": "https://drive.google.com/file/d/1KXG9b0FUszf1y6JtreAvquht1ut5c3Io/view?usp=drivesdk",
+    "file_size": "9.37",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.129050",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2662,
+    "title": "Distributed Database Management Systems_ A Practical Approach ( PDFDrive.com ).pdf",
+    "drive_link": "https://drive.google.com/file/d/10UD4wccJq1YF281gTHbOrF3EiwJmlCCX/view?usp=drivesdk",
+    "file_size": "10.16",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.129395",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2663,
+    "title": "introducing-data-science-machine-learning-python.pdf",
+    "drive_link": "https://drive.google.com/file/d/1zrIpvWuC06e569OFf_AL3DZDXkofct2l/view?usp=drivesdk",
+    "file_size": "14.59",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.129713",
+    "upload_date": "2025-12-16"
+  },
+  {
+    "id": 2664,
+    "title": "Data Science from Scratch ( PDFDrive ).pdf",
+    "drive_link": "https://drive.google.com/file/d/17G2GjV1S8XbDUvq8K_-i00RnZqStzeHl/view?usp=drivesdk",
+    "file_size": "5.93",
+    "uploaded_by": "admin",
+    "uploaded_at": "2025-12-16T22:23:20.130024",
+    "upload_date": "2025-12-16"
   }
 ]

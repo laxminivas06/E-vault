@@ -1133,7 +1133,7 @@
     </style>
 </head>
 <body>
-    <!-- Navigation -->
+      <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('welcome') }}">
@@ -1144,18 +1144,24 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('dashboard') }}"><i class="fas fa-home me-1"></i>User Dashboard</a>
-                    </li>
+                    
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('admin_dashboard') }}"><i class="fas fa-file-pdf me-1"></i>PDF Management</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('admin_users') }}"><i class="fas fa-users me-1"></i>User Management</a>
+                     <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin_users') }}">
+                            <i class="fas fa-users me-1"></i>
+                            User Management
+                        </a>
                     </li>
-                   
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('admin_location') }}"><i class="fas fa-map-marker-alt me-1"></i>Location Settings</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin_statistics') }}">
+                            <i class="fas fa-chart-line me-2"></i>
+                            Statistics
+                        </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('admin_contacts') }}">

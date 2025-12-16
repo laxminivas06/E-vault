@@ -1728,39 +1728,39 @@ def admin_dashboard():
                          total_pages=total_pages)
 
 
-@app.route('/admin/users')
+@app.route('/admin/search-users')
 @require_location_verification
-def admin_users():
-    """Admin users management page"""
+def search_users():
+    """AJAX endpoint for searching users with pagination"""
     if session.get('user_role') != 'admin':
-        flash('Access denied. Admin privileges required.', 'error')
-        return redirect(url_for('dashboard'))
+        return jsonify({'success': False, 'message': 'Access denied'}), 403
 
+    # Get parameters
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 10, type=int)
-    search_query = request.args.get('search', '').strip().lower()
+    search_query = request.args.get('search', '').strip()
 
-    users = load_json_data('users.json')
-
-    # Apply search filter if query exists
+    # Load all users
+    all_users = load_json_data('users.json')
+    
+    # Apply search filter if provided
+    filtered_users = all_users
     if search_query:
-        filtered_users = []
-        for user in users:
-            # Search in username, name, and role
-            if (search_query in user.get('username', '').lower() or 
-                search_query in user.get('name', '').lower() or 
-                search_query in user.get('role', '').lower()):
-                filtered_users.append(user)
-        users = filtered_users
-    else:
-        filtered_users = users
+        search_query_lower = search_query.lower()
+        filtered_users = [
+            user for user in all_users
+            if (search_query_lower in user.get('username', '').lower() or
+                search_query_lower in user.get('name', '').lower() or
+                search_query_lower in user.get('role', '').lower())
+        ]
 
     # Set default values for users
-    for user in users:
+    for user in filtered_users:
         user.setdefault('created_at', 'Unknown')
         user.setdefault('name', 'Unknown')
 
-    total_users = len(users)
+    # Pagination calculations
+    total_users = len(filtered_users)
     total_pages = (total_users + per_page - 1) // per_page if total_users > 0 else 1
 
     if page < 1:
@@ -1770,17 +1770,76 @@ def admin_users():
 
     start_idx = (page - 1) * per_page
     end_idx = start_idx + per_page
+    users_page = filtered_users[start_idx:end_idx]
 
-    paginated_users = users[start_idx:end_idx]
+    # Prepare response data
+    response_data = {
+        'success': True,
+        'users': users_page,
+        'page': page,
+        'per_page': per_page,
+        'total_users': total_users,
+        'total_pages': total_pages,
+        'has_prev': page > 1,
+        'has_next': page < total_pages,
+        'search_query': search_query
+    }
+
+    return jsonify(response_data)\
+
+@app.route('/admin/users')
+@require_location_verification
+def admin_users():
+    """Admin users management page with pagination"""
+    if session.get('user_role') != 'admin':
+        flash('Access denied. Admin privileges required.', 'error')
+        return redirect(url_for('dashboard'))
+
+    # Get pagination parameters
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 10, type=int)
+    search_query = request.args.get('search', '').strip()
+
+    # Load all users
+    all_users = load_json_data('users.json')
+    
+    # Apply search filter if provided
+    filtered_users = all_users
+    if search_query:
+        search_query_lower = search_query.lower()
+        filtered_users = [
+            user for user in all_users
+            if (search_query_lower in user.get('username', '').lower() or
+                search_query_lower in user.get('name', '').lower() or
+                search_query_lower in user.get('role', '').lower())
+        ]
+
+    # Set default values for users
+    for user in filtered_users:
+        user.setdefault('created_at', 'Unknown')
+        user.setdefault('name', 'Unknown')
+
+    # Pagination calculations
+    total_users = len(filtered_users)
+    total_pages = (total_users + per_page - 1) // per_page if total_users > 0 else 1
+
+    if page < 1:
+        page = 1
+    elif page > total_pages and total_pages > 0:
+        page = total_pages
+
+    start_idx = (page - 1) * per_page
+    end_idx = start_idx + per_page
+    users_page = filtered_users[start_idx:end_idx]
 
     user_stats = {
-        'total_users': total_users,
-        'admin_users': sum(1 for user in filtered_users if user.get('role') == 'admin'),
-        'student_users': sum(1 for user in filtered_users if user.get('role') == 'student')
+        'total_users': len(all_users),
+        'admin_users': sum(1 for user in all_users if user.get('role') == 'admin'),
+        'student_users': sum(1 for user in all_users if user.get('role') == 'student')
     }
 
     return render_template('admin_users.html',
-                         users=paginated_users,
+                         users=users_page,
                          username=session.get('user_id'),
                          location=session.get('verified_location'),
                          format_date=format_date,

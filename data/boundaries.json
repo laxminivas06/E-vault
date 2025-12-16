@@ -1,13 +1,12 @@
 [
   {
     "id": 2,
-    "name": "nivas",
-    "type": "rectangle",
-    "north": 17.283174,
-    "south": 17.281867,
-    "east": 78.553845,
-    "west": 78.552686,
+    "name": "shee",
+    "type": "circle",
+    "latitude": 17.27288,
+    "longitude": 78.58425,
+    "radius_km": 0.5,
     "created_by": "admin",
-    "created_at": "2025-12-16T11:36:40.160576"
+    "created_at": "2025-12-16T23:26:25.116074"
   }
 ]

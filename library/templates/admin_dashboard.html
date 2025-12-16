@@ -1085,7 +1085,7 @@
     </style>
 </head>
 <body>
-    <!-- Navigation -->
+      <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('welcome') }}">
@@ -1096,39 +1096,35 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('dashboard') }}"><i class="fas fa-home me-1"></i>User Dashboard</a>
-                    </li>
-                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('admin_users') }}"><i class="fas fa-user-plus"></i> User Management</a>
-                    </li>
-                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('admin_location') }}"><i class="fas fa-map-marker-alt"></i> Location Settings</a>
-                    </li>
-
-                           <li class="nav-item">
-    <a class="nav-link" href="{{ url_for('admin_contacts') }}">
-        <i class="fas fa-envelope me-1"></i>
-        Contacts
-    </a>
-</li>
                     
                     <li class="nav-item">
-    <a class="nav-link" href="{{ url_for('admin_statistics') }}">
-        <i class="fas fa-chart-line me-2"></i>
-        Statistics
-    </a>
-</li>
+                        <a class="nav-link" href="{{ url_for('admin_dashboard') }}"><i class="fas fa-file-pdf me-1"></i>PDF Management</a>
+                    </li>
+                     <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin_users') }}">
+                            <i class="fas fa-users me-1"></i>
+                            User Management
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin_location') }}"><i class="fas fa-map-marker-alt me-1"></i>Location Settings</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin_statistics') }}">
+                            <i class="fas fa-chart-line me-2"></i>
+                            Statistics
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin_contacts') }}">
+                            <i class="fas fa-envelope me-1"></i>
+                            Contacts
+                        </a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt me-1"></i>Logout</a>
                     </li>
-
-                    <!-- Add this to the admin navigation -->
-
-
                 </ul>
-
-                
             </div>
         </div>
     </nav>
@@ -1141,9 +1137,9 @@
                     <img src="/static/images/college_logo.png" alt="Sphoorthy Engineering College Logo">
                 </div>
             </div>
-            <h1>Admin Dashboard</h1>
-            <p class="subtitle">Complete System Administration - Manage PDFs, Users, and Locations</p>
-            
+            <h1>PDF Management</h1>
+            <p class="subtitle">  Manage System PDFs - Add, Remove, and Monitor PDF Documents with Ease.</p>
+
             <!-- User Info Section -->
             <div class="user-info">
                 <p>
@@ -1164,29 +1160,7 @@
         </div>
     </header>
 
-  <!-- Main Content -->
-<div class="dashboard-main">
-    <div class="container">
-        <!-- Statistics Section -->
-        <!-- Statistics Section -->
-<div class="stats-section" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 30px; width: 100%;">
-    <div class="stat-card" style="background: white; border-radius: 20px; padding: 30px 20px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); transition: all 0.3s ease; position: relative; overflow: hidden; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 180px;">
-        <div class="stat-icon" style="font-size: 2.2rem; margin-bottom: 15px; color: #2E86AB; transition: all 0.3s ease;">
-            <i class="fas fa-file-pdf"></i>
-        </div>
-        <div class="stat-number" style="font-size: 2.2rem; font-weight: bold; color: #2A2D3E; margin-bottom: 5px; transition: all 0.3s ease;">{{ total_pdfs }}</div>
-        <div class="stat-label" style="color: #6b7280; font-size: 0.9rem; font-weight: 500;">Total Documents</div>
-    </div>
-    
-    <div class="stat-card" style="background: white; border-radius: 20px; padding: 30px 20px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); transition: all 0.3s ease; position: relative; overflow: hidden; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 180px;">
-        <div class="stat-icon" style="font-size: 2.2rem; margin-bottom: 15px; color: #2E86AB; transition: all 0.3s ease;">
-            <i class="fas fa-users"></i>
-        </div>
-        <div class="stat-number" style="font-size: 2.2rem; font-weight: bold; color: #2A2D3E; margin-bottom: 5px; transition: all 0.3s ease;">{{ user_stats.total_users if user_stats else 0 }}</div>
-        <div class="stat-label" style="color: #6b7280; font-size: 0.9rem; font-weight: 500;">System Users</div>
-    </div>
-</div>
-        </div>
+ 
 
            
 
@@ -1195,7 +1169,7 @@
     <div class="section-header">
         <h2 class="section-title">
             <i class="fas fa-book"></i>
-            PDF Management ({{ total_pdfs }})
+            PDF Management ({{ total_pdfs }} PDFs)
         </h2>
         <div class="d-flex flex-column flex-md-row gap-2 gap-md-3 align-items-start align-items-md-center w-100">
             <!-- Search Bar -->
