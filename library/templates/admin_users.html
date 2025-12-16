@@ -1359,6 +1359,591 @@
     color: var(--dark);
 }
 
+
+/* Password field styles - Mobile First */
+.password-field {
+    position: relative;
+    min-width: 120px;
+    padding-right: 35px;
+}
+
+.password-text {
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    word-break: break-all;
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 4px 8px;
+    font-size: 0.7rem;
+    background: rgba(0,0,0,0.05);
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    opacity: 0.8;
+    transition: all 0.3s ease;
+    min-width: 32px;
+    min-height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.toggle-password:hover {
+    opacity: 1;
+    transform: translateY(-50%) scale(1.05);
+}
+
+.toggle-password.btn-outline-primary {
+    background: rgba(13, 110, 253, 0.1);
+    border-color: #0d6efd;
+}
+
+/* Mobile-specific table styles */
+@media (max-width: 768px) {
+    .table-responsive {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    
+    .table {
+        min-width: 600px; /* Ensure horizontal scroll for complex data */
+    }
+    
+    .password-column {
+        min-width: 150px;
+    }
+    
+    .created-column {
+        min-width: 100px;
+    }
+    
+    .password-field {
+        min-width: 140px;
+        padding-right: 40px;
+    }
+    
+    .password-text {
+        font-size: 0.85rem;
+        max-width: 100px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .toggle-password {
+        padding: 6px 8px;
+        font-size: 0.75rem;
+        min-width: 36px;
+        min-height: 32px;
+    }
+    
+    .mobile-badge {
+        font-size: 0.75rem;
+        padding: 4px 8px;
+    }
+    
+    .mobile-date {
+        font-size: 0.8rem;
+        white-space: nowrap;
+    }
+    
+    .mobile-delete-btn {
+        padding: 6px 8px;
+        font-size: 0.8rem;
+    }
+    
+    .mobile-btn-text {
+        display: none;
+    }
+    
+    .mobile-username, 
+    .mobile-name {
+        font-size: 0.9rem;
+        word-break: break-word;
+    }
+}
+
+@media (max-width: 576px) {
+    .table {
+        min-width: 700px; /* Wider for very small screens */
+    }
+    
+    .password-field {
+        min-width: 130px;
+        padding-right: 38px;
+    }
+    
+    .password-text {
+        max-width: 90px;
+        font-size: 0.8rem;
+    }
+    
+    .toggle-password {
+        padding: 5px 7px;
+        font-size: 0.7rem;
+        min-width: 34px;
+        min-height: 30px;
+    }
+    
+    .mobile-badge {
+        font-size: 0.7rem;
+        padding: 3px 6px;
+    }
+}
+
+@media (max-width: 480px) {
+    .password-field {
+        min-width: 120px;
+    }
+    
+    .password-text {
+        max-width: 80px;
+        font-size: 0.75rem;
+    }
+    
+    .toggle-password {
+        padding: 4px 6px;
+        min-width: 32px;
+        min-height: 28px;
+    }
+
+/* Enhanced Table Styles - No Horizontal Scroll */
+.table-responsive {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    width: 100%;
+    overflow-x: auto; /* Keep for safety but it shouldn't be needed */
+}
+
+.table {
+    width: 100%;
+    margin-bottom: 0;
+    min-width: auto !important; /* Remove forced minimum width */
+}
+
+.table thead th {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-bottom: 3px solid var(--primary);
+    font-weight: 700;
+    color: var(--dark);
+    padding: 18px 15px;
+    white-space: nowrap;
+    font-size: 0.9rem;
+}
+
+.table tbody td {
+    padding: 16px 15px;
+    vertical-align: middle;
+    border-bottom: 1px solid #f0f0f0;
+    word-break: break-word; /* Allow text to wrap */
+}
+
+/* Password field responsive styles */
+.password-field {
+    position: relative;
+    min-width: 120px;
+    max-width: 200px;
+}
+
+.password-text {
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    word-break: break-all;
+    display: block;
+    line-height: 1.4;
+}
+
+.toggle-password {
+    position: absolute;
+    right: -5px;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 4px 6px;
+    font-size: 0.7rem;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    opacity: 0.8;
+    transition: all 0.3s ease;
+    min-width: 28px;
+    min-height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Mobile-specific optimizations */
+@media (max-width: 1200px) {
+    .table thead th,
+    .table tbody td {
+        padding: 14px 12px;
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 992px) {
+    .table thead th,
+    .table tbody td {
+        padding: 12px 10px;
+        font-size: 0.82rem;
+    }
+    
+    .password-field {
+        min-width: 100px;
+        max-width: 150px;
+    }
+}
+
+@media (max-width: 768px) {
+    .table-responsive {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        overflow-x: auto; /* Allow horizontal scroll only when absolutely necessary */
+    }
+    
+    .table {
+        min-width: 100%; /* Ensure table doesn't exceed container */
+    }
+    
+    .table thead th {
+        padding: 12px 8px;
+        font-size: 0.8rem;
+        white-space: nowrap;
+    }
+    
+    .table tbody td {
+        padding: 12px 8px;
+        font-size: 0.8rem;
+    }
+    
+    /* Make columns more compact */
+    .table th:nth-child(1), /* ID */
+    .table td:nth-child(1) {
+        max-width: 60px;
+        min-width: 50px;
+    }
+    
+    .table th:nth-child(2), /* Username */
+    .table td:nth-child(2) {
+        max-width: 120px;
+        min-width: 100px;
+    }
+    
+    .table th:nth-child(3), /* Name */
+    .table td:nth-child(3) {
+        max-width: 120px;
+        min-width: 100px;
+    }
+    
+    .table th:nth-child(4), /* Password */
+    .table td:nth-child(4) {
+        max-width: 140px;
+        min-width: 120px;
+    }
+    
+    .table th:nth-child(5), /* Role */
+    .table td:nth-child(5) {
+        max-width: 80px;
+        min-width: 70px;
+    }
+    
+    .table th:nth-child(6), /* Created */
+    .table td:nth-child(6) {
+        max-width: 100px;
+        min-width: 90px;
+    }
+    
+    .table th:nth-child(7), /* Actions */
+    .table td:nth-child(7) {
+        max-width: 80px;
+        min-width: 70px;
+    }
+    
+    .password-field {
+        min-width: 100px;
+        max-width: 120px;
+        padding-right: 25px;
+    }
+    
+    .password-text {
+        font-size: 0.75rem;
+        max-width: 90px;
+    }
+    
+    .toggle-password {
+        padding: 3px 5px;
+        font-size: 0.65rem;
+        min-width: 26px;
+        min-height: 22px;
+        right: -8px;
+    }
+    
+    .badge {
+        font-size: 0.7rem;
+        padding: 3px 6px;
+    }
+    
+    .action-buttons .btn {
+        padding: 4px 6px;
+        font-size: 0.7rem;
+        min-width: 30px;
+    }
+}
+
+@media (max-width: 576px) {
+    .container {
+        padding: 0 8px;
+    }
+    
+    .documents-section {
+        padding: 20px 10px;
+        margin: 0 -8px;
+        border-radius: 0;
+    }
+    
+    .table-responsive {
+        margin: 0 -8px;
+        border-left: none;
+        border-right: none;
+        border-radius: 0;
+    }
+    
+    .table thead th {
+        padding: 10px 6px;
+        font-size: 0.75rem;
+    }
+    
+    .table tbody td {
+        padding: 10px 6px;
+        font-size: 0.75rem;
+    }
+    
+    /* Further reduce column widths */
+    .table th:nth-child(1), .table td:nth-child(1) { max-width: 50px; }
+    .table th:nth-child(2), .table td:nth-child(2) { max-width: 100px; }
+    .table th:nth-child(3), .table td:nth-child(3) { max-width: 100px; }
+    .table th:nth-child(4), .table td:nth-child(4) { max-width: 110px; }
+    .table th:nth-child(5), .table td:nth-child(5) { max-width: 70px; }
+    .table th:nth-child(6), .table td:nth-child(6) { max-width: 90px; }
+    .table th:nth-child(7), .table td:nth-child(7) { max-width: 70px; }
+    
+    .password-field {
+        min-width: 90px;
+        max-width: 100px;
+        padding-right: 22px;
+    }
+    
+    .password-text {
+        font-size: 0.7rem;
+        max-width: 75px;
+    }
+    
+    .toggle-password {
+        padding: 2px 4px;
+        font-size: 0.6rem;
+        min-width: 24px;
+        min-height: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Switch to stacked cards layout for very small screens */
+    .table thead {
+        display: none;
+    }
+    
+    .table, .table tbody, .table tr, .table td {
+        display: block;
+        width: 100%;
+    }
+    
+    .table tr {
+        margin-bottom: 15px;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 15px;
+        background: white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .table td {
+        border: none;
+        padding: 8px 0;
+        position: relative;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .table td:last-child {
+        border-bottom: none;
+        padding-top: 12px;
+        margin-top: 8px;
+        border-top: 1px solid #e9ecef;
+    }
+    
+    .table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--dark);
+        font-size: 0.8rem;
+        min-width: 80px;
+        margin-right: 15px;
+    }
+    
+    .password-field {
+        max-width: none;
+        min-width: auto;
+        padding-right: 0;
+        flex: 1;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .password-text {
+        max-width: none;
+        flex: 1;
+        margin-right: 10px;
+    }
+    
+    .toggle-password {
+        position: relative;
+        right: 0;
+        top: 0;
+        transform: none;
+        flex-shrink: 0;
+    }
+    
+    .action-buttons {
+        justify-content: flex-end;
+        width: 100%;
+    }
+    
+    .mobile-btn-text {
+        display: inline-block;
+        margin-left: 5px;
+    }
+}
+
+@media (max-width: 360px) {
+    .table td {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 10px 0;
+    }
+    
+    .table td::before {
+        margin-bottom: 5px;
+        min-width: auto;
+    }
+    
+    .password-field {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .password-text {
+        margin-right: 10px;
+    }
+}
+
+/* Remove mobile scroll hint since we're eliminating horizontal scroll */
+.mobile-scroll-hint,
+.mobile-scroll-indicator {
+    display: none !important;
+}
+
+    
+    /* Stack table for very small screens */
+    @media (max-width: 360px) {
+        .table thead {
+            display: none;
+        }
+        
+        .table, .table tbody, .table tr, .table td {
+            display: block;
+            width: 100%;
+        }
+        
+        .table tr {
+            margin-bottom: 15px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 10px;
+            background: white;
+        }
+        
+        .table td {
+            border: none;
+            padding: 8px 12px;
+            position: relative;
+            padding-left: 45%;
+        }
+        
+        .table td::before {
+            content: attr(data-label);
+            position: absolute;
+            left: 12px;
+            top: 8px;
+            width: 40%;
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 0.8rem;
+        }
+        
+        .password-field {
+            padding-right: 0;
+            min-width: auto;
+        }
+        
+        .password-text {
+            max-width: none;
+            font-size: 0.85rem;
+        }
+        
+        .toggle-password {
+            position: relative;
+            margin-left: 10px;
+            transform: none;
+            top: 0;
+        }
+    }
+}
+
+
+/* Always visible password style for mobile */
+.password-visible {
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    background: #f8f9fa;
+    padding: 4px 8px;
+    border-radius: 4px;
+    word-break: break-all;
+    display: inline-block;
+    max-width: 100%;
+}
+
+@media (max-width: 768px) {
+    .password-visible {
+        font-size: 0.8rem;
+        padding: 3px 6px;
+        background: #e9ecef;
+    }
+}
     </style>
 </head>
 <body>
@@ -1459,24 +2044,16 @@
 <div class="documents-section">
     <div class="section-header">
         <h2 class="section-title">
-            <i class="fas fa-users"></i>
-            User Management ({{ total_users }})
-        </h2>
+    <i class="fas fa-users"></i>
+    User Management 
+    {% if search_query %}
+        ({{ total_users }} results for "{{ search_query }}")
+    {% else %}
+        ({{ total_users }})
+    {% endif %}
+</h2>
         <div class="d-flex flex-column flex-md-row gap-2 gap-md-3 align-items-start align-items-md-center w-100">
-            <!-- Search Bar -->
-            <div class="search-container flex-grow-1 w-100">
-                <div class="input-group input-group-lg input-group-sm-md">
-                    <span class="input-group-text bg-light border-end-0">
-                        <i class="fas fa-search text-muted"></i>
-                    </span>
-                    <input type="text" 
-                           class="form-control border-start-0" 
-                           id="userSearch" 
-                           placeholder="Search users..."
-                           onkeyup="searchUsers()">
-                    
-                </div>
-            </div>
+            
             <button class="btn btn-primary btn-sm-md w-100 w-md-auto" data-bs-toggle="modal" data-bs-target="#addUserModal">
                 <i class="fas fa-user-plus"></i> <span class="d-none d-sm-inline">Add User</span>
                 <span class="d-inline d-sm-none">Add</span>
@@ -1484,46 +2061,88 @@
         </div>
     </div>
 
+    <!-- Replace the current search container with this -->
+<div class="search-container flex-grow-1 w-100">
+    <form method="GET" action="{{ url_for('admin_users') }}" class="d-flex">
+        <div class="input-group input-group-lg input-group-sm-md">
+            <span class="input-group-text bg-light border-end-0">
+                <i class="fas fa-search text-muted"></i>
+            </span>
+            <input type="text" 
+                   class="form-control border-start-0" 
+                   name="search" 
+                   id="userSearch" 
+                   placeholder="Search users..."
+                   value="{{ search_query or '' }}">
+           
+        </div>
+         <button type="button" class="btn btn-outline-secondary" onclick="clearSearch()" title="Clear search">
+                <i class="fas fa-times"></i>
+            </button>
+        <button type="submit" class="btn btn-primary ms-2 d-none d-md-block">
+            <i class="fas fa-search"></i>
+        </button>
+    </form>
+</div>
 
-                <!-- User List -->
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Username</th>
-                                <th>Name</th>
-                                <th>Role</th>
-                                <th>Created</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for user in users %}
-                            <tr>
-                                <td>{{ user.id }}</td>
-                                <td>{{ user.username }}</td>
-                                <td>{{ user.name }}</td>
-                                <td>
-                                    <span class="badge bg-{{ 'success' if user.role == 'admin' else 'info' }}">
-                                        {{ user.role }}
-                                    </span>
-                                </td>
-                                <td>{{ format_date(user.created_at) }}</td>
-                                <td>
-                                    <div class="action-buttons">
-                                        {% if user.role != 'admin' or user.username == session.user_id %}
-                                        <button class="btn btn-sm btn-outline-danger" onclick="deleteUser('{{ user.username }}')" title="Delete User">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                        {% endif %}
-                                    </div>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+
+
+ <!-- Replace the entire table section with this -->
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Name</th>
+                <th>Password</th>
+                <th>Role</th>
+                <th>Created</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td data-label="ID">{{ user.id }}</td>
+                <td data-label="Username">{{ user.username }}</td>
+                <td data-label="Name">{{ user.name }}</td>
+                <td data-label="Password">
+                    <div class="password-field">
+                        <span class="password-text" id="password-{{ user.username }}">
+                            ••••••••
+                        </span>
+                        <button class="btn btn-sm btn-outline-secondary toggle-password" 
+                                type="button" 
+                                data-username="{{ user.username }}"
+                                data-password="{{ user.password }}"
+                                title="Show/Hide Password">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </td>
+                <td data-label="Role">
+                    <span class="badge bg-{{ 'success' if user.role == 'admin' else 'info' }}">
+                        {{ user.role }}
+                    </span>
+                </td>
+                <td data-label="Created">{{ format_date(user.created_at) }}</td>
+                <td data-label="Actions">
+                    <div class="action-buttons">
+                        {% if user.role != 'admin' or user.username == session.user_id %}
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteUser('{{ user.username }}')" title="Delete User">
+                            <i class="fas fa-trash"></i>
+                            <span class="mobile-btn-text">Delete</span>
+                        </button>
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
 
                 <!-- Mobile Scroll Indicator -->
                 <div class="mobile-scroll-indicator">
@@ -1539,17 +2158,13 @@
                     <nav aria-label="User pagination">
                         <ul class="pagination">
                             <!-- Previous Page -->
-                            {% if page > 1 %}
-                            <li class="page-item">
-                                <a class="page-link" href="{{ url_for('admin_users', page=page-1) }}" aria-label="Previous">
-                                    <i class="fas fa-chevron-left"></i>
-                                </a>
-                            </li>
-                            {% else %}
-                            <li class="page-item disabled">
-                                <span class="page-link"><i class="fas fa-chevron-left"></i></span>
-                            </li>
-                            {% endif %}
+                           {% if page > 1 %}
+<li class="page-item">
+    <a class="page-link" href="{{ url_for('admin_users', page=page-1, search=search_query) }}" aria-label="Previous">
+        <i class="fas fa-chevron-left"></i>
+    </a>
+</li>
+{% endif %}
                             
                             <!-- Page Numbers -->
                             {% set start_page = [1, page-2]|max %}
@@ -1738,6 +2353,104 @@
 
 
 
+ 
+// Enhanced password toggle with mobile optimization
+document.addEventListener('DOMContentLoaded', function() {
+    const toggleButtons = document.querySelectorAll('.toggle-password');
+    
+    toggleButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const username = this.getAttribute('data-username');
+            const password = this.getAttribute('data-password');
+            const passwordSpan = document.getElementById(`password-${username}`);
+            const icon = this.querySelector('i');
+            
+            if (passwordSpan.textContent === '••••••••') {
+                // Simple confirmation for mobile
+                if (confirm(`Show password for ${username}?`)) {
+                    revealPassword(passwordSpan, password, icon, this);
+                }
+            } else {
+                hidePassword(passwordSpan, icon, this);
+            }
+        });
+    });
+    
+    function revealPassword(passwordSpan, password, icon, button) {
+        passwordSpan.textContent = password;
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+        button.classList.remove('btn-outline-secondary');
+        button.classList.add('btn-outline-primary');
+        
+        // Auto-hide after 10 seconds on mobile
+        setTimeout(() => {
+            if (passwordSpan.textContent === password) {
+                hidePassword(passwordSpan, icon, button);
+            }
+        }, 10000);
+    }
+    
+    function hidePassword(passwordSpan, icon, button) {
+        passwordSpan.textContent = '••••••••';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+        button.classList.remove('btn-outline-primary');
+        button.classList.add('btn-outline-secondary');
+    }
+});
+
+// Force table to fit container
+function optimizeTableLayout() {
+    const table = document.querySelector('.table');
+    const container = document.querySelector('.table-responsive');
+    
+    if (table && container) {
+        const tableWidth = table.offsetWidth;
+        const containerWidth = container.offsetWidth;
+        
+        if (tableWidth > containerWidth) {
+            // Reduce padding and font sizes if table is too wide
+            table.style.fontSize = '0.8rem';
+            const cells = table.querySelectorAll('th, td');
+            cells.forEach(cell => {
+                cell.style.padding = '8px 6px';
+            });
+        }
+    }
+}
+
+// Run optimization on load and resize
+window.addEventListener('load', optimizeTableLayout);
+window.addEventListener('resize', optimizeTableLayout);
+
+
+// Enhanced mobile scroll handling
+document.addEventListener('DOMContentLoaded', function() {
+    const tableContainer = document.querySelector('.table-responsive');
+    const scrollHint = document.createElement('div');
+    scrollHint.className = 'mobile-scroll-hint';
+    scrollHint.innerHTML = '<i class="fas fa-arrows-left-right"></i> Scroll';
+    
+    if (window.innerWidth <= 768 && tableContainer) {
+        tableContainer.style.position = 'relative';
+        tableContainer.appendChild(scrollHint);
+        
+        // Hide scroll hint after 5 seconds
+        setTimeout(() => {
+            scrollHint.style.opacity = '0';
+            setTimeout(() => {
+                if (scrollHint.parentNode) {
+                    scrollHint.parentNode.removeChild(scrollHint);
+                }
+            }, 1000);
+        }, 5000);
+    }
+});
+
         // Close mobile navbar when a nav link is clicked
 document.addEventListener('DOMContentLoaded', function() {
     const navLinks = document.querySelectorAll('.nav-link');
@@ -1851,11 +2564,10 @@ function removeHighlights(row) {
     });
 }
 
-// Clear search
 function clearSearch() {
-    document.getElementById('userSearch').value = '';
-    searchUsers();
+    window.location.href = "{{ url_for('admin_users') }}";
 }
+
 
 // Initialize search on page load
 document.addEventListener('DOMContentLoaded', function() {

@@ -14,6 +14,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Leaflet Extra Providers -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
     <style>
         :root {
             --primary: #2E86AB;
@@ -61,7 +63,7 @@
             backdrop-filter: blur(10px);
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             padding: 1rem 0;
-            position:absolute;
+            position: sticky;
             top: 0;
             left: 0;
             right: 0;
@@ -149,64 +151,13 @@
             gap: 10px;
         }
 
-        /* Navigation Bar Styles */
-        .navbar {
-            background: rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 0;
-            margin-top: 76px;
-        }
-
-        .navbar-nav {
-            display: flex;
-            flex-direction: row;
-            width: 100%;
-            justify-content: center;
-        }
-
-        .nav-item {
-            flex: 1;
-            text-align: center;
-        }
-
-        .nav-link {
-            color: white !important;
-            padding: 15px 20px !important;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            border-bottom: 3px solid transparent;
-        }
-
-        .nav-link:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-bottom-color: var(--secondary);
-        }
-
-        .nav-link.active {
-            background: rgba(255, 255, 255, 0.2) !important;
-            border-bottom-color: var(--accent) !important;
-            font-weight: 600;
-        }
-
-        .navbar-toggler {
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            padding: 5px 10px;
-        }
-
-        .navbar-toggler-icon {
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.8%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
-        }
-        
         /* Main Content Styles */
         .main-content {
             padding: 20px;
             flex: 1;
             transition: all 0.3s ease;
-            margin-top: 150px;
+            margin-top: 20px;
+            min-height: calc(100vh - 200px);
         }
         
         .content-header {
@@ -241,8 +192,8 @@
         }
 
         .card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
         }
         
         .card-header {
@@ -342,7 +293,9 @@
             display: grid;
             grid-template-columns: 1fr 400px;
             gap: 20px;
-            height: calc(100vh - 250px);
+            min-height: 600px;
+            max-height: calc(100vh - 300px);
+            margin-bottom: 30px;
         }
         
         .map-container {
@@ -351,12 +304,28 @@
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             position: relative;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
         }
         
         #map {
             height: 100%;
             width: 100%;
             border-radius: 20px;
+            flex: 1;
+            min-height: 400px;
+        }
+        
+        .map-controls-bottom {
+            background: white;
+            padding: 15px 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
         }
         
         .controls-panel {
@@ -365,6 +334,8 @@
             padding: 25px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             overflow-y: auto;
+            height: 100%;
+            max-height: calc(100vh - 300px);
         }
         
         .section {
@@ -520,6 +491,7 @@
             border-radius: 8px;
             font-size: 0.9rem;
             margin-top: 10px;
+            word-break: break-all;
         }
         
         .drawing-controls {
@@ -664,6 +636,7 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             max-width: 300px;
             text-align: center;
+            display: none;
         }
         
         .boundary-preview h4 {
@@ -790,6 +763,7 @@
             color: white;
             padding: 40px 0 20px;
             position: relative;
+            margin-top: auto;
         }
 
         .footer::before {
@@ -823,16 +797,169 @@
             }
         }
 
+        /* Map View Controls */
+        .map-view-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .view-type-btn {
+            padding: 8px 15px;
+            border: 2px solid var(--primary);
+            background: white;
+            color: var(--primary);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .view-type-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .view-type-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(46, 134, 171, 0.3);
+        }
+
+        /* Search Box */
+        .search-box {
+            background: white;
+            padding: 10px 15px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 300px;
+        }
+
+        .search-box input {
+            border: none;
+            outline: none;
+            flex: 1;
+            font-size: 0.9rem;
+        }
+
+        .search-box i {
+            color: var(--gray);
+        }
+
+        /* Boundary Item Actions */
+        .boundary-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .action-btn {
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn.view {
+            background: #e3f2fd;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+
+        .action-btn.edit {
+            background: #fff3cd;
+            color: var(--secondary);
+            border: 1px solid var(--secondary);
+        }
+
+        .action-btn.delete {
+            background: #f8d7da;
+            color: var(--accent);
+            border: 1px solid var(--accent);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Drawing Tools Styles */
+        .drawing-tools-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .drawing-tool {
+            flex: 1;
+            min-width: 100px;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background: white;
+            color: var(--primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            text-align: center;
+        }
+
+        .drawing-tool:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .drawing-tool.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .drawing-tool i {
+            font-size: 1.5rem;
+        }
+
+        .drawing-tool span {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
         /* Mobile Responsive */
         @media (max-width: 1200px) {
-            .nav-link {
-                padding: 12px 15px !important;
-                font-size: 0.9rem;
-            }
-            
             .content-grid {
                 grid-template-columns: 1fr;
-                height: auto;
+                gap: 20px;
+                max-height: none;
             }
             
             .map-container {
@@ -841,28 +968,19 @@
             
             .controls-panel {
                 max-height: none;
+                height: auto;
             }
         }
         
         @media (max-width: 992px) {
-            .navbar-nav {
+            .content-header {
                 flex-direction: column;
+                align-items: flex-start;
             }
             
-            .nav-item {
-                flex: none;
-            }
-            
-            .nav-link {
-                justify-content: flex-start;
-                border-bottom: none;
-                border-left: 3px solid transparent;
-            }
-            
-            .nav-link:hover,
-            .nav-link.active {
-                border-bottom-color: transparent;
-                border-left-color: var(--accent);
+            .college-logo {
+                width: 250px;
+                height: 80px;
             }
         }
         
@@ -877,14 +995,9 @@
                 text-align: center;
             }
             
-            .content-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
             .college-logo {
-                width: 250px;
-                height: 80px;
+                width: 200px;
+                height: 70px;
             }
             
             .header-text h1 {
@@ -897,7 +1010,8 @@
             
             .main-content {
                 padding: 15px;
-                margin-top: 180px;
+                margin-top: 140px;
+                min-height: calc(100vh - 180px);
             }
             
             .map-container {
@@ -924,6 +1038,29 @@
                 flex: 1 1 calc(33.333% - 8px);
                 min-width: 80px;
             }
+
+            .map-controls-bottom {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 12px 15px;
+            }
+
+            .map-view-controls {
+                justify-content: center;
+            }
+
+            .search-box {
+                max-width: 100%;
+                margin-top: 10px;
+            }
+
+            .drawing-tools-container {
+                flex-direction: column;
+            }
+
+            .drawing-tool {
+                min-width: auto;
+            }
         }
         
         @media (max-width: 576px) {
@@ -936,8 +1073,8 @@
             }
             
             .college-logo {
-                width: 200px;
-                height: 70px;
+                width: 180px;
+                height: 60px;
             }
             
             .header-text h1 {
@@ -955,11 +1092,6 @@
             
             .card-body {
                 padding: 15px;
-            }
-            
-            .nav-link {
-                padding: 10px 15px !important;
-                font-size: 0.85rem;
             }
             
             .map-container {
@@ -982,12 +1114,27 @@
             .drawing-tool-btn i {
                 font-size: 1rem;
             }
+
+            .view-type-btn {
+                padding: 6px 12px;
+                font-size: 0.8rem;
+            }
+
+            .developer-section {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+
+            .developer-logo {
+                width: 80px;
+                height: 80px;
+            }
         }
 
         @media (max-width: 480px) {
             .college-logo {
-                width: 180px;
-                height: 60px;
+                width: 150px;
+                height: 50px;
             }
             
             .header-text h1 {
@@ -1003,10 +1150,6 @@
                 font-size: 0.75rem;
             }
             
-            .navbar-brand {
-                font-size: 0.9rem;
-            }
-            
             .drawing-tools-compact {
                 gap: 5px;
             }
@@ -1015,6 +1158,12 @@
                 flex: 1 1 calc(50% - 5px);
                 min-width: 70px;
                 padding: 8px 3px;
+            }
+
+            .map-controls {
+                top: 5px;
+                right: 5px;
+                padding: 8px;
             }
         }
 
@@ -1028,11 +1177,6 @@
                 font-size: 0.9rem;
             }
             
-            .nav-link {
-                padding: 8px 12px !important;
-                font-size: 0.8rem;
-            }
-            
             .drawing-tools-compact {
                 flex-direction: column;
             }
@@ -1042,103 +1186,6 @@
                 min-width: auto;
             }
         }
-        .multi-boundary-controls {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-        }
-        
-        .boundary-list-item {
-            background: white;
-            border: 2px solid #e9ecef;
-            border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 10px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        
-        .boundary-list-item:hover {
-            border-color: var(--primary);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        
-        .boundary-list-item.active {
-            border-color: var(--primary);
-            background: rgba(46, 134, 171, 0.05);
-        }
-        
-        .boundary-name {
-            font-weight: 600;
-            color: var(--primary);
-            margin-bottom: 5px;
-        }
-        
-        .boundary-type {
-            font-size: 0.8rem;
-            color: var(--gray);
-            text-transform: capitalize;
-        }
-        
-        .boundary-coords {
-            font-size: 0.75rem;
-            color: #666;
-            margin-top: 5px;
-        }
-        
-        .boundary-actions {
-            display: flex;
-            gap: 5px;
-            margin-top: 8px;
-        }
-        
-        .boundary-count {
-            background: var(--primary);
-            color: white;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            margin-left: 5px;
-        }
-        
-        .drawing-status {
-            background: #fff3cd;
-            border-left: 4px solid var(--secondary);
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            font-size: 0.9rem;
-        }
-        
-        .boundary-visibility {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-        
-        .visibility-toggle {
-            display: flex;
-            gap: 5px;
-        }
-        
-        .visibility-btn {
-            padding: 5px 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            transition: all 0.3s ease;
-        }
-        
-        .visibility-btn.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-        
     </style>
 </head>
 <body>
@@ -1172,8 +1219,6 @@
                     <a href="{{ url_for('dashboard') }}" class="btn btn-outline-primary">
                         <i class="fas fa-home"></i> User Dashboard
                     </a>
-
-                          
                     <a href="{{ url_for('logout') }}" class="btn btn-outline-primary">
                         <i class="fas fa-sign-out-alt"></i> Logout
                     </a>
@@ -1182,49 +1227,85 @@
         </div>
     </header>
 
-    
-<br><br>
-<br> <br> <br><br> <!-- Main content -->
+    <!-- Main content -->
     <main class="main-content">
         <div class="container">
             <div class="content-header">
                 <h1 class="content-title">
                     <i class="fas fa-map-marker-alt"></i> Location Boundary Management
                 </h1>
-                <p class="text-white">Set and manage geographical boundaries for library access with satellite view</p>
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchAddress" placeholder="Search location...">
+                </div>
             </div>
             
             <div class="content-grid">
                 <!-- Map Container -->
                 <div class="card map-container">
-                    <div class="card-header">
-                        <i class="fas fa-map"></i> Interactive Map
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="fas fa-map"></i> Interactive Map
+                        </div>
+                        <div class="map-view-controls">
+                            <button class="view-type-btn active" onclick="setMapView('street')" id="streetView">
+                                <i class="fas fa-road"></i> Street
+                            </button>
+                            <button class="view-type-btn" onclick="setMapView('satellite')" id="satelliteView">
+                                <i class="fas fa-satellite"></i> Satellite
+                            </button>
+                            <button class="view-type-btn" onclick="setMapView('topo')" id="topoView">
+                                <i class="fas fa-mountain"></i> Topo
+                            </button>
+                        </div>
                     </div>
-                    <div class="card-body p-0" style="position: relative;">
+                    <div class="card-body p-0" style="position: relative; flex: 1;">
                         <div id="map"></div>
                         <div class="map-controls">
                             <button class="btn-sm btn-primary" onclick="getCurrentLocation()">
                                 <i class="fas fa-location-arrow"></i> My Location
                             </button>
-                            <button id="satelliteBtn" onclick="toggleSatelliteView()">
-                                <i class="fas fa-satellite"></i> Satellite
-                            </button>
-                            <button id="streetBtn" onclick="toggleStreetView()" class="active">
-                                <i class="fas fa-road"></i> Street
-                            </button>
                             <button onclick="toggleBoundaryPreview()">
                                 <i class="fas fa-eye"></i> Preview
+                            </button>
+                            <button onclick="clearAllDrawings()">
+                                <i class="fas fa-trash"></i> Clear
                             </button>
                         </div>
                         <div class="accuracy-indicator" id="accuracyIndicator">
                             <i class="fas fa-crosshairs"></i>
                             <span>Accuracy: Unknown</span>
                         </div>
-                        <div class="boundary-preview" id="boundaryPreview" style="display: none;">
+                        <div class="boundary-preview" id="boundaryPreview">
                             <h4>Boundary Preview</h4>
                             <p id="previewArea">Area: Calculating...</p>
                             <p id="previewRadius">Radius: N/A</p>
                             <p id="previewVertices">Vertices: 0</p>
+                            <button class="btn btn-sm btn-primary mt-2" onclick="hidePreview()">Close</button>
+                        </div>
+                    </div>
+                    <div class="map-controls-bottom">
+                        <div class="drawing-tools-container">
+                            <div class="drawing-tool active" onclick="startDrawingCircle()" id="circleBtn">
+                                <i class="fas fa-circle"></i>
+                                <span>Draw Circle</span>
+                            </div>
+                            <div class="drawing-tool" onclick="startDrawingRectangle()" id="rectangleBtn">
+                                <i class="fas fa-vector-square"></i>
+                                <span>Draw Rectangle</span>
+                            </div>
+                            <div class="drawing-tool" onclick="startDrawingPolygon()" id="polygonBtn">
+                                <i class="fas fa-draw-polygon"></i>
+                                <span>Draw Polygon</span>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-success btn-sm" onclick="saveBoundary()">
+                                <i class="fas fa-save"></i> Save
+                            </button>
+                            <button class="btn btn-warning btn-sm" onclick="testBoundary()">
+                                <i class="fas fa-vial"></i> Test
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -1257,35 +1338,6 @@
                                 <button class="btn btn-primary w-100" onclick="getCurrentLocation()">
                                     <i class="fas fa-sync-alt"></i> Refresh Location
                                 </button>
-                            </div>
-                        </div>
-                        
-                        <!-- Drawing Controls -->
-                        <div class="section">
-                            <h3 class="section-title">
-                                <i class="fas fa-draw-polygon"></i>
-                                Drawing Tools
-                            </h3>
-                            <div class="drawing-tools-compact">
-                                <button class="drawing-tool-btn btn-primary" onclick="startDrawingCircle()" title="Draw Circle">
-                                    <i class="fas fa-circle"></i>
-                                    <span>Circle</span>
-                                </button>
-                                <button class="drawing-tool-btn btn-success" onclick="startDrawingRectangle()" title="Draw Rectangle">
-                                    <i class="fas fa-vector-square"></i>
-                                    <span>Rectangle</span>
-                                </button>
-                                <button class="drawing-tool-btn btn-warning" onclick="startDrawingPolygon()" title="Draw Polygon">
-                                    <i class="fas fa-draw-polygon"></i>
-                                    <span>Polygon</span>
-                                </button>
-                            </div>
-                            <div class="drawing-controls" id="drawingControls">
-                                <div class="btn-group-custom">
-                                    <button class="btn btn-danger" onclick="clearAllDrawings()">
-                                        <i class="fas fa-trash"></i> Clear All
-                                    </button>
-                                </div>
                             </div>
                         </div>
                         
@@ -1328,15 +1380,6 @@
                                         No boundary drawn yet
                                     </div>
                                 </div>
-                                
-                                <div class="btn-group-custom">
-                                    <button type="submit" class="btn btn-success">
-                                        <i class="fas fa-save"></i> Save Boundary
-                                    </button>
-                                    <button type="button" class="btn btn-warning" onclick="testBoundary()">
-                                        <i class="fas fa-vial"></i> Test Boundary
-                                    </button>
-                                </div>
                             </form>
                         </div>
                         
@@ -1345,9 +1388,10 @@
                             <h3 class="section-title">
                                 <i class="fas fa-list"></i>
                                 Existing Boundaries
+                                <span class="badge bg-primary ms-2" id="boundaryCount">0</span>
                             </h3>
                             <div class="location-list" id="locationList">
-                                <div class="text-center">
+                                <div class="text-center py-4">
                                     <div class="spinner"></div>
                                     <p class="text-muted mt-2">Loading boundaries...</p>
                                 </div>
@@ -1364,7 +1408,7 @@
                                     <li>Fill in the location details</li>
                                     <li>Click "Save Boundary" to apply</li>
                                     <li>Use "Test Boundary" to verify the area</li>
-                                    <li>Toggle between Street and Satellite views for accuracy</li>
+                                    <li>Toggle between different map views</li>
                                 </ul>
                             </div>
                         </div>
@@ -1419,699 +1463,1018 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <!-- Leaflet Draw -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+    <!-- Leaflet Providers -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-providers/1.13.0/leaflet-providers.min.js"></script>
+    <!-- Leaflet Geocoder -->
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
     <script>
-        // Global variables
-        let map;
-        let drawnItems = new L.FeatureGroup();
-        let currentLocationMarker = null;
-        let accuracyCircle = null;
-        let drawControl = null;
-        let isDrawingActive = false;
-        let currentMapType = 'street';
-        let satelliteLayer, streetLayer;
+       // Global variables
+let map;
+let drawnItems = new L.FeatureGroup();
+let currentLocationMarker = null;
+let accuracyCircle = null;
+let drawControl = null;
+let isDrawingActive = false;
+let currentMapView = 'street';
+let currentLayer;
+let boundaries = {};
+let geocoder = L.Control.Geocoder.nominatim();
+let currentDrawControl = null;
 
-
-        // Close mobile navbar when a nav link is clicked
-document.addEventListener('DOMContentLoaded', function() {
-    const navLinks = document.querySelectorAll('.nav-link');
-    const navbarToggler = document.querySelector('.navbar-toggler');
-    const navbarCollapse = document.querySelector('.navbar-collapse');
+// Initialize map with multiple layers
+function initMap() {
+    // Default coordinates (Sphoorthy Engineering College)
+    const defaultCoords = [17.5415, 78.3930];
     
-    navLinks.forEach(link => {
-        link.addEventListener('click', () => {
-            // Check if navbar is collapsed (mobile view)
-            if (navbarCollapse.classList.contains('show')) {
-                // Trigger click on navbar toggler to close it
-                navbarToggler.click();
-            }
-        });
+    // Create map
+    map = L.map('map', {
+        center: defaultCoords,
+        zoom: 16,
+        zoomControl: true,
+        attributionControl: true
     });
-});
 
-        // Initialize map
-        function initMap() {
-            // Default coordinates
-            const defaultCoords = [17.5415, 78.3930];
-            
-            map = L.map('map').setView(defaultCoords, 16);
-            
-            // Define tile layers
-            streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors'
-            });
-            
-            satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-                attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
-            });
-            
-            // Add default street layer
-            streetLayer.addTo(map);
-            
-            // Add drawn items layer
-            drawnItems.addTo(map);
-            
-            // Initialize drawing control
-            drawControl = new L.Control.Draw({
-                draw: {
-                    polygon: {
-                        allowIntersection: false,
-                        drawError: {
-                            color: '#e74c3c',
-                            message: '<strong>Error:</strong> Polygon edges cannot cross!'
-                        },
-                        shapeOptions: {
-                            color: '#3498db',
-                            fillOpacity: 0.2
-                        }
-                    },
-                    rectangle: {
-                        shapeOptions: {
-                            color: '#e74c3c',
-                            fillOpacity: 0.2
-                        }
-                    },
-                    circle: {
-                        shapeOptions: {
-                            color: '#27ae60',
-                            fillOpacity: 0.2
-                        }
-                    },
-                    marker: false,
-                    polyline: false,
-                    circlemarker: false
+    // Define different map layers
+    const streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors',
+        maxZoom: 19
+    });
+
+    const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles © Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+        maxZoom: 19
+    });
+
+    const topoLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+        attribution: 'Map data: © OpenStreetMap contributors, SRTM | Map style: © OpenTopoMap (CC-BY-SA)',
+        maxZoom: 17
+    });
+
+    // Add default layer
+    currentLayer = streetLayer;
+    currentLayer.addTo(map);
+    document.getElementById('streetView').classList.add('active');
+
+    // Initialize drawn items
+    drawnItems.addTo(map);
+
+    // Initialize drawing control options
+    const drawOptions = {
+        position: 'topright',
+        draw: {
+            polygon: {
+                allowIntersection: false,
+                drawError: {
+                    color: '#e74c3c',
+                    message: '<strong>Error:</strong> Polygon edges cannot cross!'
                 },
-                edit: {
-                    featureGroup: drawnItems
+                shapeOptions: {
+                    color: '#3498db',
+                    weight: 3,
+                    fillColor: '#3498db',
+                    fillOpacity: 0.2
+                },
+                showArea: true,
+                metric: true
+            },
+            rectangle: {
+                shapeOptions: {
+                    color: '#e74c3c',
+                    weight: 3,
+                    fillColor: '#e74c3c',
+                    fillOpacity: 0.2
+                },
+                showArea: true,
+                metric: true
+            },
+            circle: {
+                shapeOptions: {
+                    color: '#27ae60',
+                    weight: 3,
+                    fillColor: '#27ae60',
+                    fillOpacity: 0.2
+                },
+                showRadius: true,
+                metric: true,
+                feet: false
+            },
+            marker: false,
+            polyline: false,
+            circlemarker: false
+        },
+        edit: {
+            featureGroup: drawnItems,
+            remove: true,
+            edit: false
+        }
+    };
+
+    drawControl = new L.Control.Draw(drawOptions);
+    map.addControl(drawControl);
+
+    // Set up event listeners for drawing
+    map.on(L.Draw.Event.CREATED, function (e) {
+        const layer = e.layer;
+        
+        // Clear previous drawings
+        drawnItems.clearLayers();
+        drawnItems.addLayer(layer);
+        
+        // Determine the type of shape
+        let type = '';
+        if (layer instanceof L.Circle) {
+            type = 'circle';
+            // Get radius from input if available
+            const radiusInput = document.getElementById('radius');
+            if (radiusInput && radiusInput.value) {
+                const newRadius = parseFloat(radiusInput.value);
+                if (!isNaN(newRadius) && newRadius > 0) {
+                    layer.setRadius(newRadius);
                 }
-            });
-            map.addControl(drawControl);
-            
-            // Set up event listeners for drawing
-            map.on(L.Draw.Event.CREATED, function (e) {
-                const layer = e.layer;
-                drawnItems.clearLayers();
-                drawnItems.addLayer(layer);
-                
-                // Determine the type of shape
-                let type = '';
-                if (layer instanceof L.Circle) {
-                    type = 'circle';
-                } else if (layer instanceof L.Rectangle) {
-                    type = 'rectangle';
-                } else if (layer instanceof L.Polygon) {
-                    type = 'polygon';
-                }
-                
-                // Update boundary coordinates display
-                updateBoundaryCoords(layer, type);
-                
-                // Update form
-                document.getElementById('boundaryType').value = type;
-                toggleRadiusField();
-                
-                // Remove drawing mode
-                document.getElementById('drawingControls').classList.remove('drawing-mode-active');
-                isDrawingActive = false;
-                
-                showToast('Boundary drawn successfully!', 'success');
-            });
-            
-            // Handle draw events
-            map.on('draw:drawstart', function() {
-                document.getElementById('drawingControls').classList.add('drawing-mode-active');
-                isDrawingActive = true;
-            });
-            
-            map.on('draw:drawstop', function() {
-                if (!drawnItems.getLayers().length) {
-                    document.getElementById('drawingControls').classList.remove('drawing-mode-active');
-                    isDrawingActive = false;
-                }
-            });
-            
-            // Handle edit events to update coordinates
-            map.on('draw:edited', function(e) {
-                const layers = e.layers;
-                layers.eachLayer(function(layer) {
-                    let type = '';
-                    if (layer instanceof L.Circle) {
-                        type = 'circle';
-                    } else if (layer instanceof L.Rectangle) {
-                        type = 'rectangle';
-                    } else if (layer instanceof L.Polygon) {
-                        type = 'polygon';
-                    }
-                    updateBoundaryCoords(layer, type);
-                });
-            });
-            
-            // Get current location
-            getCurrentLocation();
-            
-            // Load existing boundaries
-            loadExistingBoundaries();
-        }
-
-        // Toggle satellite view
-        function toggleSatelliteView() {
-            if (currentMapType !== 'satellite') {
-                map.removeLayer(streetLayer);
-                satelliteLayer.addTo(map);
-                currentMapType = 'satellite';
-                document.getElementById('satelliteBtn').classList.add('active');
-                document.getElementById('streetBtn').classList.remove('active');
-                showToast('Satellite view activated', 'success');
             }
+        } else if (layer instanceof L.Rectangle) {
+            type = 'rectangle';
+        } else if (layer instanceof L.Polygon) {
+            type = 'polygon';
         }
-
-        // Toggle street view
-        function toggleStreetView() {
-            if (currentMapType !== 'street') {
-                map.removeLayer(satelliteLayer);
-                streetLayer.addTo(map);
-                currentMapType = 'street';
-                document.getElementById('streetBtn').classList.add('active');
-                document.getElementById('satelliteBtn').classList.remove('active');
-                showToast('Street view activated', 'success');
-            }
+        
+        // Update boundary coordinates display
+        updateBoundaryCoords(layer, type);
+        
+        // Update form
+        document.getElementById('boundaryType').value = type;
+        toggleRadiusField();
+        
+        // Update drawing button states
+        updateDrawingButtonState(type);
+        
+        // Stop drawing mode
+        if (currentDrawControl) {
+            currentDrawControl.disable();
+            currentDrawControl = null;
         }
+        isDrawingActive = false;
+        
+        showToast('Boundary drawn successfully!', 'success');
+    });
 
-        // Toggle boundary preview
-        function toggleBoundaryPreview() {
-            const preview = document.getElementById('boundaryPreview');
-            if (preview.style.display === 'none') {
-                preview.style.display = 'block';
-                updateBoundaryPreview();
-                showToast('Boundary preview activated', 'success');
-            } else {
-                preview.style.display = 'none';
-            }
-        }
-
-        // Update boundary preview information
-        function updateBoundaryPreview() {
-            if (drawnItems.getLayers().length === 0) {
-                document.getElementById('previewArea').textContent = 'Area: No boundary';
-                document.getElementById('previewRadius').textContent = 'Radius: N/A';
-                document.getElementById('previewVertices').textContent = 'Vertices: 0';
-                return;
-            }
-            
-            const layer = drawnItems.getLayers()[0];
-            let area = 0;
-            let radius = 'N/A';
-            let vertices = 0;
-            
+    // Handle edit events
+    map.on('draw:edited', function(e) {
+        const layers = e.layers;
+        layers.eachLayer(function(layer) {
+            let type = '';
             if (layer instanceof L.Circle) {
-                radius = layer.getRadius().toFixed(2) + ' meters';
-                area = (Math.PI * Math.pow(layer.getRadius(), 2)).toFixed(2) + ' m²';
-                vertices = 'N/A';
+                type = 'circle';
             } else if (layer instanceof L.Rectangle) {
-                const bounds = layer.getBounds();
-                const width = bounds.getEast() - bounds.getWest();
-                const height = bounds.getNorth() - bounds.getSouth();
-                // Approximate area calculation (simplified)
-                area = (width * 111320 * height * 111320 * Math.cos(bounds.getCenter().lat * Math.PI / 180)).toFixed(2) + ' m²';
-                radius = 'N/A';
-                vertices = 4;
+                type = 'rectangle';
             } else if (layer instanceof L.Polygon) {
-                vertices = layer.getLatLngs()[0].length;
-                // Simplified area calculation for polygons
-                area = 'Calculating...';
-                radius = 'N/A';
+                type = 'polygon';
             }
-            
-            document.getElementById('previewArea').textContent = 'Area: ' + area;
-            document.getElementById('previewRadius').textContent = 'Radius: ' + radius;
-            document.getElementById('previewVertices').textContent = 'Vertices: ' + vertices;
-        }
+            updateBoundaryCoords(layer, type);
+        });
+        showToast('Boundary updated', 'info');
+    });
 
-        // Get current location with accuracy
-        function getCurrentLocation() {
-            const coordsDisplay = document.getElementById('currentCoords');
-            const accuracyDisplay = document.getElementById('accuracyDetails');
-            coordsDisplay.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Detecting location...';
-            accuracyDisplay.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Calculating...';
+    // Handle delete events
+    map.on('draw:deleted', function(e) {
+        drawnItems.clearLayers();
+        document.getElementById('boundaryCoords').innerHTML = 'No boundary drawn yet';
+        document.getElementById('boundaryArea').innerHTML = 'No boundary drawn yet';
+        updateDrawingButtonState('');
+        showToast('Boundary cleared', 'info');
+    });
+
+    // Handle draw start
+    map.on('draw:drawstart', function(e) {
+        isDrawingActive = true;
+        currentDrawControl = e.handler;
+    });
+
+    // Handle draw stop
+    map.on('draw:drawstop', function() {
+        if (currentDrawControl) {
+            currentDrawControl.disable();
+            currentDrawControl = null;
+        }
+        isDrawingActive = false;
+    });
+
+    // Add search functionality
+    document.getElementById('searchAddress').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            searchLocation(this.value);
+        }
+    });
+
+    // Get current location after a short delay
+    setTimeout(() => {
+        getCurrentLocation();
+    }, 1000);
+    
+    // Load existing boundaries
+    loadExistingBoundaries();
+    
+    // Listen for radius input changes
+    document.getElementById('radius')?.addEventListener('input', function(e) {
+        const radius = parseFloat(e.target.value);
+        if (!isNaN(radius) && radius > 0) {
+            const layers = drawnItems.getLayers();
+            if (layers.length > 0 && layers[0] instanceof L.Circle) {
+                layers[0].setRadius(radius);
+                updateBoundaryCoords(layers[0], 'circle');
+            }
+        }
+    });
+}
+
+// Set map view type
+function setMapView(type) {
+    if (currentMapView === type) return;
+    
+    currentMapView = type;
+    
+    // Remove current layer
+    if (currentLayer) {
+        map.removeLayer(currentLayer);
+    }
+    
+    // Add new layer based on type
+    switch(type) {
+        case 'satellite':
+            currentLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles © Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+                maxZoom: 19
+            });
+            break;
+        case 'topo':
+            currentLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+                attribution: 'Map data: © OpenStreetMap contributors, SRTM | Map style: © OpenTopoMap (CC-BY-SA)',
+                maxZoom: 17
+            });
+            break;
+        default:
+            currentLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors',
+                maxZoom: 19
+            });
+    }
+    
+    currentLayer.addTo(map);
+    
+    // Update button states
+    document.getElementById('streetView').classList.remove('active');
+    document.getElementById('satelliteView').classList.remove('active');
+    document.getElementById('topoView').classList.remove('active');
+    document.getElementById(type + 'View').classList.add('active');
+    
+    showToast(`${type.charAt(0).toUpperCase() + type.slice(1)} view activated`, 'success');
+}
+
+// Search location
+function searchLocation(query) {
+    if (!query.trim()) return;
+    
+    geocoder.geocode(query, function(results) {
+        if (results && results.length > 0) {
+            const result = results[0];
+            map.setView(result.center, 16);
             
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    function(position) {
-                        const lat = position.coords.latitude;
-                        const lng = position.coords.longitude;
-                        const accuracy = position.coords.accuracy;
-                        
-                        // Update display
-                        coordsDisplay.innerHTML = `Lat: ${lat.toFixed(6)}<br>Lng: ${lng.toFixed(6)}`;
-                        accuracyDisplay.innerHTML = `Horizontal Accuracy: ${accuracy.toFixed(2)} meters`;
-                        
-                        // Update accuracy indicator
-                        updateAccuracyIndicator(accuracy);
-                        
-                        // Update or create marker
-                        if (currentLocationMarker) {
-                            currentLocationMarker.setLatLng([lat, lng]);
-                        } else {
-                            currentLocationMarker = L.marker([lat, lng], {
-                                icon: L.divIcon({
-                                    className: 'current-location-marker',
-                                    html: '<i class="fas fa-user" style="color: white; font-size: 12px; background: #3498db; padding: 5px; border-radius: 50%;"></i>',
-                                    iconSize: [24, 24]
-                                })
-                            }).addTo(map);
-                            
-                            // Add popup
-                            currentLocationMarker.bindPopup('Your current location<br>Accuracy: ' + accuracy.toFixed(2) + ' meters').openPopup();
-                        }
-                        
-                        // Update or create accuracy circle
-                        if (accuracyCircle) {
-                            accuracyCircle.setLatLng([lat, lng]);
-                            accuracyCircle.setRadius(accuracy);
-                        } else {
-                            accuracyCircle = L.circle([lat, lng], {
-                                radius: accuracy,
-                                color: '#3498db',
-                                fillColor: '#3498db',
-                                fillOpacity: 0.1,
-                                weight: 1
-                            }).addTo(map);
-                        }
-                        
-                        // Center map on current location
-                        map.setView([lat, lng], 16);
-                        
-                        showToast('Location detected with ' + accuracy.toFixed(2) + 'm accuracy', 'success');
-                    },
-                    function(error) {
-                        console.error('Geolocation error:', error);
-                        let errorMessage = 'Unable to get location. ';
-                        
-                        switch(error.code) {
-                            case error.PERMISSION_DENIED:
-                                errorMessage += 'Location access was denied. Please enable location permissions.';
-                                break;
-                            case error.POSITION_UNAVAILABLE:
-                                errorMessage += 'Location information is unavailable.';
-                                break;
-                            case error.TIMEOUT:
-                                errorMessage += 'Location request timed out.';
-                                break;
-                            default:
-                                errorMessage += 'An unknown error occurred.';
-                        }
-                        
-                        coordsDisplay.innerHTML = errorMessage;
-                        accuracyDisplay.innerHTML = 'Accuracy: Unknown';
-                        updateAccuracyIndicator(null);
-                        showToast(errorMessage, 'error');
-                    },
-                    {
-                        enableHighAccuracy: true,
-                        timeout: 15000,
-                        maximumAge: 60000
-                    }
-                );
-            } else {
-                coordsDisplay.innerHTML = 'Geolocation is not supported by this browser.';
+            // Add marker for searched location
+            L.marker(result.center)
+                .addTo(map)
+                .bindPopup(`<b>${result.name || 'Searched Location'}</b><br>${result.center.lat.toFixed(6)}, ${result.center.lng.toFixed(6)}`)
+                .openPopup();
+            
+            showToast(`Location found: ${result.name}`, 'success');
+        } else {
+            showToast('Location not found. Try a different search term.', 'error');
+        }
+    });
+}
+
+// Get current location
+function getCurrentLocation() {
+    const coordsDisplay = document.getElementById('currentCoords');
+    const accuracyDisplay = document.getElementById('accuracyDetails');
+    coordsDisplay.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Detecting location...';
+    accuracyDisplay.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Calculating...';
+    
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                const accuracy = position.coords.accuracy;
+                
+                // Update display
+                coordsDisplay.innerHTML = `Lat: ${lat.toFixed(6)}<br>Lng: ${lng.toFixed(6)}`;
+                accuracyDisplay.innerHTML = `Accuracy: ${accuracy.toFixed(2)} meters`;
+                
+                // Update accuracy indicator
+                updateAccuracyIndicator(accuracy);
+                
+                // Update or create marker
+                if (currentLocationMarker) {
+                    currentLocationMarker.setLatLng([lat, lng]);
+                } else {
+                    currentLocationMarker = L.marker([lat, lng], {
+                        icon: L.divIcon({
+                            className: 'current-location-marker',
+                            html: '<div style="background: #3498db; color: white; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: 2px solid white; box-shadow: 0 0 10px rgba(0,0,0,0.3);"><i class="fas fa-user" style="font-size: 14px;"></i></div>',
+                            iconSize: [32, 32],
+                            iconAnchor: [16, 16]
+                        })
+                    }).addTo(map);
+                    
+                    // Add popup
+                    currentLocationMarker.bindPopup(`
+                        <strong>Your Current Location</strong><br>
+                        Latitude: ${lat.toFixed(6)}<br>
+                        Longitude: ${lng.toFixed(6)}<br>
+                        Accuracy: ${accuracy.toFixed(2)} meters
+                    `).openPopup();
+                }
+                
+                // Update or create accuracy circle
+                if (accuracyCircle) {
+                    accuracyCircle.setLatLng([lat, lng]);
+                    accuracyCircle.setRadius(accuracy);
+                } else {
+                    accuracyCircle = L.circle([lat, lng], {
+                        radius: accuracy,
+                        color: '#3498db',
+                        fillColor: '#3498db',
+                        fillOpacity: 0.1,
+                        weight: 1
+                    }).addTo(map);
+                }
+                
+                // Center map on current location
+                map.setView([lat, lng], 17);
+                
+                showToast(`Location detected! Accuracy: ${accuracy.toFixed(2)}m`, 'success');
+            },
+            function(error) {
+                console.error('Geolocation error:', error);
+                let errorMessage = 'Unable to get location. ';
+                
+                switch(error.code) {
+                    case error.PERMISSION_DENIED:
+                        errorMessage = 'Location access was denied. Please enable location permissions in your browser settings.';
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        errorMessage = 'Location information is unavailable. Check your device location settings.';
+                        break;
+                    case error.TIMEOUT:
+                        errorMessage = 'Location request timed out. Please try again.';
+                        break;
+                    default:
+                        errorMessage = 'An unknown error occurred while getting location.';
+                }
+                
+                coordsDisplay.innerHTML = `<span style="color: #dc3545;">${errorMessage}</span>`;
                 accuracyDisplay.innerHTML = 'Accuracy: Unknown';
                 updateAccuracyIndicator(null);
-                showToast('Geolocation is not supported by this browser.', 'error');
+                showToast(errorMessage, 'error');
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 30000,
+                maximumAge: 0
             }
-        }
+        );
+    } else {
+        coordsDisplay.innerHTML = '<span style="color: #dc3545;">Geolocation is not supported by this browser.</span>';
+        accuracyDisplay.innerHTML = 'Accuracy: Unknown';
+        updateAccuracyIndicator(null);
+        showToast('Geolocation is not supported by this browser. Please use Chrome, Firefox, or Edge.', 'error');
+    }
+}
 
-        // Update accuracy indicator
-        function updateAccuracyIndicator(accuracy) {
-            const indicator = document.getElementById('accuracyIndicator');
-            
-            if (!accuracy) {
-                indicator.innerHTML = '<i class="fas fa-crosshairs"></i><span>Accuracy: Unknown</span>';
-                indicator.className = 'accuracy-indicator';
-                return;
-            }
-            
-            let accuracyClass = 'accuracy-low';
-            if (accuracy < 20) accuracyClass = 'accuracy-high';
-            else if (accuracy < 50) accuracyClass = 'accuracy-medium';
-            
-            indicator.innerHTML = `<i class="fas fa-crosshairs"></i><span>Accuracy: ${accuracy.toFixed(2)}m</span>`;
-            indicator.className = `accuracy-indicator ${accuracyClass}`;
-        }
+// Update accuracy indicator
+function updateAccuracyIndicator(accuracy) {
+    const indicator = document.getElementById('accuracyIndicator');
+    
+    if (!accuracy) {
+        indicator.innerHTML = '<i class="fas fa-crosshairs"></i><span>Accuracy: Unknown</span>';
+        indicator.className = 'accuracy-indicator';
+        return;
+    }
+    
+    let accuracyClass = 'accuracy-low';
+    if (accuracy < 20) accuracyClass = 'accuracy-high';
+    else if (accuracy < 50) accuracyClass = 'accuracy-medium';
+    
+    indicator.innerHTML = `<i class="fas fa-crosshairs"></i><span>Accuracy: ${accuracy.toFixed(2)}m</span>`;
+    indicator.className = `accuracy-indicator ${accuracyClass}`;
+}
 
-        // Drawing functions
-        function startDrawingCircle() {
-            if (isDrawingActive) return;
-            
-            new L.Draw.Circle(map, drawControl.options.draw.circle).enable();
-            updateDrawingMode('circle');
-        }
+// Drawing functions
+function startDrawingCircle() {
+    if (isDrawingActive && currentDrawControl) {
+        currentDrawControl.disable();
+    }
+    
+    // Clear any existing drawings first
+    drawnItems.clearLayers();
+    
+    // Update drawing button states
+    updateDrawingButtonState('circle');
+    
+    // Enable circle drawing using the draw control
+    drawControl.setDrawingOptions({
+        circle: true,
+        rectangle: false,
+        polygon: false,
+        marker: false,
+        polyline: false,
+        circlemarker: false
+    });
+    
+    // Trigger circle drawing
+    const circleDrawer = new L.Draw.Circle(map, drawControl.options.draw.circle);
+    circleDrawer.enable();
+    currentDrawControl = circleDrawer;
+    
+    showToast('Circle drawing mode activated. Click on map to set center, drag to set radius.', 'info');
+}
 
-        function startDrawingRectangle() {
-            if (isDrawingActive) return;
-            
-            new L.Draw.Rectangle(map, drawControl.options.draw.rectangle).enable();
-            updateDrawingMode('rectangle');
-        }
+function startDrawingRectangle() {
+    if (isDrawingActive && currentDrawControl) {
+        currentDrawControl.disable();
+    }
+    
+    // Clear any existing drawings first
+    drawnItems.clearLayers();
+    
+    // Update drawing button states
+    updateDrawingButtonState('rectangle');
+    
+    // Enable rectangle drawing
+    drawControl.setDrawingOptions({
+        circle: false,
+        rectangle: true,
+        polygon: false,
+        marker: false,
+        polyline: false,
+        circlemarker: false
+    });
+    
+    const rectangleDrawer = new L.Draw.Rectangle(map, drawControl.options.draw.rectangle);
+    rectangleDrawer.enable();
+    currentDrawControl = rectangleDrawer;
+    
+    showToast('Rectangle drawing mode activated. Click and drag on map to draw.', 'info');
+}
 
-        function startDrawingPolygon() {
-            if (isDrawingActive) return;
-            
-            new L.Draw.Polygon(map, drawControl.options.draw.polygon).enable();
-            updateDrawingMode('polygon');
-        }
+function startDrawingPolygon() {
+    if (isDrawingActive && currentDrawControl) {
+        currentDrawControl.disable();
+    }
+    
+    // Clear any existing drawings first
+    drawnItems.clearLayers();
+    
+    // Update drawing button states
+    updateDrawingButtonState('polygon');
+    
+    // Enable polygon drawing
+    drawControl.setDrawingOptions({
+        circle: false,
+        rectangle: false,
+        polygon: true,
+        marker: false,
+        polyline: false,
+        circlemarker: false
+    });
+    
+    const polygonDrawer = new L.Draw.Polygon(map, drawControl.options.draw.polygon);
+    polygonDrawer.enable();
+    currentDrawControl = polygonDrawer;
+    
+    showToast('Polygon drawing mode activated. Click points on map, double-click to finish.', 'info');
+}
 
-        function clearAllDrawings() {
-            drawnItems.clearLayers();
-            document.getElementById('boundaryCoords').innerHTML = 'No boundary drawn yet';
-            document.getElementById('boundaryArea').innerHTML = 'No boundary drawn yet';
-            document.getElementById('boundaryType').value = 'circle';
-            toggleRadiusField();
-            updateBoundaryPreview();
-            showToast('All drawings cleared', 'success');
-        }
+function updateDrawingButtonState(type) {
+    // Reset all buttons
+    document.getElementById('circleBtn').classList.remove('active');
+    document.getElementById('rectangleBtn').classList.remove('active');
+    document.getElementById('polygonBtn').classList.remove('active');
+    
+    // Activate current type
+    if (type) {
+        document.getElementById(type + 'Btn').classList.add('active');
+        isDrawingActive = true;
+    } else {
+        isDrawingActive = false;
+    }
+}
 
-        function updateDrawingMode(mode) {
-            const controls = document.getElementById('drawingControls');
-            controls.classList.add('drawing-mode-active');
-            isDrawingActive = true;
-            
-            showToast(`Drawing mode: ${mode.charAt(0).toUpperCase() + mode.slice(1)}. Click on the map to start drawing.`, 'warning');
-        }
+function clearAllDrawings() {
+    // Stop any active drawing
+    if (currentDrawControl) {
+        currentDrawControl.disable();
+        currentDrawControl = null;
+    }
+    
+    // Clear drawn items
+    drawnItems.clearLayers();
+    
+    // Reset UI
+    document.getElementById('boundaryCoords').innerHTML = 'No boundary drawn yet';
+    document.getElementById('boundaryArea').innerHTML = 'No boundary drawn yet';
+    document.getElementById('boundaryType').value = 'circle';
+    toggleRadiusField();
+    updateDrawingButtonState('');
+    hidePreview();
+    
+    showToast('All drawings cleared', 'success');
+}
 
-        function updateBoundaryCoords(layer, type) {
-            let coordsText = '';
-            let areaText = '';
-            
-            if (type === 'circle') {
-                const center = layer.getLatLng();
-                const radius = layer.getRadius();
-                const area = Math.PI * Math.pow(radius, 2);
-                coordsText = `Center: ${center.lat.toFixed(6)}, ${center.lng.toFixed(6)}<br>Radius: ${radius.toFixed(2)}m`;
-                areaText = `Area: ${area.toFixed(2)} m²`;
-            } else if (type === 'rectangle') {
-                const bounds = layer.getBounds();
-                const width = bounds.getEast() - bounds.getWest();
-                const height = bounds.getNorth() - bounds.getSouth();
-                // Approximate area calculation (simplified)
-                const area = width * 111320 * height * 111320 * Math.cos(bounds.getCenter().lat * Math.PI / 180);
-                coordsText = `North: ${bounds.getNorth().toFixed(6)}<br>South: ${bounds.getSouth().toFixed(6)}<br>East: ${bounds.getEast().toFixed(6)}<br>West: ${bounds.getWest().toFixed(6)}`;
-                areaText = `Area: ${area.toFixed(2)} m²`;
-            } else if (type === 'polygon') {
-                const latlngs = layer.getLatLngs()[0];
-                coordsText = 'Vertices:<br>';
-                latlngs.forEach((latlng, index) => {
-                    coordsText += `${index + 1}. ${latlng.lat.toFixed(6)}, ${latlng.lng.toFixed(6)}<br>`;
-                });
-                // Simplified area calculation for polygons
-                areaText = `Area: Calculating...<br>Vertices: ${latlngs.length}`;
-            }
-            
-            document.getElementById('boundaryCoords').innerHTML = coordsText;
-            document.getElementById('boundaryArea').innerHTML = areaText;
-            updateBoundaryPreview();
-        }
-
-        function toggleRadiusField() {
-            const type = document.getElementById('boundaryType').value;
-            const radiusGroup = document.getElementById('radiusGroup');
-            
-            if (type === 'circle') {
-                radiusGroup.style.display = 'block';
-            } else {
-                radiusGroup.style.display = 'none';
-            }
-        }
-
-        // Form submission
-        document.getElementById('boundaryForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            saveBoundary();
+function updateBoundaryCoords(layer, type) {
+    let coordsText = '';
+    let areaText = '';
+    
+    if (type === 'circle') {
+        const center = layer.getLatLng();
+        const radius = layer.getRadius();
+        const area = Math.PI * Math.pow(radius, 2);
+        coordsText = `Center: ${center.lat.toFixed(6)}, ${center.lng.toFixed(6)}<br>Radius: ${radius.toFixed(2)}m`;
+        areaText = `Area: ${area.toFixed(2)} m² (≈${(area/10000).toFixed(2)} hectares)`;
+    } else if (type === 'rectangle') {
+        const bounds = layer.getBounds();
+        const northEast = bounds.getNorthEast();
+        const southWest = bounds.getSouthWest();
+        
+        // Calculate distance using haversine formula
+        const latDistance = calculateHaversineDistance(
+            southWest.lat, southWest.lng,
+            northEast.lat, southWest.lng
+        );
+        const lngDistance = calculateHaversineDistance(
+            southWest.lat, southWest.lng,
+            southWest.lat, northEast.lng
+        );
+        
+        const area = latDistance * lngDistance;
+        
+        coordsText = `
+            North: ${bounds.getNorth().toFixed(6)}<br>
+            South: ${bounds.getSouth().toFixed(6)}<br>
+            East: ${bounds.getEast().toFixed(6)}<br>
+            West: ${bounds.getWest().toFixed(6)}<br>
+            Width: ${lngDistance.toFixed(2)}m<br>
+            Height: ${latDistance.toFixed(2)}m
+        `;
+        areaText = `Area: ${area.toFixed(2)} m² (≈${(area/10000).toFixed(2)} hectares)`;
+    } else if (type === 'polygon') {
+        const latlngs = layer.getLatLngs()[0];
+        coordsText = 'Vertices:<br>';
+        latlngs.forEach((latlng, index) => {
+            coordsText += `${index + 1}. ${latlng.lat.toFixed(6)}, ${latlng.lng.toFixed(6)}<br>`;
         });
+        
+        // Calculate polygon area
+        const area = calculatePolygonArea(latlngs);
+        areaText = `Area: ${area.toFixed(2)} m² (≈${(area/10000).toFixed(2)} hectares)<br>Vertices: ${latlngs.length}`;
+    }
+    
+    document.getElementById('boundaryCoords').innerHTML = coordsText;
+    document.getElementById('boundaryArea').innerHTML = areaText;
+    updateBoundaryPreview(layer, type);
+}
 
-        function saveBoundary() {
-            const name = document.getElementById('locationName').value;
-            const type = document.getElementById('boundaryType').value;
-            const radius = document.getElementById('radius').value;
-            
-            if (!name) {
-                showToast('Please enter a location name', 'error');
-                return;
-            }
-            
-            if (drawnItems.getLayers().length === 0) {
-                showToast('Please draw a boundary on the map first', 'error');
-                return;
-            }
-            
-            const layer = drawnItems.getLayers()[0];
-            let boundaryData;
-            
-            if (type === 'circle') {
-                const center = layer.getLatLng();
-                boundaryData = {
-                    name: name,
-                    type: 'circle',
-                    latitude: parseFloat(center.lat),
-                    longitude: parseFloat(center.lng),
-                    radius_km: parseFloat(radius / 1000) // Convert to float, not string
-                };
-            } else if (type === 'rectangle') {
-                const bounds = layer.getBounds();
-                boundaryData = {
-                    name: name,
-                    type: 'rectangle',
-                    north: parseFloat(bounds.getNorth()),
-                    south: parseFloat(bounds.getSouth()),
-                    east: parseFloat(bounds.getEast()),
-                    west: parseFloat(bounds.getWest())
-                };
-            } else if (type === 'polygon') {
-                const latlngs = layer.getLatLngs()[0];
-                boundaryData = {
-                    name: name,
-                    type: 'polygon',
-                    coordinates: latlngs.map(latlng => [parseFloat(latlng.lat), parseFloat(latlng.lng)])
-                };
-            }
-            
-            // Show loading state
-            const saveButton = document.querySelector('#boundaryForm button[type="submit"]');
-            const originalText = saveButton.innerHTML;
-            saveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
-            saveButton.disabled = true;
-            
-            // Send to server
-            fetch('/admin/save-boundary', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(boundaryData)
-            })
-            .then(response => {
-                if (!response.ok) {
-                    // Get error details from response
-                    return response.text().then(text => {
-                        let errorMsg = `HTTP ${response.status}`;
-                        try {
-                            const errorData = JSON.parse(text);
-                            errorMsg = errorData.message || errorData.error || text;
-                        } catch {
-                            errorMsg = text || `HTTP Error: ${response.status}`;
-                        }
-                        throw new Error(errorMsg);
-                    });
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.success) {
-                    showToast('Boundary saved successfully!', 'success');
-                    loadExistingBoundaries();
-                    clearAllDrawings();
-                    document.getElementById('locationName').value = '';
-                } else {
-                    showToast('Error saving boundary: ' + data.message, 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Save boundary error:', error);
-                showToast('Error saving boundary: ' + error.message, 'error');
-            })
-            .finally(() => {
-                // Restore button state
-                saveButton.innerHTML = originalText;
-                saveButton.disabled = false;
-            });
+// Helper functions for calculations
+function calculateHaversineDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371e3; // Earth's radius in meters
+    const φ1 = lat1 * Math.PI / 180;
+    const φ2 = lat2 * Math.PI / 180;
+    const Δφ = (lat2 - lat1) * Math.PI / 180;
+    const Δλ = (lon2 - lon1) * Math.PI / 180;
+
+    const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+              Math.cos(φ1) * Math.cos(φ2) *
+              Math.sin(Δλ/2) * Math.sin(Δλ/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+    return R * c;
+}
+
+function calculatePolygonArea(latlngs) {
+    let area = 0;
+    const n = latlngs.length;
+    
+    if (n < 3) return 0;
+    
+    // Convert to radians
+    const coords = latlngs.map(ll => ({
+        lat: ll.lat * Math.PI / 180,
+        lng: ll.lng * Math.PI / 180
+    }));
+    
+    for (let i = 0; i < n; i++) {
+        const j = (i + 1) % n;
+        area += (coords[j].lng - coords[i].lng) *
+                (2 + Math.sin(coords[i].lat) + Math.sin(coords[j].lat));
+    }
+    
+    area = area * 6378137 * 6378137 / 2;
+    return Math.abs(area);
+}
+
+function toggleRadiusField() {
+    const type = document.getElementById('boundaryType').value;
+    const radiusGroup = document.getElementById('radiusGroup');
+    
+    if (type === 'circle') {
+        radiusGroup.style.display = 'block';
+        // Update circle radius if there's a circle drawn
+        const layers = drawnItems.getLayers();
+        if (layers.length > 0 && layers[0] instanceof L.Circle) {
+            const circle = layers[0];
+            const radiusValue = circle.getRadius();
+            document.getElementById('radius').value = Math.round(radiusValue);
         }
+    } else {
+        radiusGroup.style.display = 'none';
+    }
+}
 
-        function testBoundary() {
-            if (drawnItems.getLayers().length === 0) {
-                showToast('Please draw a boundary first', 'error');
-                return;
-            }
-            
-            // Test Boundary Functionality:
-            // 1. Check if current location is within the drawn boundary
-            // 2. Provide visual feedback on the map
-            // 3. Show a message indicating if the user is inside or outside the boundary
-            
-            if (currentLocationMarker) {
-                const userLatLng = currentLocationMarker.getLatLng();
-                const boundaryLayer = drawnItems.getLayers()[0];
-                let isInside = false;
-                
-                if (boundaryLayer instanceof L.Circle) {
-                    const distance = boundaryLayer.getLatLng().distanceTo(userLatLng);
-                    isInside = distance <= boundaryLayer.getRadius();
-                } else if (boundaryLayer instanceof L.Rectangle || boundaryLayer instanceof L.Polygon) {
-                    isInside = boundaryLayer.getBounds().contains(userLatLng);
-                }
-                
-                if (isInside) {
-                    showToast('✅ Your current location is INSIDE the boundary', 'success');
-                } else {
-                    showToast('❌ Your current location is OUTSIDE the boundary', 'error');
-                }
-            } else {
-                showToast('Please enable location detection first to test the boundary', 'warning');
-                getCurrentLocation();
-            }
-        }
+function updateBoundaryPreview(layer, type) {
+    const preview = document.getElementById('boundaryPreview');
+    if (!layer) {
+        preview.style.display = 'none';
+        return;
+    }
+    
+    let area = 0;
+    let radius = 'N/A';
+    let vertices = 0;
+    
+    if (type === 'circle') {
+        radius = layer.getRadius().toFixed(2) + ' meters';
+        area = (Math.PI * Math.pow(layer.getRadius(), 2)).toFixed(2) + ' m²';
+        vertices = 'N/A';
+    } else if (type === 'rectangle') {
+        const bounds = layer.getBounds();
+        const northEast = bounds.getNorthEast();
+        const southWest = bounds.getSouthWest();
+        const latDistance = calculateHaversineDistance(
+            southWest.lat, southWest.lng,
+            northEast.lat, southWest.lng
+        );
+        const lngDistance = calculateHaversineDistance(
+            southWest.lat, southWest.lng,
+            southWest.lat, northEast.lng
+        );
+        area = (latDistance * lngDistance).toFixed(2) + ' m²';
+        radius = 'N/A';
+        vertices = 4;
+    } else if (type === 'polygon') {
+        vertices = layer.getLatLngs()[0].length;
+        area = calculatePolygonArea(layer.getLatLngs()[0]).toFixed(2) + ' m²';
+        radius = 'N/A';
+    }
+    
+    document.getElementById('previewArea').textContent = 'Area: ' + area;
+    document.getElementById('previewRadius').textContent = 'Radius: ' + radius;
+    document.getElementById('previewVertices').textContent = 'Vertices: ' + vertices;
+}
 
-        function loadExistingBoundaries() {
-            fetch('/admin/get-boundaries')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    const locationList = document.getElementById('locationList');
-                    
-                    if (data.success && data.boundaries && data.boundaries.length > 0) {
-                        let html = '';
-                        data.boundaries.forEach(boundary => {
-                            html += `
-                                <div class="location-item">
-                                    <div class="location-name">${boundary.name}</div>
-                                    <div class="location-coords">
-                                        ${boundary.type === 'circle' ? 
-                                            `Center: ${boundary.latitude.toFixed(6)}, ${boundary.longitude.toFixed(6)}` : 
-                                            boundary.type === 'rectangle' ?
-                                            `Bounds: ${boundary.north.toFixed(6)} to ${boundary.south.toFixed(6)}` :
-                                            `Polygon: ${boundary.coordinates.length} vertices`
-                                        }
-                                    </div>
-                                    <div class="location-radius">
-                                        ${boundary.type === 'circle' ? `Radius: ${boundary.radius_km} km` : boundary.type}
-                                    </div>
-                                    <div class="location-actions">
-                                        <button class="btn-sm btn-warning" onclick="editBoundary('${boundary.name}')">
-                                            <i class="fas fa-edit"></i> Edit
-                                        </button>
-                                        <button class="btn-sm btn-danger" onclick="deleteBoundary('${boundary.name}')">
-                                            <i class="fas fa-trash"></i> Delete
-                                        </button>
-                                        <button class="btn-sm btn-primary" onclick="viewOnMap('${boundary.name}')">
-                                            <i class="fas fa-eye"></i> View
-                                        </button>
-                                    </div>
-                                </div>
-                            `;
-                        });
-                        locationList.innerHTML = html;
-                    } else {
-                        locationList.innerHTML = '<div class="text-muted text-center">No boundaries configured yet</div>';
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading boundaries:', error);
-                    document.getElementById('locationList').innerHTML = '<div class="text-danger text-center">Error loading boundaries</div>';
-                });
-        }
+function toggleBoundaryPreview() {
+    const preview = document.getElementById('boundaryPreview');
+    if (drawnItems.getLayers().length === 0) {
+        showToast('No boundary to preview', 'warning');
+        return;
+    }
+    
+    const layer = drawnItems.getLayers()[0];
+    let type = '';
+    if (layer instanceof L.Circle) type = 'circle';
+    else if (layer instanceof L.Rectangle) type = 'rectangle';
+    else if (layer instanceof L.Polygon) type = 'polygon';
+    
+    updateBoundaryPreview(layer, type);
+    preview.style.display = 'block';
+}
 
-        function editBoundary(name) {
-            showToast('Edit functionality for: ' + name, 'warning');
-            // Implementation for editing boundaries
-        }
+function hidePreview() {
+    document.getElementById('boundaryPreview').style.display = 'none';
+}
 
-        function deleteBoundary(name) {
-            if (confirm(`Are you sure you want to delete the boundary "${name}"?`)) {
-                fetch('/admin/delete-boundary', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ name: name })
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        showToast('Boundary deleted successfully!', 'success');
-                        loadExistingBoundaries();
-                    } else {
-                        showToast('Error deleting boundary: ' + data.message, 'error');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showToast('Error deleting boundary', 'error');
-                });
-            }
-        }
-
-        function viewOnMap(name) {
-            showToast('Viewing boundary on map: ' + name, 'warning');
-            // Implementation for viewing specific boundary on map
-        }
-
-        // Toast notification function
-        function showToast(message, type = 'info') {
-            const toastContainer = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = `toast toast-${type}`;
-            
-            let icon = 'info-circle';
-            if (type === 'success') icon = 'check-circle';
-            if (type === 'error') icon = 'exclamation-circle';
-            if (type === 'warning') icon = 'exclamation-triangle';
-            
-            toast.innerHTML = `
-                <i class="fas fa-${icon}"></i>
-                <span>${message}</span>
-            `;
-            
-            toastContainer.appendChild(toast);
-            
-            // Auto remove after 5 seconds
-            setTimeout(() => {
-                if (toast.parentNode) {
-                    toast.remove();
-                }
-            }, 5000);
-        }
-
-        // Initialize when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            // Set current year in footer
-            document.getElementById('year').textContent = new Date().getFullYear();
-            
-            initMap();
-            toggleRadiusField();
-            
-            // Add resize listener for responsive behavior
-            window.addEventListener('resize', function() {
-                setTimeout(() => {
-                    map.invalidateSize();
-                }, 300);
-            });
+// Save boundary
+async function saveBoundary() {
+    const name = document.getElementById('locationName').value.trim();
+    const type = document.getElementById('boundaryType').value;
+    const radius = document.getElementById('radius').value;
+    
+    if (!name) {
+        showToast('Please enter a location name', 'error');
+        return;
+    }
+    
+    if (drawnItems.getLayers().length === 0) {
+        showToast('Please draw a boundary on the map first', 'error');
+        return;
+    }
+    
+    const layer = drawnItems.getLayers()[0];
+    let boundaryData;
+    
+    if (type === 'circle') {
+        const center = layer.getLatLng();
+        boundaryData = {
+            name: name,
+            type: 'circle',
+            latitude: parseFloat(center.lat.toFixed(6)),
+            longitude: parseFloat(center.lng.toFixed(6)),
+            radius_km: parseFloat(radius) / 1000
+        };
+    } else if (type === 'rectangle') {
+        const bounds = layer.getBounds();
+        boundaryData = {
+            name: name,
+            type: 'rectangle',
+            north: parseFloat(bounds.getNorth().toFixed(6)),
+            south: parseFloat(bounds.getSouth().toFixed(6)),
+            east: parseFloat(bounds.getEast().toFixed(6)),
+            west: parseFloat(bounds.getWest().toFixed(6))
+        };
+    } else if (type === 'polygon') {
+        const latlngs = layer.getLatLngs()[0];
+        boundaryData = {
+            name: name,
+            type: 'polygon',
+            coordinates: latlngs.map(latlng => [
+                parseFloat(latlng.lat.toFixed(6)), 
+                parseFloat(latlng.lng.toFixed(6))
+            ])
+        };
+    }
+    
+    try {
+        const response = await fetch('/admin/save-boundary', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(boundaryData)
         });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showToast('Boundary saved successfully!', 'success');
+            loadExistingBoundaries();
+            clearAllDrawings();
+            document.getElementById('locationName').value = '';
+        } else {
+            showToast('Error: ' + data.message, 'error');
+        }
+    } catch (error) {
+        console.error('Save boundary error:', error);
+        showToast('Error saving boundary', 'error');
+    }
+}
+
+// Test boundary
+function testBoundary() {
+    if (drawnItems.getLayers().length === 0) {
+        showToast('Please draw a boundary first', 'error');
+        return;
+    }
+    
+    const layer = drawnItems.getLayers()[0];
+    let testResults = '';
+    
+    if (layer instanceof L.Circle) {
+        const center = layer.getLatLng();
+        const radius = layer.getRadius();
+        testResults = `Circle Boundary Test:<br>
+                      Center: ${center.lat.toFixed(6)}, ${center.lng.toFixed(6)}<br>
+                      Radius: ${radius.toFixed(2)} meters<br>
+                      Area: ${(Math.PI * radius * radius).toFixed(2)} m²`;
+    } else if (layer instanceof L.Rectangle) {
+        const bounds = layer.getBounds();
+        testResults = `Rectangle Boundary Test:<br>
+                      North: ${bounds.getNorth().toFixed(6)}<br>
+                      South: ${bounds.getSouth().toFixed(6)}<br>
+                      East: ${bounds.getEast().toFixed(6)}<br>
+                      West: ${bounds.getWest().toFixed(6)}`;
+    } else if (layer instanceof L.Polygon) {
+        const vertices = layer.getLatLngs()[0].length;
+        const area = calculatePolygonArea(layer.getLatLngs()[0]);
+        testResults = `Polygon Boundary Test:<br>
+                      Vertices: ${vertices}<br>
+                      Area: ${area.toFixed(2)} m²`;
+    }
+    
+    showToast(testResults, 'success');
+    
+    // Visual test - flash the boundary
+    layer.setStyle({color: '#ff0000', weight: 5});
+    setTimeout(() => {
+        layer.setStyle({color: layer.options.color, weight: 3});
+    }, 2000);
+}
+
+// Load existing boundaries
+async function loadExistingBoundaries() {
+    try {
+        const response = await fetch('/admin/get-boundaries');
+        const data = await response.json();
+        
+        if (data.success && data.boundaries) {
+            boundaries = {};
+            const locationList = document.getElementById('locationList');
+            let html = '';
+            
+            data.boundaries.forEach((boundary, index) => {
+                boundaries[boundary.name] = boundary;
+                
+                let coordsText = '';
+                if (boundary.type === 'circle') {
+                    coordsText = `Center: ${boundary.latitude?.toFixed(6) || 'N/A'}, ${boundary.longitude?.toFixed(6) || 'N/A'}<br>Radius: ${boundary.radius_km ? (boundary.radius_km * 1000).toFixed(2) + 'm' : 'N/A'}`;
+                } else if (boundary.type === 'rectangle') {
+                    coordsText = `Bounds: ${boundary.north?.toFixed(6) || 'N/A'} to ${boundary.south?.toFixed(6) || 'N/A'}`;
+                } else if (boundary.type === 'polygon') {
+                    coordsText = `Polygon with ${boundary.coordinates?.length || 0} vertices`;
+                }
+                
+                html += `
+                    <div class="location-item">
+                        <div class="location-name">${boundary.name}</div>
+                        <div class="location-coords">${coordsText}</div>
+                        <div class="location-radius">Type: ${boundary.type}</div>
+                        <div class="boundary-actions">
+                            <button class="action-btn view" onclick="viewBoundary('${boundary.name}')">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                            <button class="action-btn edit" onclick="editBoundary('${boundary.name}')">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="action-btn delete" onclick="deleteBoundary('${boundary.name}')">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            locationList.innerHTML = html || '<div class="text-muted text-center py-4">No boundaries configured yet</div>';
+            document.getElementById('boundaryCount').textContent = data.boundaries.length;
+        }
+    } catch (error) {
+        console.error('Error loading boundaries:', error);
+        document.getElementById('locationList').innerHTML = '<div class="text-danger text-center py-4">Error loading boundaries</div>';
+    }
+}
+
+// View boundary on map
+function viewBoundary(name) {
+    const boundary = boundaries[name];
+    if (!boundary) {
+        showToast('Boundary not found', 'error');
+        return;
+    }
+    
+    // Clear existing drawings
+    drawnItems.clearLayers();
+    
+    let layer;
+    if (boundary.type === 'circle') {
+        layer = L.circle([boundary.latitude, boundary.longitude], {
+            radius: boundary.radius_km * 1000,
+            color: '#27ae60',
+            fillColor: '#27ae60',
+            fillOpacity: 0.2,
+            weight: 3
+        });
+    } else if (boundary.type === 'rectangle') {
+        layer = L.rectangle([
+            [boundary.north, boundary.east],
+            [boundary.south, boundary.west]
+        ], {
+            color: '#e74c3c',
+            fillColor: '#e74c3c',
+            fillOpacity: 0.2,
+            weight: 3
+        });
+    } else if (boundary.type === 'polygon') {
+        layer = L.polygon(boundary.coordinates, {
+            color: '#3498db',
+            fillColor: '#3498db',
+            fillOpacity: 0.2,
+            weight: 3
+        });
+    }
+    
+    if (layer) {
+        layer.addTo(drawnItems);
+        map.fitBounds(layer.getBounds());
+        updateBoundaryCoords(layer, boundary.type);
+        document.getElementById('locationName').value = boundary.name;
+        document.getElementById('boundaryType').value = boundary.type;
+        toggleRadiusField();
+        
+        if (boundary.type === 'circle') {
+            document.getElementById('radius').value = boundary.radius_km * 1000;
+        }
+        
+        showToast(`Viewing boundary: ${name}`, 'success');
+    }
+}
+
+// Edit boundary
+function editBoundary(name) {
+    viewBoundary(name);
+    showToast(`Editing boundary: ${name}. Make changes and click Save.`, 'info');
+}
+
+// Delete boundary
+async function deleteBoundary(name) {
+    if (!confirm(`Are you sure you want to delete the boundary "${name}"?`)) {
+        return;
+    }
+    
+    try {
+        const response = await fetch('/admin/delete-boundary', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name: name })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showToast('Boundary deleted successfully!', 'success');
+            loadExistingBoundaries();
+            clearAllDrawings();
+        } else {
+            showToast('Error: ' + data.message, 'error');
+        }
+    } catch (error) {
+        console.error('Error deleting boundary:', error);
+        showToast('Error deleting boundary', 'error');
+    }
+}
+
+// Toast notification function
+function showToast(message, type = 'info') {
+    const toastContainer = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    
+    let icon = 'info-circle';
+    if (type === 'success') icon = 'check-circle';
+    if (type === 'error') icon = 'exclamation-circle';
+    if (type === 'warning') icon = 'exclamation-triangle';
+    
+    toast.innerHTML = `
+        <i class="fas fa-${icon}"></i>
+        <span>${message}</span>
+    `;
+    
+    toastContainer.appendChild(toast);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        if (toast.parentNode) {
+            toast.remove();
+        }
+    }, 5000);
+}
+
+// Initialize when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    // Set current year in footer
+    document.getElementById('year').textContent = new Date().getFullYear();
+    
+    initMap();
+    toggleRadiusField();
+    
+    // Add resize listener for responsive behavior
+    window.addEventListener('resize', function() {
+        setTimeout(() => {
+            if (map) map.invalidateSize();
+        }, 300);
+    });
+    
+    // Handle window resize for better mobile experience
+    window.addEventListener('orientationchange', function() {
+        setTimeout(() => {
+            if (map) {
+                map.invalidateSize();
+                // Re-center map
+                if (currentLocationMarker) {
+                    map.setView(currentLocationMarker.getLatLng(), map.getZoom());
+                }
+            }
+        }, 500);
+    });
+});
     </script>
 </body>
 </html>

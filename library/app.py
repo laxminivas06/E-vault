@@ -1727,6 +1727,7 @@ def admin_dashboard():
                          total_pdfs=total_pdfs,
                          total_pages=total_pages)
 
+
 @app.route('/admin/users')
 @require_location_verification
 def admin_users():
@@ -1737,15 +1738,30 @@ def admin_users():
 
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 10, type=int)
+    search_query = request.args.get('search', '').strip().lower()
 
     users = load_json_data('users.json')
 
+    # Apply search filter if query exists
+    if search_query:
+        filtered_users = []
+        for user in users:
+            # Search in username, name, and role
+            if (search_query in user.get('username', '').lower() or 
+                search_query in user.get('name', '').lower() or 
+                search_query in user.get('role', '').lower()):
+                filtered_users.append(user)
+        users = filtered_users
+    else:
+        filtered_users = users
+
+    # Set default values for users
     for user in users:
         user.setdefault('created_at', 'Unknown')
         user.setdefault('name', 'Unknown')
 
     total_users = len(users)
-    total_pages = (total_users + per_page - 1) // per_page
+    total_pages = (total_users + per_page - 1) // per_page if total_users > 0 else 1
 
     if page < 1:
         page = 1
@@ -1759,8 +1775,8 @@ def admin_users():
 
     user_stats = {
         'total_users': total_users,
-        'admin_users': sum(1 for user in users if user.get('role') == 'admin'),
-        'student_users': sum(1 for user in users if user.get('role') == 'student')
+        'admin_users': sum(1 for user in filtered_users if user.get('role') == 'admin'),
+        'student_users': sum(1 for user in filtered_users if user.get('role') == 'student')
     }
 
     return render_template('admin_users.html',
@@ -1772,7 +1788,8 @@ def admin_users():
                          page=page,
                          per_page=per_page,
                          total_users=total_users,
-                         total_pages=total_pages)
+                         total_pages=total_pages,
+                         search_query=search_query)
 
 @app.route('/admin/location')
 @require_location_verification
