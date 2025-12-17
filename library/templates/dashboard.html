@@ -1964,6 +1964,80 @@
         });
     });
 
+
+    // Continuous location checking every 10 seconds
+let locationCheckInterval;
+
+function startLocationMonitoring() {
+    // Check location every 10 seconds
+    locationCheckInterval = setInterval(checkCurrentLocation, 10000);
+    
+    // Initial check
+    checkCurrentLocation();
+}
+
+function checkCurrentLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+                
+                // Send location to server for verification
+                fetch('/real-time-location-check', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        latitude: lat,
+                        longitude: lon
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.success) {
+                        if (data.redirect) {
+                            // User moved outside boundary - redirect to location check
+                            clearInterval(locationCheckInterval);
+                            window.location.href = data.redirect_url;
+                        } else {
+                            console.warn('Location check failed:', data.message);
+                        }
+                    } else {
+                        console.log('Location verified:', data.location);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error checking location:', error);
+                });
+            },
+            (error) => {
+                console.error('Error getting location:', error.message);
+                // If location access is denied, we might want to handle it differently
+                if (error.code === error.PERMISSION_DENIED) {
+                    console.warn('Location access denied by user');
+                }
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 5000,
+                maximumAge: 0
+            }
+        );
+    }
+}
+
+// Start monitoring when page loads
+document.addEventListener('DOMContentLoaded', startLocationMonitoring);
+
+// Clean up interval when leaving page
+window.addEventListener('beforeunload', () => {
+    if (locationCheckInterval) {
+        clearInterval(locationCheckInterval);
+    }
+});
+
     // AJAX pagination function
     function loadPage(page, searchQuery = '') {
         const params = new URLSearchParams();

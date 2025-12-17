@@ -16,6 +16,7 @@ import pandas as pd
 import numpy as np
 import time
 import traceback
+from werkzeug.utils import secure_filename
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -39,14 +40,15 @@ app.config['UPLOAD_FOLDER'] = 'static/uploads'
 mail = Mail(app)
 
 # Location verification settings
-LOCATION_CHECK_INTERVAL = 300  # 5 minutes in seconds
+LOCATION_CHECK_INTERVAL = 10  # Changed from 300 to 10 seconds for continuous checking
 
 def require_location_verification(f):
-    """Simplified decorator for location verification"""
+    """Decorator for location verification with continuous checking"""
     @wraps(f)
     def decorated_function(*args, **kwargs):
         # Skip location check for static files and specific routes
-        if request.endpoint in ['static', 'welcome', 'location_check', 'check_boundary', 'logout']:
+        if request.endpoint in ['static', 'welcome', 'location_check', 'check_boundary', 'logout',
+                               'real_time_location_check', 'admin_real_time_location_check']:
             return f(*args, **kwargs)
 
         # Check if location needs verification
@@ -67,7 +69,7 @@ def needs_location_verification():
     if not session.get('location_verified'):
         return True
 
-    # Check if verification has expired
+    # Check if verification has expired (10 seconds interval)
     last_check = session.get('last_location_check')
     if last_check:
         try:
@@ -89,6 +91,10 @@ def update_location_verification(lat, lon, location_name):
     session['current_latitude'] = lat
     session['current_longitude'] = lon
     session['needs_location_verification'] = False
+
+    # Store the current page before verification was triggered
+    if 'verified_location' not in session:
+        session['previous_page'] = session.get('intended_url', url_for('dashboard'))
 
 # ==================== HELPER FUNCTIONS ====================
 def load_json_data(filename):
@@ -173,6 +179,7 @@ def is_location_allowed(user_lat, user_lon):
                 return True, boundary['name']
 
     return False, None
+
 # Add these helper functions for statistics
 def track_user_access(username, action, location=None, pdf_id=None):
     """Track user access for statistics"""
@@ -286,7 +293,6 @@ def export_statistics():
         logger.error(f"Error exporting statistics: {str(e)}")
         flash('Error exporting statistics', 'error')
         return redirect(url_for('admin_statistics'))
-
 
 @app.route('/track-pdf-view', methods=['POST'])
 @require_location_verification
@@ -629,7 +635,6 @@ def send_thank_you_email(name, email, message_type):
         logger.error(f"Error sending thank you email to {email}: {str(e)}")
         raise
 
-
 @app.route('/admin/contacts')
 @require_location_verification
 def admin_contacts():
@@ -749,8 +754,6 @@ def delete_contact():
         logger.error(f"Error deleting contact: {str(e)}")
         return jsonify({'success': False, 'message': 'Error deleting contact'}), 500
 
-
-
 def get_user_detailed_stats(username):
     """Get detailed statistics for a specific user"""
     try:
@@ -806,21 +809,6 @@ def get_user_detailed_stats(username):
         logger.error(f"Error getting user detailed stats: {str(e)}")
         return None
 
-def update_location_verification(lat, lon, location_name):
-    """Update session with new location verification"""
-    session['location_verified'] = True
-    session['verified_location'] = location_name
-    session['last_location_check'] = datetime.now().isoformat()
-    session['current_latitude'] = lat
-    session['current_longitude'] = lon
-    session['needs_location_verification'] = False
-
-    # Track location access if user is logged in
-    if session.get('user_id'):
-        track_user_access(session['user_id'], 'location_verify', location_name)
-
-
-
 def is_point_in_polygon(lat, lon, polygon):
     """Check if a point is inside a polygon using ray casting algorithm"""
     n = len(polygon)
@@ -835,7 +823,6 @@ def is_point_in_polygon(lat, lon, polygon):
         j = i
 
     return inside
-
 
 def validate_student_credentials(username, password):
     """Validate student credentials (rollno OR department code as username, DOB/password as password)"""
@@ -873,7 +860,6 @@ def validate_admin_credentials(username, password):
 def is_valid_rollno(rollno):
     """Check if roll number is valid (alphanumeric, 10 characters)"""
     return bool(re.match(r'^[A-Za-z0-9]{10}$', rollno))
-
 
 def process_excel_users(file):
     """Process Excel file for bulk user upload - IMPROVED date format handling"""
@@ -970,7 +956,6 @@ def process_excel_users(file):
         logger.error(f"Error processing Excel file: {str(e)}")
         logger.error(traceback.format_exc())
         return False, f"Error processing Excel file: {str(e)}"
-
 
 def clean_and_validate_dob(dob_string, row_number, errors):
     """Clean and validate date of birth in various formats - SUPER ROBUST VERSION"""
@@ -1145,7 +1130,6 @@ def clean_and_validate_dob(dob_string, row_number, errors):
         errors.append(f"Row {row_number}: Used default date due to critical error")
         return "01012000"  # Default fallback date
 
-
 def is_valid_dob(dob):
     """More lenient DOB validation"""
     try:
@@ -1183,7 +1167,6 @@ def is_valid_dob(dob):
     except (ValueError, IndexError):
         return False
 
-
 def create_upload_summary(success_count, error_count, errors):
     """Create a user-friendly upload summary"""
     if success_count == 0:
@@ -1220,9 +1203,6 @@ def format_date(date_string):
         return "Unknown"
     except:
         return "Unknown"
-
-
-
 
 def process_excel_pdfs(file):
     """Process Excel file for bulk PDF upload with better error handling"""
@@ -1301,7 +1281,6 @@ def process_excel_pdfs(file):
         logger.error(f"Error processing Excel file: {str(e)}")
         return False, f"Error processing Excel file: {str(e)}"
 
-
 @app.errorhandler(Exception)
 def handle_unexpected_error(error):
     """Handle unexpected errors and return JSON responses"""
@@ -1323,7 +1302,7 @@ def welcome():
     """Welcome page"""
     location_keys = ['location_verified', 'verified_location', 'last_location_check',
                     'current_latitude', 'current_longitude', 'needs_location_verification',
-                    'intended_url']
+                    'intended_url', 'previous_page']
     for key in location_keys:
         session.pop(key, None)
 
@@ -1343,7 +1322,7 @@ def welcome():
 def location_check():
     """Location verification endpoint"""
     if not needs_location_verification() and session.get('location_verified'):
-        intended_url = session.get('intended_url', url_for('login'))
+        intended_url = session.get('intended_url', url_for('dashboard'))
         session.pop('intended_url', None)
         return redirect(intended_url)
 
@@ -1380,7 +1359,7 @@ def location_check():
                 redirect_url = intended_url
             else:
                 if session.get('user_id'):
-                    redirect_url = url_for('dashboard')
+                    redirect_url = session.get('previous_page', url_for('dashboard'))
                 else:
                     redirect_url = url_for('login')
 
@@ -1398,6 +1377,106 @@ def location_check():
             })
 
     return render_template('location_check.html')
+
+# NEW: Real-time location checking endpoint for users
+@app.route('/real-time-location-check', methods=['POST'])
+def real_time_location_check():
+    """Real-time location check endpoint for continuous monitoring"""
+    if not session.get('user_id'):
+        return jsonify({'success': False, 'message': 'Not authenticated', 'redirect': True}), 401
+
+    data = request.get_json()
+    user_lat = data.get('latitude')
+    user_lon = data.get('longitude')
+
+    if user_lat is None or user_lon is None:
+        return jsonify({'success': False, 'message': 'Location data required'}), 400
+
+    try:
+        user_lat = float(user_lat)
+        user_lon = float(user_lon)
+    except (TypeError, ValueError):
+        return jsonify({'success': False, 'message': 'Invalid location data'}), 400
+
+    allowed, location_name = is_location_allowed(user_lat, user_lon)
+
+    if allowed:
+        # Update session with new location and timestamp
+        session['location_verified'] = True
+        session['verified_location'] = location_name
+        session['last_location_check'] = datetime.now().isoformat()
+        session['current_latitude'] = user_lat
+        session['current_longitude'] = user_lon
+
+        return jsonify({
+            'success': True,
+            'location': location_name,
+            'message': 'Location verified'
+        })
+    else:
+        # User moved outside allowed boundary
+        logger.warning(f"User {session.get('user_id')} moved outside boundary: {user_lat}, {user_lon}")
+        
+        # Store current page before redirecting
+        session['previous_page'] = request.referrer or url_for('dashboard')
+        session['needs_location_verification'] = True
+        
+        return jsonify({
+            'success': False,
+            'message': 'You have moved outside the allowed area. Please return to the designated location.',
+            'redirect': True,
+            'redirect_url': url_for('location_check')
+        }), 403
+
+# NEW: Real-time location checking endpoint for admin
+@app.route('/admin/real-time-location-check', methods=['POST'])
+def admin_real_time_location_check():
+    """Real-time location check endpoint for admin continuous monitoring"""
+    if not session.get('user_id') or session.get('user_role') != 'admin':
+        return jsonify({'success': False, 'message': 'Not authenticated', 'redirect': True}), 401
+
+    data = request.get_json()
+    user_lat = data.get('latitude')
+    user_lon = data.get('longitude')
+
+    if user_lat is None or user_lon is None:
+        return jsonify({'success': False, 'message': 'Location data required'}), 400
+
+    try:
+        user_lat = float(user_lat)
+        user_lon = float(user_lon)
+    except (TypeError, ValueError):
+        return jsonify({'success': False, 'message': 'Invalid location data'}), 400
+
+    allowed, location_name = is_location_allowed(user_lat, user_lon)
+
+    if allowed:
+        # Update session with new location and timestamp
+        session['location_verified'] = True
+        session['verified_location'] = location_name
+        session['last_location_check'] = datetime.now().isoformat()
+        session['current_latitude'] = user_lat
+        session['current_longitude'] = user_lon
+
+        return jsonify({
+            'success': True,
+            'location': location_name,
+            'message': 'Location verified'
+        })
+    else:
+        # Admin moved outside allowed boundary
+        logger.warning(f"Admin {session.get('user_id')} moved outside boundary: {user_lat}, {user_lon}")
+        
+        # Store current page before redirecting
+        session['previous_page'] = request.referrer or url_for('admin_dashboard')
+        session['needs_location_verification'] = True
+        
+        return jsonify({
+            'success': False,
+            'message': 'You have moved outside the allowed area. Please return to the designated location.',
+            'redirect': True,
+            'redirect_url': url_for('location_check')
+        }), 403
 
 @app.route('/login', methods=['GET', 'POST'])
 @require_location_verification
@@ -1495,7 +1574,6 @@ def init_access_logs():
         return jsonify({'success': True, 'message': 'Access logs initialized'})
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)})
-
 
 @app.route('/debug/pdfs')
 def debug_pdfs():
@@ -1621,6 +1699,9 @@ def dashboard():
         'last_login': session.get('login_time', 'First time')[:10] if session.get('login_time') else 'First time'
     }
 
+    # Store current page for redirect after location verification
+    session['previous_page'] = request.url
+
     return render_template('dashboard.html',
                           pdfs=paginated_pdfs,
                           all_pdfs_data=pdf_data_js,  # Pass all PDF data for JS
@@ -1633,7 +1714,8 @@ def dashboard():
                           page=page,
                           per_page=per_page,
                           total_pdfs=total_pdfs,
-                          total_pages=total_pages)
+                          total_pages=total_pages,
+                          location_check_interval=LOCATION_CHECK_INTERVAL * 1000)  # Convert to milliseconds
 
 def validate_and_fix_pdf_data(pdfs):
     """Validate and fix PDF data issues"""
@@ -1715,6 +1797,9 @@ def admin_dashboard():
                              total_pdfs=total_pdfs,
                              total_pages=total_pages)
 
+    # Store current page for redirect after location verification
+    session['previous_page'] = request.url
+
     return render_template('admin_dashboard.html',
                          pdfs=pdfs_page,
                          users=users,
@@ -1725,8 +1810,8 @@ def admin_dashboard():
                          page=page,
                          per_page=per_page,
                          total_pdfs=total_pdfs,
-                         total_pages=total_pages)
-
+                         total_pages=total_pages,
+                         location_check_interval=LOCATION_CHECK_INTERVAL * 1000)  # Convert to milliseconds
 
 @app.route('/admin/search-users')
 @require_location_verification
@@ -1785,7 +1870,7 @@ def search_users():
         'search_query': search_query
     }
 
-    return jsonify(response_data)\
+    return jsonify(response_data)
 
 @app.route('/admin/users')
 @require_location_verification
@@ -1838,6 +1923,9 @@ def admin_users():
         'student_users': sum(1 for user in all_users if user.get('role') == 'student')
     }
 
+    # Store current page for redirect after location verification
+    session['previous_page'] = request.url
+
     return render_template('admin_users.html',
                          users=users_page,
                          username=session.get('user_id'),
@@ -1848,7 +1936,8 @@ def admin_users():
                          per_page=per_page,
                          total_users=total_users,
                          total_pages=total_pages,
-                         search_query=search_query)
+                         search_query=search_query,
+                         location_check_interval=LOCATION_CHECK_INTERVAL * 1000)
 
 @app.route('/admin/location')
 @require_location_verification
@@ -1858,9 +1947,13 @@ def admin_location():
         flash('Access denied. Admin privileges required.', 'error')
         return redirect(url_for('dashboard'))
 
+    # Store current page for redirect after location verification
+    session['previous_page'] = request.url
+
     return render_template('admin_location.html',
                          username=session.get('user_id'),
-                         location=session.get('verified_location'))
+                         location=session.get('verified_location'),
+                         location_check_interval=LOCATION_CHECK_INTERVAL * 1000)
 
 @app.route('/check-boundary', methods=['POST'])
 @require_location_verification
@@ -2008,7 +2101,6 @@ def delete_pdf(pdf_id):
 
     return jsonify({'success': True, 'message': 'PDF deleted successfully'})
 
-
 @app.route('/admin/upload-users-excel', methods=['POST'])
 @require_location_verification
 def upload_users_excel():
@@ -2147,8 +2239,6 @@ def upload_pdf():
             'message': f'Error uploading PDF: {str(e)}'
         }), 500
 
-
-
 @app.route('/admin/upload-pdfs-bulk', methods=['POST'])
 @require_location_verification
 def upload_pdfs_bulk():
@@ -2219,7 +2309,6 @@ def upload_pdfs_excel():
         })
     else:
         return jsonify({'success': False, 'message': message}), 400
-
 
 @app.route('/admin/download-users-template')
 @require_location_verification
@@ -2304,7 +2393,6 @@ def download_users_template():
         mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
 
-
 @app.route('/admin/debug-upload', methods=['POST'])
 def debug_upload():
     """Debug endpoint to check upload issues"""
@@ -2337,9 +2425,6 @@ def debug_upload():
 
     except Exception as e:
         return jsonify({'error': f'Server error: {str(e)}'}), 500
-
-
-
 
 @app.route('/admin/download-pdfs-template')
 @require_location_verification
