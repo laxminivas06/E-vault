@@ -1,3 +1,4 @@
+from tkinter.font import Font
 from flask_mail import Mail, Message
 from flask import Flask, render_template, render_template_string, request, redirect, url_for, session, jsonify, flash
 import json
@@ -43,7 +44,7 @@ mail = Mail(app)
 LOCATION_CHECK_INTERVAL = 10  # Changed from 300 to 10 seconds for continuous checking
 
 def require_location_verification(f):
-    """Decorator for location verification with continuous checking"""
+    """Decorator for location verification - Only checks initial location"""
     @wraps(f)
     def decorated_function(*args, **kwargs):
         # Skip location check for static files and specific routes
@@ -68,18 +69,6 @@ def needs_location_verification():
     # If location is not verified at all
     if not session.get('location_verified'):
         return True
-
-    # Check if verification has expired (10 seconds interval)
-    last_check = session.get('last_location_check')
-    if last_check:
-        try:
-            last_check_time = datetime.fromisoformat(last_check)
-            time_since_check = (datetime.now() - last_check_time).total_seconds()
-            if time_since_check > LOCATION_CHECK_INTERVAL:
-                return True
-        except Exception as e:
-            logger.error(f"Error checking last location time: {str(e)}")
-            return True
 
     return False
 
@@ -1378,12 +1367,11 @@ def location_check():
 
     return render_template('location_check.html')
 
-# NEW: Real-time location checking endpoint for users
 @app.route('/real-time-location-check', methods=['POST'])
 def real_time_location_check():
-    """Real-time location check endpoint for continuous monitoring"""
+    """Location check endpoint - Only for manual checks"""
     if not session.get('user_id'):
-        return jsonify({'success': False, 'message': 'Not authenticated', 'redirect': True}), 401
+        return jsonify({'success': False, 'message': 'Not authenticated'}), 401
 
     data = request.get_json()
     user_lat = data.get('latitude')
@@ -1401,10 +1389,9 @@ def real_time_location_check():
     allowed, location_name = is_location_allowed(user_lat, user_lon)
 
     if allowed:
-        # Update session with new location and timestamp
+        # Update session
         session['location_verified'] = True
         session['verified_location'] = location_name
-        session['last_location_check'] = datetime.now().isoformat()
         session['current_latitude'] = user_lat
         session['current_longitude'] = user_lon
 
@@ -1414,20 +1401,17 @@ def real_time_location_check():
             'message': 'Location verified'
         })
     else:
-        # User moved outside allowed boundary
-        logger.warning(f"User {session.get('user_id')} moved outside boundary: {user_lat}, {user_lon}")
-        
-        # Store current page before redirecting
-        session['previous_page'] = request.referrer or url_for('dashboard')
+        # User is outside boundary - mark for verification
+        session['location_verified'] = False
         session['needs_location_verification'] = True
         
         return jsonify({
             'success': False,
-            'message': 'You have moved outside the allowed area. Please return to the designated location.',
+            'message': 'You are outside the allowed area.',
             'redirect': True,
             'redirect_url': url_for('location_check')
         }), 403
-
+    
 # NEW: Real-time location checking endpoint for admin
 @app.route('/admin/real-time-location-check', methods=['POST'])
 def admin_real_time_location_check():
@@ -1956,7 +1940,6 @@ def admin_location():
                          location_check_interval=LOCATION_CHECK_INTERVAL * 1000)
 
 @app.route('/check-boundary', methods=['POST'])
-@require_location_verification
 def check_boundary():
     """API endpoint to check if user is within allowed boundary"""
     data = request.get_json()
@@ -1981,22 +1964,30 @@ def check_boundary():
     allowed, location_name = is_location_allowed(user_lat, user_lon)
 
     if not allowed:
-        session.clear()
+        # Clear location verification status
+        session['location_verified'] = False
+        session['needs_location_verification'] = True
+        
         logger.warning(f"User moved outside boundary: {user_lat}, {user_lon}")
         return jsonify({
             'success': False,
-            'message': 'You have moved outside the allowed boundary. Please return to the designated area.',
+            'message': 'You have moved outside the allowed boundary.',
             'redirect': True,
-            'redirect_url': url_for('welcome')
-        }), 403
+            'redirect_url': url_for('location_check')  # Go to location check page
+        })
 
-    update_location_verification(user_lat, user_lon, location_name)
+    # If user is within boundary, update their location but don't force check
+    if session.get('location_verified'):
+        session['current_latitude'] = user_lat
+        session['current_longitude'] = user_lon
+        session['verified_location'] = location_name
 
     return jsonify({
         'success': True,
         'message': 'Location verified',
         'location': location_name
     })
+
 
 @app.route('/admin/add-user', methods=['POST'])
 @require_location_verification
