@@ -1273,6 +1273,11 @@ def process_excel_pdfs(file):
 @app.errorhandler(Exception)
 def handle_unexpected_error(error):
     """Handle unexpected errors and return JSON responses"""
+    # Handle favicon.ico requests first
+    if request.path == '/favicon.ico':
+        logger.debug(f"Favicon request: {request.path}")  # Use debug instead of error
+        return '', 204  # Return no content
+    
     logger.error(f"Unexpected error: {str(error)}")
     logger.error(traceback.format_exc())
 
@@ -1286,6 +1291,67 @@ def handle_unexpected_error(error):
     # Otherwise, show error page
     return render_template('error.html'), 500
 
+@app.route('/favicon.ico')
+def favicon():
+    """Serve favicon to avoid 404 errors"""
+    try:
+        # Try to serve a favicon if you have one
+        favicon_path = os.path.join(app.static_folder, 'favicon.ico')
+        if os.path.exists(favicon_path):
+            return send_file(favicon_path, mimetype='image/vnd.microsoft.icon')
+    except:
+        pass
+    # Return no content if favicon doesn't exist
+    return '', 204
+
+
+@app.route('/debug/boundaries-check')
+def debug_boundaries_check():
+    """Debug endpoint to check boundaries.json"""
+    try:
+        # Check if data directory exists
+        data_dir_exists = os.path.exists('data')
+        boundaries_path = 'data/boundaries.json'
+        file_exists = os.path.exists(boundaries_path)
+        
+        result = {
+            'data_dir_exists': data_dir_exists,
+            'boundaries_file_exists': file_exists,
+            'boundaries_path': boundaries_path,
+            'current_working_directory': os.getcwd()
+        }
+        
+        if file_exists:
+            with open(boundaries_path, 'r') as f:
+                content = f.read()
+                result['file_size'] = len(content)
+                result['is_empty'] = len(content.strip()) == 0
+                if content.strip():
+                    try:
+                        boundaries = json.loads(content)
+                        result['boundaries_count'] = len(boundaries)
+                        result['boundaries'] = boundaries
+                    except json.JSONDecodeError as e:
+                        result['json_error'] = str(e)
+                        result['file_content'] = content[:500]  # First 500 chars
+        else:
+            # Try to create the file
+            try:
+                os.makedirs('data', exist_ok=True)
+                with open(boundaries_path, 'w') as f:
+                    json.dump([], f)
+                result['file_created'] = True
+            except Exception as e:
+                result['creation_error'] = str(e)
+        
+        return jsonify(result)
+        
+    except Exception as e:
+        return jsonify({
+            'error': str(e),
+            'traceback': traceback.format_exc()
+        })
+       
 @app.route('/')
 def welcome():
     """Welcome page"""
@@ -1751,36 +1817,47 @@ def admin_dashboard():
 
     page = request.args.get('page', 1, type=int)
     per_page = 10
+    search_query = request.args.get('search', '').strip()
 
     pdfs = load_json_data('pdfs.json')
     users = load_json_data('users.json')
 
-    for user in users:
-        user.setdefault('created_at', 'Unknown')
-        user.setdefault('name', 'Unknown')
+    # Apply search filter if provided
+    if search_query:
+        search_query_lower = search_query.lower()
+        filtered_pdfs = [
+            pdf for pdf in pdfs
+            if search_query_lower in pdf.get('title', '').lower()
+        ]
+    else:
+        filtered_pdfs = pdfs
 
     user_stats = {
         'total_users': len(users),
-        'total_pdfs': len(pdfs)
+        'total_pdfs': len(pdfs),
+        'filtered_pdfs': len(filtered_pdfs)
     }
 
-    total_pdfs = len(pdfs)
-    total_pages = (total_pdfs + per_page - 1) // per_page
+    total_pdfs = len(filtered_pdfs)
+    total_pages = (total_pdfs + per_page - 1) // per_page if total_pdfs > 0 else 1
 
     page = max(1, min(page, total_pages))
 
     start_idx = (page - 1) * per_page
     end_idx = start_idx + per_page
-    pdfs_page = pdfs[start_idx:end_idx]
+    pdfs_page = filtered_pdfs[start_idx:end_idx]
 
+    # For AJAX requests, return only the table HTML
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         return render_template('_pdf_table.html',
                              pdfs=pdfs_page,
                              page=page,
                              per_page=per_page,
                              total_pdfs=total_pdfs,
-                             total_pages=total_pages)
+                             total_pages=total_pages,
+                             search_query=search_query)
 
+    # For full page requests, return the complete dashboard
     # Store current page for redirect after location verification
     session['previous_page'] = request.url
 
@@ -1795,7 +1872,8 @@ def admin_dashboard():
                          per_page=per_page,
                          total_pdfs=total_pdfs,
                          total_pages=total_pages,
-                         location_check_interval=LOCATION_CHECK_INTERVAL * 1000)  # Convert to milliseconds
+                         search_query=search_query,
+                         location_check_interval=LOCATION_CHECK_INTERVAL * 1000)
 
 @app.route('/admin/search-users')
 @require_location_verification
@@ -2304,85 +2382,92 @@ def upload_pdfs_excel():
 @app.route('/admin/download-users-template')
 @require_location_verification
 def download_users_template():
-    """Download Users template Excel file - CLEAR date format instructions"""
+    """Download Users template Excel file - Simplified version without tkinter dependency"""
     if session.get('user_role') != 'admin':
         flash('Access denied. Admin privileges required.', 'error')
         return redirect(url_for('dashboard'))
 
-    # Create sample data with only the required columns
-    examples = [
-        {
-            'username': '23N81A62B0',
-            'password': '15/08/2002',
-            'role': 'student',
-            'name': 'Rajesh Kumar'
-        },
-        {
-            'username': '22M91A12C5',
-            'password': '23/11/2001',
-            'role': 'student',
-            'name': 'Priya Sharma'
-        },
-        {
-            'username': 'admin2',
-            'password': 'securepassword123',
-            'role': 'admin',
-            'name': 'Library Manager'
-        }
-    ]
-
-    df = pd.DataFrame(examples)
-
-    buffer = BytesIO()
-
-    with pd.ExcelWriter(buffer, engine='openpyxl') as writer:
-        # Write the main template data
-        df.to_excel(writer, sheet_name='Users Template', index=False)
-
-        # Get the worksheet
-        worksheet = writer.sheets['Users Template']
-
-        # Add instructions as separate rows
-        instructions = [
-            "=== IMPORTANT: DATE FORMAT INSTRUCTIONS ===",
-            "For STUDENT date of birth (password field), use ANY of these formats:",
-            "• DD/MM/YYYY (Recommended) - e.g., 15/08/2002",
-            "• DD-MM-YYYY - e.g., 15-08-2002",
-            "• YYYY-MM-DD - e.g., 2002-08-15",
-            "• DDMMYYYY (no separators) - e.g., 15082002",
-            "",
-            "The system will automatically convert to the correct format.",
-            "",
-            "OTHER INSTRUCTIONS:",
-            "• For students: username must be 10-digit roll number",
-            "• For admins: username and password can be any values",
-            "• Role must be either 'student' or 'admin'",
-            "• All fields are required",
-            "",
-            "IMPORTANT:",
-            "- Duplicate usernames are not allowed",
-            "- Password can be same for multiple users",
-            "- Keep the exact column order and names"
+    try:
+        # Create sample data
+        examples = [
+            {
+                'username': '23N81A62B0',
+                'password': '15/08/2002',
+                'role': 'student',
+                'name': 'Rajesh Kumar'
+            },
+            {
+                'username': '22M91A12C5',
+                'password': '23/11/2001',
+                'role': 'student',
+                'name': 'Priya Sharma'
+            },
+            {
+                'username': 'admin2',
+                'password': 'securepassword123',
+                'role': 'admin',
+                'name': 'Library Manager'
+            }
         ]
 
-        # Add instructions starting from row after the data
-        start_row = len(examples) + 3
-        for i, instruction in enumerate(instructions):
-            cell = f'A{start_row + i}'
-            worksheet[cell] = instruction
+        # Create DataFrame
+        df = pd.DataFrame(examples)
 
-            # Style important lines
-            if any(keyword in instruction for keyword in ["IMPORTANT", "====", "Recommended"]):
-                worksheet[cell].font = Font(bold=True, color="FF0000" if "====" in instruction else "000000")
+        # Create BytesIO buffer
+        output = BytesIO()
 
-    buffer.seek(0)
+        # Write to Excel WITHOUT styling to avoid tkinter dependency
+        with pd.ExcelWriter(output, engine='openpyxl') as writer:
+            df.to_excel(writer, sheet_name='Users Template', index=False)
+            
+            # Get worksheet
+            worksheet = writer.sheets['Users Template']
+            
+            # Add instructions as cell values (no styling)
+            start_row = len(examples) + 3
+            
+            instructions = [
+                "=== IMPORTANT: DATE FORMAT INSTRUCTIONS ===",
+                "For STUDENT date of birth (password field), use ANY of these formats:",
+                "• DD/MM/YYYY (Recommended) - e.g., 15/08/2002",
+                "• DD-MM-YYYY - e.g., 15-08-2002",
+                "• YYYY-MM-DD - e.g., 2002-08-15",
+                "• DDMMYYYY (no separators) - e.g., 15082002",
+                "",
+                "The system will automatically convert to the correct format.",
+                "",
+                "OTHER INSTRUCTIONS:",
+                "• For students: username must be 10-digit roll number",
+                "• For admins: username and password can be any values",
+                "• Role must be either 'student' or 'admin'",
+                "• All fields are required",
+                "",
+                "IMPORTANT:",
+                "- Duplicate usernames are not allowed",
+                "- Password can be same for multiple users",
+                "- Keep the exact column order and names"
+            ]
+            
+            for i, instruction in enumerate(instructions):
+                worksheet.cell(row=start_row + i, column=1, value=instruction)
 
-    return send_file(
-        buffer,
-        as_attachment=True,
-        download_name='users_upload_template.xlsx',
-        mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    )
+        output.seek(0)
+
+        # Return file with correct headers (remove cache_timeout parameter)
+        return send_file(
+            output,
+            as_attachment=True,
+            download_name='users_upload_template.xlsx',
+            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+
+    except Exception as e:
+        logger.error(f"Error generating template: {str(e)}")
+        logger.error(traceback.format_exc())
+        
+        flash('Error generating template. Please try again.', 'error')
+        return redirect(url_for('admin_users'))
+    
 
 @app.route('/admin/debug-upload', methods=['POST'])
 def debug_upload():
@@ -2456,10 +2541,94 @@ def download_pdfs_template():
         mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
 
+@app.route('/api/check-location-continuous', methods=['POST'])
+def check_location_continuous():
+    """Continuous location check endpoint for all users"""
+    if not session.get('user_id'):
+        return jsonify({'success': False, 'message': 'Not authenticated', 'redirect': True}), 401
+    
+    data = request.get_json()
+    user_lat = data.get('latitude')
+    user_lon = data.get('longitude')
+    
+    if user_lat is None or user_lon is None:
+        return jsonify({'success': False, 'message': 'Location data required'}), 400
+    
+    try:
+        user_lat = float(user_lat)
+        user_lon = float(user_lon)
+    except (TypeError, ValueError):
+        return jsonify({'success': False, 'message': 'Invalid location data'}), 400
+    
+    # Check if user is within allowed boundary
+    allowed, location_name = is_location_allowed(user_lat, user_lon)
+    
+    if allowed:
+        # Update session with new location
+        session['location_verified'] = True
+        session['verified_location'] = location_name
+        session['last_location_check'] = datetime.now().isoformat()
+        session['current_latitude'] = user_lat
+        session['current_longitude'] = user_lon
+        session['needs_location_verification'] = False
+        
+        return jsonify({
+            'success': True,
+            'location': location_name,
+            'message': 'Location verified'
+        })
+    else:
+        # User moved outside boundary
+        logger.warning(f"User {session.get('user_id')} moved outside boundary: {user_lat}, {user_lon}")
+        
+        # Clear session data
+        session['location_verified'] = False
+        session['needs_location_verification'] = True
+        
+        return jsonify({
+            'success': False,
+            'message': 'You have moved outside the allowed area. Please return to the designated location.',
+            'redirect': True,
+            'redirect_url': url_for('location_check')
+        }), 403
+    
+def init_boundaries_file():
+    """Initialize boundaries.json file if it doesn't exist"""
+    filepath = 'data/boundaries.json'
+    try:
+        os.makedirs('data', exist_ok=True)
+        
+        if not os.path.exists(filepath):
+            logger.info(f"Creating new boundaries.json file at {filepath}")
+            with open(filepath, 'w', encoding='utf-8') as f:
+                json.dump([], f, indent=2, ensure_ascii=False)
+            logger.info("Created new boundaries.json file")
+            return True
+        else:
+            # Check if file is valid JSON
+            try:
+                with open(filepath, 'r', encoding='utf-8') as f:
+                    content = f.read()
+                    if content.strip():
+                        json.loads(content)
+                logger.info(f"boundaries.json file exists and is valid")
+                return True
+            except json.JSONDecodeError:
+                logger.warning(f"boundaries.json contains invalid JSON, recreating it")
+                with open(filepath, 'w', encoding='utf-8') as f:
+                    json.dump([], f, indent=2, ensure_ascii=False)
+                return True
+    except Exception as e:
+        logger.error(f"Error initializing boundaries.json: {str(e)}")
+        return False
+
+init_boundaries_file()
+
+
 @app.route('/admin/save-boundary', methods=['POST'])
 @require_location_verification
 def save_boundary():
-    """Save location boundary (Admin only)"""
+    """Save location boundary (Admin only) - FIXED VERSION"""
     try:
         if session.get('user_role') != 'admin':
             logger.warning(f"Unauthorized access attempt by user: {session.get('user_id')}")
@@ -2471,54 +2640,23 @@ def save_boundary():
 
         logger.info(f"Received boundary data: {data}")
 
+        # Validate required fields
         required_fields = ['name', 'type']
         for field in required_fields:
             if not data.get(field):
                 return jsonify({'success': False, 'message': f'Missing required field: {field}'}), 400
 
-        if data['type'] == 'circle':
-            circle_fields = ['latitude', 'longitude', 'radius_km']
-            for field in circle_fields:
-                if field not in data:
-                    return jsonify({'success': False, 'message': f'Missing circle field: {field}'}), 400
-                try:
-                    data[field] = float(data[field])
-                except (ValueError, TypeError):
-                    return jsonify({'success': False, 'message': f'Invalid {field} value: {data[field]}'}), 400
-
-        elif data['type'] == 'rectangle':
-            rect_fields = ['north', 'south', 'east', 'west']
-            for field in rect_fields:
-                if field not in data:
-                    return jsonify({'success': False, 'message': f'Missing rectangle field: {field}'}), 400
-                try:
-                    data[field] = float(data[field])
-                except (ValueError, TypeError):
-                    return jsonify({'success': False, 'message': f'Invalid {field} value: {data[field]}'}), 400
-
-        elif data['type'] == 'polygon':
-            if 'coordinates' not in data or not data['coordinates']:
-                return jsonify({'success': False, 'message': 'Missing polygon coordinates'}), 400
-            try:
-                for i, coord in enumerate(data['coordinates']):
-                    if len(coord) != 2:
-                        return jsonify({'success': False, 'message': f'Invalid coordinate at index {i}'}), 400
-                    data['coordinates'][i] = [float(coord[0]), float(coord[1])]
-            except (ValueError, TypeError) as e:
-                return jsonify({'success': False, 'message': f'Invalid coordinate format: {str(e)}'}), 400
-
-        else:
-            return jsonify({'success': False, 'message': f'Invalid boundary type: {data["type"]}'}), 400
-
-        try:
-            boundaries = load_json_data('boundaries.json')
-        except Exception as e:
-            logger.warning(f"Could not load boundaries, starting fresh: {str(e)}")
-            boundaries = []
-
-        existing_index = next((i for i, b in enumerate(boundaries) if b['name'] == data['name']), -1)
-
+        # Load existing boundaries
+        boundaries = load_json_data('boundaries.json')
+        
+        # DEBUG: Log current boundaries
+        logger.info(f"Current boundaries count: {len(boundaries)}")
+        
+        # Check if boundary name already exists
+        existing_index = next((i for i, b in enumerate(boundaries) if b.get('name') == data['name']), -1)
+        
         if existing_index >= 0:
+            # Update existing boundary
             boundaries[existing_index] = {
                 **boundaries[existing_index],
                 **data,
@@ -2528,6 +2666,7 @@ def save_boundary():
             message = 'Boundary updated successfully'
             action = 'updated'
         else:
+            # Create new boundary
             new_boundary = {
                 'id': len(boundaries) + 1,
                 **data,
@@ -2538,10 +2677,15 @@ def save_boundary():
             message = 'Boundary saved successfully'
             action = 'created'
 
+        # Save to file
         save_json_data('boundaries.json', boundaries)
+        
+        # DEBUG: Verify save
+        saved_boundaries = load_json_data('boundaries.json')
+        logger.info(f"After save - boundaries count: {len(saved_boundaries)}")
 
         logger.info(f"Boundary '{data['name']}' {action} successfully. Total boundaries: {len(boundaries)}")
-        return jsonify({'success': True, 'message': message})
+        return jsonify({'success': True, 'message': message, 'count': len(boundaries)})
 
     except Exception as e:
         logger.error(f"Error saving boundary: {str(e)}")
@@ -2550,6 +2694,10 @@ def save_boundary():
             'success': False,
             'message': f'Server error while saving boundary: {str(e)}'
         }), 500
+    
+# Call this in your main application startup
+
+
 
 @app.route('/admin/get-boundaries')
 @require_location_verification
@@ -2560,8 +2708,20 @@ def get_boundaries():
             return jsonify({'success': False, 'message': 'Access denied'}), 403
 
         boundaries = load_json_data('boundaries.json')
-        logger.info(f"Loaded {len(boundaries)} boundaries")
-        return jsonify({'success': True, 'boundaries': boundaries})
+        
+        # DEBUG: Log what's being returned
+        logger.info(f"Returning {len(boundaries)} boundaries")
+        
+        # Ensure all boundaries have required fields
+        for boundary in boundaries:
+            boundary.setdefault('name', 'Unnamed')
+            boundary.setdefault('type', 'circle')
+        
+        return jsonify({
+            'success': True, 
+            'boundaries': boundaries,
+            'count': len(boundaries)
+        })
 
     except Exception as e:
         logger.error(f"Error loading boundaries: {str(e)}")
@@ -2569,9 +2729,35 @@ def get_boundaries():
         return jsonify({
             'success': False,
             'message': f'Error loading boundaries: {str(e)}',
-            'boundaries': []
+            'boundaries': [],
+            'count': 0
         }), 500
 
+
+@app.route('/admin/debug-boundaries')
+def debug_boundaries():
+    """Debug endpoint to check boundaries"""
+    try:
+        boundaries = load_json_data('boundaries.json')
+        file_exists = os.path.exists('data/boundaries.json')
+        file_size = os.path.getsize('data/boundaries.json') if file_exists else 0
+        
+        return jsonify({
+            'success': True,
+            'file_exists': file_exists,
+            'file_size': file_size,
+            'boundaries_count': len(boundaries),
+            'boundaries': boundaries[:5],  # First 5 for debugging
+            'data_dir_exists': os.path.exists('data'),
+            'data_dir_contents': os.listdir('data') if os.path.exists('data') else []
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'traceback': traceback.format_exc()
+        })
+    
 @app.route('/admin/delete-boundary', methods=['POST'])
 @require_location_verification
 def delete_boundary():
@@ -2679,23 +2865,6 @@ def user_direct_access():
 
     return redirect(url_for('login'))
 
-@app.route('/debug/boundaries')
-def debug_boundaries():
-    """Debug endpoint to check boundaries data"""
-    try:
-        boundaries = load_json_data('boundaries.json')
-        return jsonify({
-            'success': True,
-            'boundaries': boundaries,
-            'file_exists': os.path.exists('data/boundaries.json')
-        })
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'error': str(e),
-            'traceback': traceback.format_exc()
-        })
-
 @app.route('/debug/save-test', methods=['POST'])
 def debug_save_test():
     """Test endpoint to check if saving works"""
@@ -2730,6 +2899,8 @@ def logout():
     session.clear()
     flash('You have been logged out successfully.', 'success')
     return redirect(url_for('welcome'))
+
+
 
 if __name__ == '__main__':
     # Create data directory if it doesn't exist

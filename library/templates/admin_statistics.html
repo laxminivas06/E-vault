@@ -801,6 +801,143 @@
             color: var(--primary);
         }
 
+        /* NEW MAP STYLES */
+        .map-container {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e9ecef;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .map-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s ease;
+        }
+
+        .map-container:hover::before {
+            transform: scaleX(1);
+        }
+
+        #map {
+            height: 400px;
+            width: 100%;
+            border-radius: 10px;
+            overflow: hidden;
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .map-loading {
+            text-align: center;
+            color: #6c757d;
+        }
+
+        .map-loading i {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .coordinates-list {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 15px;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .coordinate-item {
+            padding: 8px 12px;
+            border-bottom: 1px solid #dee2e6;
+            transition: all 0.3s ease;
+        }
+
+        .coordinate-item:hover {
+            background: white;
+            transform: translateX(5px);
+        }
+
+        .coordinate-item:last-child {
+            border-bottom: none;
+        }
+
+        .coordinate-link {
+            color: #2E86AB;
+            text-decoration: none;
+            font-weight: 500;
+            font-family: monospace;
+        }
+
+        .coordinate-link:hover {
+            color: #1B5E7A;
+            text-decoration: underline;
+        }
+
+        /* Fullscreen map */
+        .map-fullscreen {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            z-index: 9999 !important;
+            border-radius: 0 !important;
+            padding: 20px !important;
+        }
+
+        /* Location coordinates table */
+        .coordinates-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .coordinates-table th {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 10px;
+            text-align: left;
+            font-size: 0.85rem;
+        }
+
+        .coordinates-table td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #dee2e6;
+            font-size: 0.85rem;
+        }
+
+        .coordinates-table tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        /* Scroll indicator for maps */
+        .map-scroll-indicator {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 10px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 5px;
+            color: #6c757d;
+            font-size: 0.8rem;
+            margin-top: 10px;
+            text-align: center;
+        }
+
         /* Animation Keyframes */
         @keyframes fadeIn {
             from { opacity: 0; }
@@ -844,201 +981,6 @@
             100% {
                 opacity: 1;
                 transform: scale(1);
-            }
-        }
-
-        /* Responsive Design */
-        @media (max-width: 1200px) {
-            .container {
-                max-width: 1140px;
-            }
-        }
-
-        @media (max-width: 992px) {
-            .stat-card {
-                min-width: 200px;
-            }
-            
-            .content-container {
-                min-width: 300px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .dashboard-header {
-                padding: 80px 20px 30px;
-            }
-            
-            .college-logo {
-                width: 250px;
-                height: 80px;
-            }
-            
-            h1 {
-                font-size: 2rem;
-            }
-            
-            .stat-card {
-                min-width: 180px;
-                padding: 25px 15px;
-                min-height: 160px;
-            }
-            
-            .stat-icon {
-                width: 60px;
-                height: 60px;
-                font-size: 1.6rem;
-                margin-bottom: 12px;
-            }
-            
-            .stat-number {
-                font-size: 2rem;
-            }
-            
-            .content-container {
-                min-width: 280px;
-                height: 320px;
-                padding: 20px;
-            }
-            
-            .content-container {
-                height: 380px;
-            }
-            
-            .table-container {
-                padding: 20px;
-            }
-            
-            .user-info {
-                padding: 15px;
-                margin: 15px auto;
-            }
-            
-            .mobile-scroll-indicator {
-                display: flex;
-            }
-
-            .filter-row {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .filter-group {
-                min-width: 100%;
-            }
-
-            .pagination-container {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .export-buttons {
-                justify-content: center;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .dashboard-main {
-                padding: 20px 0;
-            }
-            
-            .college-logo {
-                width: 200px;
-                height: 70px;
-            }
-            
-            h1 {
-                font-size: 1.8rem;
-            }
-            
-            .stat-card {
-                min-width: 160px;
-                padding: 20px 12px;
-                min-height: 140px;
-            }
-            
-            .stat-icon {
-                width: 50px;
-                height: 50px;
-                font-size: 1.4rem;
-            }
-            
-            .stat-number {
-                font-size: 1.8rem;
-            }
-            
-            .stat-label {
-                font-size: 0.85rem;
-            }
-            
-            .content-container {
-                min-width: 260px;
-                height: 300px;
-                padding: 15px;
-            }
-            
-            .content-container {
-                height: 360px;
-            }
-            
-            .btn {
-                padding: 10px 20px;
-                font-size: 0.9rem;
-            }
-            
-            .developer-logo {
-                width: 100px;
-                height: 100px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 0 10px;
-            }
-            
-            .dashboard-header {
-                padding: 70px 15px 25px;
-            }
-            
-            .college-logo {
-                width: 180px;
-                height: 60px;
-            }
-            
-            h1 {
-                font-size: 1.6rem;
-            }
-            
-            .subtitle {
-                font-size: 1rem;
-            }
-            
-            .stat-card {
-                min-width: 140px;
-                padding: 18px 10px;
-                min-height: 130px;
-            }
-            
-            .stat-icon {
-                width: 45px;
-                height: 45px;
-                font-size: 1.3rem;
-            }
-            
-            .stat-number {
-                font-size: 1.6rem;
-            }
-            
-            .btn {
-                padding: 8px 16px;
-                font-size: 0.8rem;
-            }
-
-            .page-btn {
-                width: 35px;
-                height: 35px;
-                font-size: 0.85rem;
             }
         }
 
@@ -1108,6 +1050,241 @@
             display: flex;
         }
 
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .container {
+                max-width: 1140px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .stat-card {
+                min-width: 200px;
+            }
+            
+            .content-container {
+                min-width: 300px;
+            }
+            
+            #map {
+                height: 350px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-header {
+                padding: 80px 20px 30px;
+            }
+            
+            .college-logo {
+                width: 250px;
+                height: 80px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .stat-card {
+                min-width: 180px;
+                padding: 25px 15px;
+                min-height: 160px;
+            }
+            
+            .stat-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 1.6rem;
+                margin-bottom: 12px;
+            }
+            
+            .stat-number {
+                font-size: 2rem;
+            }
+            
+            .content-container {
+                min-width: 280px;
+                height: 320px;
+                padding: 20px;
+            }
+            
+            .content-container {
+                height: 380px;
+            }
+            
+            .table-container {
+                padding: 20px;
+            }
+            
+            .user-info {
+                padding: 15px;
+                margin: 15px auto;
+            }
+            
+            #map {
+                height: 300px;
+            }
+            
+            .mobile-scroll-indicator {
+                display: flex;
+            }
+
+            .filter-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-group {
+                min-width: 100%;
+            }
+
+            .pagination-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .export-buttons {
+                justify-content: center;
+            }
+            
+            .map-container {
+                padding: 20px;
+            }
+            
+            .coordinates-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .dashboard-main {
+                padding: 20px 0;
+            }
+            
+            .college-logo {
+                width: 200px;
+                height: 70px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .stat-card {
+                min-width: 160px;
+                padding: 20px 12px;
+                min-height: 140px;
+            }
+            
+            .stat-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 1.4rem;
+            }
+            
+            .stat-number {
+                font-size: 1.8rem;
+            }
+            
+            .stat-label {
+                font-size: 0.85rem;
+            }
+            
+            .content-container {
+                min-width: 260px;
+                height: 300px;
+                padding: 15px;
+            }
+            
+            .content-container {
+                height: 360px;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+            
+            .developer-logo {
+                width: 100px;
+                height: 100px;
+            }
+            
+            #map {
+                height: 250px;
+            }
+            
+            .coordinates-list {
+                max-height: 200px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 10px;
+            }
+            
+            .dashboard-header {
+                padding: 70px 15px 25px;
+            }
+            
+            .college-logo {
+                width: 180px;
+                height: 60px;
+            }
+            
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            .stat-card {
+                min-width: 140px;
+                padding: 18px 10px;
+                min-height: 130px;
+            }
+            
+            .stat-icon {
+                width: 45px;
+                height: 45px;
+                font-size: 1.3rem;
+            }
+            
+            .stat-number {
+                font-size: 1.6rem;
+            }
+            
+            .btn {
+                padding: 8px 16px;
+                font-size: 0.8rem;
+            }
+
+            .page-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 0.85rem;
+            }
+            
+            #map {
+                height: 200px;
+            }
+            
+            .map-container .content-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .map-container .export-buttons {
+                width: 100%;
+                justify-content: flex-start;
+            }
+        }
+
         /* Responsive table improvements */
         @media (max-width: 768px) {
             .table-responsive {
@@ -1128,6 +1305,35 @@
             .table thead th:nth-child(2),
             .table tbody td:nth-child(2) {
                 min-width: 100px;
+            }
+            
+            .coordinates-table {
+                display: block;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+        }
+
+        /* Print styles for backup */
+        @media print {
+            .navbar, .btn, .filter-section, .export-buttons, .mobile-scroll-indicator {
+                display: none !important;
+            }
+            
+            .dashboard-header {
+                padding: 20px 0;
+                color: black;
+                background: white;
+            }
+            
+            .stat-card, .content-container, .table-container, .map-container {
+                box-shadow: none;
+                border: 1px solid #ddd;
+                break-inside: avoid;
+            }
+            
+            #map {
+                height: 300px;
             }
         }
     </style>
@@ -1158,7 +1364,7 @@
                         <a class="nav-link" href="{{ url_for('admin_location') }}"><i class="fas fa-map-marker-alt me-1"></i>Location Settings</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('admin_statistics') }}">
+                        <a class="nav-link active" href="{{ url_for('admin_statistics') }}">
                             <i class="fas fa-chart-line me-2"></i>
                             Statistics
                         </a>
@@ -1214,28 +1420,28 @@
         <div class="container">
             <!-- Quick Stats - ALWAYS 4 IN ONE ROW -->
             <div class="stats-row">
-                <div class="stat-card">
+                <div class="stat-card card-hover-effect">
                     <div class="stat-icon icon-users">
                         <i class="fas fa-users"></i>
                     </div>
                     <div class="stat-number">{{ stats.total_users }}</div>
                     <div class="stat-label">Total Users</div>
                 </div>
-                <div class="stat-card">
+                <div class="stat-card card-hover-effect">
                     <div class="stat-icon icon-active">
                         <i class="fas fa-user-check"></i>
                     </div>
                     <div class="stat-number">{{ stats.total_active_users }}</div>
                     <div class="stat-label">Active Users</div>
                 </div>
-                <div class="stat-card">
+                <div class="stat-card card-hover-effect">
                     <div class="stat-icon icon-today">
                         <i class="fas fa-chart-bar"></i>
                     </div>
                     <div class="stat-number">{{ stats.total_pdfs }}</div>
                     <div class="stat-label">Total PDFs</div>
                 </div>
-                <div class="stat-card">
+                <div class="stat-card card-hover-effect">
                     <div class="stat-icon icon-session">
                         <i class="fas fa-clock"></i>
                     </div>
@@ -1254,7 +1460,7 @@
             </div>
 
             <!-- Top PDFs - Single container that spans full width -->
-            <div class="content-container" style="flex: 1 1 100%; min-width: 100%;">
+            <div class="content-container" style="grid-column: span 2;">
                 <div class="content-header">
                     <h6 class="content-title">
                         <i class="fas fa-file-pdf me-2 text-danger"></i>
@@ -1264,7 +1470,7 @@
                 </div>
                 <div class="pdf-list">
                     {% for pdf in top_pdfs[:10] %}
-                    <div class="pdf-item">
+                    <div class="pdf-item card-hover-effect">
                         <div class="pdf-title">{{ pdf.title[:40] }}{% if pdf.title|length > 40 %}...{% endif %}</div>
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="pdf-meta">ID: {{ pdf.id }}</div>
@@ -1281,7 +1487,7 @@
             </div>
 
             <!-- Filters Section -->
-            <div class="filter-section">
+            <div class="filter-section card-hover-effect">
                 <div class="filter-row">
                     <div class="filter-group">
                         <label class="filter-label">Activity Category</label>
@@ -1308,7 +1514,7 @@
             </div>
 
             <!-- Detailed Data Table -->
-            <div class="table-container">
+            <div class="table-container card-hover-effect">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h6 class="mb-0">
                         <i class="fas fa-table me-2 text-primary"></i>
@@ -1330,21 +1536,28 @@
                         <table class="table table-striped table-hover" id="activityTable">
                             <thead>
                                 <tr>
-                                    <th>#</th>
+                                    <th>S.No</th>
                                     <th>Username</th>
+                                    <th>Name</th>
                                     <th>Action</th>
                                     <th>Location</th>
                                     <th>Date</th>
-                                    <th>Time</th>
+                                    <th>Time (12hr)</th>
                                     <th>PDF ID</th>
                                 </tr>
                             </thead>
                             <tbody id="activityTableBody">
                                 {% for activity in recent_activity %}
+                                {% set user_info = users|selectattr('username', 'equalto', activity.username)|first %}
                                 <tr class="activity-row" data-category="{{ activity.action }}">
                                     <td class="fw-bold">{{ loop.index }}</td>
                                     <td>
                                         <span class="badge bg-secondary">{{ activity.username }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="user-name">
+                                            {{ user_info.name if user_info else 'N/A' }}
+                                        </span>
                                     </td>
                                     <td>
                                         <span class="badge {% if activity.action == 'login' %}bg-success{% elif activity.action == 'logout' %}bg-warning{% elif 'pdf' in activity.action %}bg-info{% else %}bg-primary{% endif %}">
@@ -1353,12 +1566,39 @@
                                     </td>
                                     <td>{{ activity.location or 'N/A' }}</td>
                                     <td>{{ activity.date }}</td>
-                                    <td>{{ activity.time }}</td>
+                                    <td>
+                                        {% if activity.time %}
+                                            {% set time_parts = activity.time.split(':') %}
+                                            {% set hour = time_parts[0]|int %}
+                                            {% set minute = time_parts[1] %}
+                                            {% if hour == 0 %}
+                                                {% set display_hour = 12 %}
+                                                {% set am_pm = 'AM' %}
+                                            {% elif hour < 12 %}
+                                                {% set display_hour = hour %}
+                                                {% set am_pm = 'AM' %}
+                                            {% elif hour == 12 %}
+                                                {% set display_hour = 12 %}
+                                                {% set am_pm = 'PM' %}
+                                            {% else %}
+                                                {% set display_hour = hour - 12 %}
+                                                {% set am_pm = 'PM' %}
+                                            {% endif %}
+                                            <span class="time-cell">
+                                                {{ "%02d"|format(display_hour) }}:{{ minute }}
+                                                <span class="{% if am_pm == 'AM' %}time-am{% else %}time-pm{% endif %}">
+                                                    {{ am_pm }}
+                                                </span>
+                                            </span>
+                                        {% else %}
+                                            N/A
+                                        {% endif %}
+                                    </td>
                                     <td>{{ activity.pdf_id or 'N/A' }}</td>
                                 </tr>
                                 {% else %}
                                 <tr>
-                                    <td colspan="7" class="text-center text-muted py-3">
+                                    <td colspan="8" class="text-center text-muted py-3">
                                         <i class="fas fa-inbox fa-2x mb-2"></i>
                                         <p class="small">No activity data available</p>
                                     </td>
@@ -1397,13 +1637,16 @@
                 </div>
             </div>
 
-            <!-- Developer Section -->
-            <div class="developer-section">
-                <div class="developer-info">
-                    <p style="font-size: 1.1rem;">E-Vault System developed by</p> 
-                    <strong>Laxmi Nivas Morishetty</strong>
-                    <p style="font-size: 0.9rem; color: rgba(255,255,255,0.9);"> Founder & CEO @Smart N Light Innovations</p>
-                </div>
+             <!-- Developer Section -->
+    <section class="card-section">
+        <div class="container">
+            <div class="developer-section animate__animated animate__fadeInUp">
+                
+            <div class="developer-info">
+                <p style="font-size: 1.1rem;">E-Vault System developed by</p> 
+                    <strong>Team Smart N Light Innovations</strong>
+               
+            </div>
                 
                 <!-- SmartNLight Innovation Logo -->
                 <a href="https://smartnlightinnovation.netlify.app" target="_blank" class="developer-logo">
@@ -1412,22 +1655,23 @@
                 
                 <!-- Developer Contact Links -->
                 <div class="developer-links">
-                    <a href="https://www.linkedin.com/in/laxmi-nivas-morishetty-02468m/" target="_blank" class="dev-social-link">
-                        <i class="fab fa-linkedin"></i>
-                    </a>
-                    <a href="https://laxminivasmorishetty.netlify.app" target="_blank" class="dev-social-link">
+                    
+                    <a href="https://wa.me/917993976247" target="_blank" class="dev-social-link">
+    <i class="fab fa-whatsapp"></i>
+</a>
+                    <a href="https://smartnlightinnovation.netlify.app" target="_blank" class="dev-social-link">
                         <i class="fas fa-globe"></i>
                     </a>
-                    <a href="https://instagram.com/laxminivasmorishetty" target="_blank" class="dev-social-link">
-                        <i class="fab fa-instagram"></i>
-                    </a>
+                    <a href="mailto:smartnlightinnovations@gmail.com" target="_blank" class="dev-social-link">
+    <i class="fas fa-envelope"></i>
+</a>
                 </div>
             </div>
         </div>
     </div>
 
     <footer>
-        <p>© <span id="year"></span> Sphoorthy Engineering College - E-Vault. All rights reserved.</p>
+        <p>© <span id="year"></span> Smart N Light Innovations - E-Vault. All rights reserved.</p>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -1456,6 +1700,7 @@
         initFilters();
         initPDFExport();
         initScrollDetection();
+        initResponsiveTable();
         
         // Animation on load
         const cards = document.querySelectorAll('.stat-card, .content-container');
@@ -1500,12 +1745,20 @@
         const pageBtns = paginationControls.querySelectorAll('.page-btn:not(#prevPage):not(#nextPage)');
         pageBtns.forEach(btn => btn.remove());
         
-        // Create page buttons
-        for (let i = 1; i <= pageCount; i++) {
+        // Create page buttons (max 5)
+        const maxVisiblePages = 5;
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+        let endPage = Math.min(startPage + maxVisiblePages - 1, pageCount);
+        
+        if (endPage - startPage + 1 < maxVisiblePages) {
+            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+        }
+        
+        for (let i = startPage; i <= endPage; i++) {
             const pageBtn = document.createElement('a');
             pageBtn.href = '#';
             pageBtn.className = 'page-btn';
-            if (i === 1) pageBtn.classList.add('active');
+            if (i === currentPage) pageBtn.classList.add('active');
             pageBtn.textContent = i;
             pageBtn.dataset.page = i;
             
@@ -1566,14 +1819,36 @@
         }
         
         function updatePaginationControls() {
-            // Update active page button
-            const pageBtns = paginationControls.querySelectorAll('.page-btn[data-page]');
-            pageBtns.forEach(btn => {
-                btn.classList.remove('active');
-                if (parseInt(btn.dataset.page) === currentPage) {
-                    btn.classList.add('active');
-                }
-            });
+            // Clear existing page buttons
+            const existingPageBtns = paginationControls.querySelectorAll('.page-btn[data-page]');
+            existingPageBtns.forEach(btn => btn.remove());
+            
+            // Create new page buttons
+            const maxVisiblePages = 5;
+            let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+            let endPage = Math.min(startPage + maxVisiblePages - 1, pageCount);
+            
+            if (endPage - startPage + 1 < maxVisiblePages) {
+                startPage = Math.max(1, endPage - maxVisiblePages + 1);
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                const pageBtn = document.createElement('a');
+                pageBtn.href = '#';
+                pageBtn.className = 'page-btn';
+                if (i === currentPage) pageBtn.classList.add('active');
+                pageBtn.textContent = i;
+                pageBtn.dataset.page = i;
+                
+                pageBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    currentPage = parseInt(this.dataset.page);
+                    showPage(currentPage);
+                    updatePaginationControls();
+                });
+                
+                paginationControls.insertBefore(pageBtn, nextPageBtn);
+            }
             
             // Update prev/next buttons
             prevPageBtn.classList.toggle('disabled', currentPage === 1);
@@ -1659,88 +1934,131 @@
         if (!exportPdfBtn) return;
         
         exportPdfBtn.addEventListener('click', function() {
-            // Check if jsPDF is available
-            if (typeof window.jspdf === 'undefined') {
-                alert('PDF export library not loaded. Please try again later.');
-                return;
-            }
+            // Show loading state
+            const originalText = exportPdfBtn.innerHTML;
+            exportPdfBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating PDF...';
+            exportPdfBtn.disabled = true;
             
-            const { jsPDF } = window.jspdf;
-            
-            try {
-                // Create new PDF document
-                const doc = new jsPDF();
+            setTimeout(() => {
+                // Check if jsPDF is available
+                if (typeof window.jspdf === 'undefined') {
+                    alert('PDF export library not loaded. Please try again later.');
+                    exportPdfBtn.innerHTML = originalText;
+                    exportPdfBtn.disabled = false;
+                    return;
+                }
                 
-                // Add title
-                doc.setFontSize(20);
-                doc.setTextColor(46, 134, 171); // Primary color
-                doc.text('E-Vault Statistics Report', 105, 15, { align: 'center' });
+                const { jsPDF } = window.jspdf;
                 
-                // Add date
-                doc.setFontSize(10);
-                doc.setTextColor(100, 100, 100);
-                doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 105, 22, { align: 'center' });
-                
-                // Add summary section
-                doc.setFontSize(14);
-                doc.setTextColor(0, 0, 0);
-                doc.text('System Summary', 20, 35);
-                
-                doc.setFontSize(10);
-                doc.text(`Total Users: ${document.querySelector('.stat-card:nth-child(1) .stat-number').textContent}`, 20, 45);
-                doc.text(`Active Users: ${document.querySelector('.stat-card:nth-child(2) .stat-number').textContent}`, 20, 52);
-                doc.text(`Total PDFs: ${document.querySelector('.stat-card:nth-child(3) .stat-number').textContent}`, 20, 59);
-                
-                // Add activity table
-                doc.setFontSize(14);
-                doc.text('Activity Data', 20, 80);
-                
-                // Get table data
-                const table = document.getElementById('activityTable');
-                const headers = [];
-                const rows = [];
-                
-                // Get headers
-                table.querySelectorAll('thead th').forEach(th => {
-                    headers.push(th.textContent);
-                });
-                
-                // Get visible rows data
-                const visibleRows = document.querySelectorAll('#activityTableBody tr.activity-row:not(.filtered-out)');
-                visibleRows.forEach(tr => {
-                    const rowData = [];
-                    tr.querySelectorAll('td').forEach(td => {
-                        rowData.push(td.textContent.trim());
+                try {
+                    // Create new PDF document
+                    const doc = new jsPDF('landscape');
+                    
+                    // Add title
+                    doc.setFontSize(20);
+                    doc.setTextColor(46, 134, 171); // Primary color
+                    doc.text('E-Vault Statistics Report', 148, 15, { align: 'center' });
+                    
+                    // Add date
+                    doc.setFontSize(10);
+                    doc.setTextColor(100, 100, 100);
+                    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 148, 22, { align: 'center' });
+                    
+                    // Add summary section
+                    doc.setFontSize(14);
+                    doc.setTextColor(0, 0, 0);
+                    doc.text('System Summary', 20, 35);
+                    
+                    doc.setFontSize(10);
+                    const stats = document.querySelectorAll('.stat-number');
+                    doc.text(`Total Users: ${stats[0].textContent}`, 20, 45);
+                    doc.text(`Active Users: ${stats[1].textContent}`, 20, 52);
+                    doc.text(`Total PDFs: ${stats[2].textContent}`, 20, 59);
+                    
+                    // Add activity table
+                    doc.setFontSize(14);
+                    doc.text('Activity Data', 20, 80);
+                    
+                    // Get table data
+                    const headers = ['#', 'Username', 'Name', 'Action', 'Location', 'Date', 'Time', 'PDF ID'];
+                    const rows = [];
+                    
+                    // Get visible rows data
+                    const visibleRows = document.querySelectorAll('#activityTableBody tr.activity-row:not(.filtered-out)');
+                    visibleRows.forEach(tr => {
+                        const rowData = [];
+                        tr.querySelectorAll('td').forEach(td => {
+                            rowData.push(td.textContent.trim());
+                        });
+                        rows.push(rowData);
                     });
-                    rows.push(rowData);
-                });
-                
-                // Add table to PDF
-                doc.autoTable({
-                    head: [headers],
-                    body: rows,
-                    startY: 85,
-                    styles: {
-                        fontSize: 8,
-                        cellPadding: 2
-                    },
-                    headStyles: {
-                        fillColor: [46, 134, 171], // Primary color
-                        textColor: 255
-                    },
-                    alternateRowStyles: {
-                        fillColor: [240, 240, 240]
-                    }
-                });
-                
-                // Save the PDF
-                doc.save(`evault-statistics-${new Date().toISOString().split('T')[0]}.pdf`);
-                
-            } catch (error) {
-                console.error('PDF generation error:', error);
-                alert('Error generating PDF. Please try again.');
-            }
+                    
+                    // Add table to PDF
+                    doc.autoTable({
+                        head: [headers],
+                        body: rows,
+                        startY: 85,
+                        theme: 'striped',
+                        styles: {
+                            fontSize: 8,
+                            cellPadding: 3,
+                            overflow: 'linebreak',
+                            cellWidth: 'wrap'
+                        },
+                        headStyles: {
+                            fillColor: [46, 134, 171], // Primary color
+                            textColor: 255,
+                            fontStyle: 'bold'
+                        },
+                        columnStyles: {
+                            0: { cellWidth: 15 }, // #
+                            1: { cellWidth: 40 }, // Username
+                            2: { cellWidth: 50 }, // Name
+                            3: { cellWidth: 35 }, // Action
+                            4: { cellWidth: 45 }, // Location
+                            5: { cellWidth: 35 }, // Date
+                            6: { cellWidth: 30 }, // Time
+                            7: { cellWidth: 25 }  // PDF ID
+                        }
+                    });
+                    
+                    // Save the PDF
+                    const fileName = `evault-statistics-${new Date().toISOString().split('T')[0]}.pdf`;
+                    doc.save(fileName);
+                    
+                    // Restore button state
+                    exportPdfBtn.innerHTML = originalText;
+                    exportPdfBtn.disabled = false;
+                    
+                } catch (error) {
+                    console.error('PDF generation error:', error);
+                    alert('Error generating PDF. Please try again.');
+                    exportPdfBtn.innerHTML = originalText;
+                    exportPdfBtn.disabled = false;
+                }
+            }, 1000);
         });
+    }
+
+    // Initialize responsive table behavior
+    function initResponsiveTable() {
+        function checkScreenSize() {
+            const tableContainer = document.getElementById('tableScrollContainer');
+            const isMobile = window.innerWidth < 768;
+            
+            if (isMobile) {
+                // Ensure table is scrollable on mobile
+                tableContainer.style.overflowX = 'auto';
+                tableContainer.style.webkitOverflowScrolling = 'touch';
+            } else {
+                // Reset on desktop
+                tableContainer.style.overflowX = 'auto';
+            }
+        }
+        
+        // Check on load and resize
+        checkScreenSize();
+        window.addEventListener('resize', checkScreenSize);
     }
 
     // Add CSS for enhanced scrolling if not already present
@@ -1833,10 +2151,26 @@
                     .table tbody td:nth-child(2) {
                         min-width: 100px;
                     }
+                    
+                    /* Hide less important columns on mobile */
+                    .table thead th:nth-child(4),
+                    .table tbody td:nth-child(4),
+                    .table thead th:nth-child(7),
+                    .table tbody td:nth-child(7) {
+                        display: none;
+                    }
                 }
                 
                 .activity-row.filtered-out {
                     display: none !important;
+                }
+                
+                /* Responsive table adjustments */
+                @media (max-width: 480px) {
+                    .table thead th:nth-child(5),
+                    .table tbody td:nth-child(5) {
+                        display: none;
+                    }
                 }
             `;
             document.head.appendChild(style);

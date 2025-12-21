@@ -1197,9 +1197,8 @@
     margin-top: 3px;
 }
     </style>
-</head>
 <body>
-      <!-- Navigation -->
+    <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('welcome') }}">
@@ -1210,11 +1209,10 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('admin_dashboard') }}"><i class="fas fa-file-pdf me-1"></i>PDF Management</a>
                     </li>
-                     <li class="nav-item">
+                    <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('admin_users') }}">
                             <i class="fas fa-users me-1"></i>
                             User Management
@@ -1272,7 +1270,11 @@
                 </p>
             </div>
 
-            
+            <!-- Search Box -->
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchAddress" placeholder="Search location or address...">
+            </div>
         </div>
     </header>
 
@@ -1312,76 +1314,71 @@
 
             <!-- Main Content Grid -->
             <div class="content-grid">
-               
-<!-- Interactive Map Card -->
-<div class="card map-container">
-    <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
-        <div class="d-flex align-items-center">
-            <i class="fas fa-map me-2"></i>
-            <span>Interactive Map</span>
-        </div>
-        <div class="map-view-controls mt-2 mt-md-0">
-            <button class="view-type-btn active" onclick="setMapView('street')" id="streetView">
-                <i class="fas fa-road"></i>
-                <span class="d-none d-md-inline">Street</span>
-            </button>
-            <button class="view-type-btn" onclick="setMapView('satellite')" id="satelliteView">
-                <i class="fas fa-satellite"></i>
-                <span class="d-none d-md-inline">Satellite</span>
-            </button>
-            <button class="view-type-btn" onclick="setMapView('topo')" id="topoView">
-                <i class="fas fa-mountain"></i>
-                <span class="d-none d-md-inline">Topo</span>
-            </button>
-        </div>
-    </div>
-    <div class="card-body p-0" style="position: relative; flex: 1;">
-        <div id="map"></div>
-        
-        <!-- Map Search Box -->
-        <div class="map-search-box" id="mapSearchBox">
-            <i class="fas fa-search"></i>
-            <input type="text" id="mapSearchInput" placeholder="Search places, addresses, or landmarks..." 
-                   onfocus="showSearchResults()" 
-                   onblur="setTimeout(() => hideSearchResults(), 200)"
-                   onkeyup="handleSearchInput(this.value)">
-            <div class="search-results" id="searchResults">
-                <!-- Search results will be populated here -->
-            </div>
-        </div>
-        
-        <!-- Map Controls -->
-        <div class="map-controls">
-            <button onclick="getCurrentLocation()">
-                <i class="fas fa-location-arrow"></i>
-                <span>Location</span>
-            </button>
-            <button onclick="toggleBoundaryPreview()">
-                <i class="fas fa-eye"></i>
-                <span>Preview</span>
-            </button>
-            <button onclick="clearAllDrawings()">
-                <i class="fas fa-trash"></i>
-                <span>Clear</span>
-            </button>
-        </div>
-        
-        <!-- Accuracy Indicator -->
-        <div class="accuracy-indicator" id="accuracyIndicator">
-            <i class="fas fa-crosshairs"></i>
-            <span>Accuracy: Unknown</span>
-        </div>
-        
-        <!-- Boundary Preview -->
-        <div class="boundary-preview" id="boundaryPreview">
-            <h4>Boundary Preview</h4>
-            <p id="previewArea">Area: Calculating...</p>
-            <p id="previewRadius">Radius: N/A</p>
-            <p id="previewVertices">Vertices: 0</p>
-            <button class="btn btn-sm btn-primary mt-2" onclick="hidePreview()">Close</button>
-        </div>
-    </div>
-</div>
+                <!-- Interactive Map Card -->
+                <div class="card map-container">
+                    <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-map me-2"></i>
+                            <span>Interactive Map</span>
+                        </div>
+                        <div class="map-view-controls mt-2 mt-md-0">
+                            <button class="view-type-btn active" onclick="setMapView('street')" id="streetView">
+                                <i class="fas fa-road"></i>
+                                <span class="d-none d-md-inline">Street</span>
+                            </button>
+                            <button class="view-type-btn" onclick="setMapView('satellite')" id="satelliteView">
+                                <i class="fas fa-satellite"></i>
+                                <span class="d-none d-md-inline">Satellite</span>
+                            </button>
+                            <button class="view-type-btn" onclick="setMapView('topo')" id="topoView">
+                                <i class="fas fa-mountain"></i>
+                                <span class="d-none d-md-inline">Topo</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body p-0" style="position: relative; flex: 1;">
+                        <div id="map"></div>
+                        
+                        <!-- Map Search Box -->
+                        <div class="map-search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="mapSearchInput" placeholder="Search places, addresses, or coordinates...">
+                            <div class="search-results" id="searchResults"></div>
+                        </div>
+                        
+                        <!-- Map Controls -->
+                        <div class="map-controls">
+                            <button onclick="getCurrentLocation()">
+                                <i class="fas fa-location-arrow"></i>
+                                <span class="d-none d-md-inline">Location</span>
+                            </button>
+                            <button onclick="toggleBoundaryPreview()">
+                                <i class="fas fa-eye"></i>
+                                <span class="d-none d-md-inline">Preview</span>
+                            </button>
+                            <button onclick="clearAllDrawings()">
+                                <i class="fas fa-trash"></i>
+                                <span class="d-none d-md-inline">Clear</span>
+                            </button>
+                        </div>
+                        
+                        <!-- Accuracy Indicator -->
+                        <div class="accuracy-indicator" id="accuracyIndicator">
+                            <i class="fas fa-crosshairs"></i>
+                            <span>Accuracy: Unknown</span>
+                        </div>
+                        
+                        <!-- Boundary Preview -->
+                        <div class="boundary-preview" id="boundaryPreview">
+                            <h4>Boundary Preview</h4>
+                            <p id="previewArea">Area: Calculating...</p>
+                            <p id="previewRadius">Radius: N/A</p>
+                            <p id="previewVertices">Vertices: 0</p>
+                            <button class="btn btn-sm btn-primary mt-2" onclick="hidePreview()">Close</button>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Boundary Configuration Card -->
                 <div class="card boundary-config-card">
                     <div class="card-header">
@@ -1441,7 +1438,7 @@
                                 </div>
                             </div>
                             
-                            <!-- Save Boundary Buttons - FIXED -->
+                            <!-- Save Boundary Buttons -->
                             <div class="save-buttons-container">
                                 <button type="button" class="btn btn-success" onclick="saveBoundary()" id="saveBoundaryBtn" disabled>
                                     <i class="fas fa-save"></i> Save Boundary
@@ -1488,6 +1485,7 @@
                             <li><strong>Step 4:</strong> Click "Save Boundary" to apply</li>
                             <li><strong>Step 5:</strong> Use "Test Boundary" to verify the area</li>
                             <li><strong>Step 6:</strong> Toggle between different map views as needed</li>
+                            <li><strong>Step 7:</strong> Use the search bar on the map to find specific locations</li>
                         </ul>
                         <div class="mt-3">
                             <p class="mb-1"><i class="fas fa-lightbulb text-warning"></i> <strong>Tip:</strong> For circles, you can adjust the radius in the input field after drawing</p>
@@ -1498,15 +1496,12 @@
             </div>
 
             <!-- Developer Section -->
-    <section class="card-section">
-        <div class="container">
-            <div class="developer-section animate__animated animate__fadeInUp">
-                
-            <div class="developer-info">
-                <p style="font-size: 1.1rem;">E-Vault System developed by</p> 
-                    <strong>Team Smart N Light Innovations</strong>
-               
-            </div>
+            <div class="developer-section">
+                <div class="developer-info">
+                    <p style="font-size: 1.1rem;">E-Vault System developed by</p> 
+                    <strong>Laxmi Nivas Morishetty</strong>
+                    <p style="font-size: 0.9rem; color: rgba(255,255,255,0.9);"> Founder & CEO @Smart N Light Innovations</p>
+                </div>
                 
                 <!-- SmartNLight Innovation Logo -->
                 <a href="https://smartnlightinnovation.netlify.app" target="_blank" class="developer-logo">
@@ -1515,23 +1510,22 @@
                 
                 <!-- Developer Contact Links -->
                 <div class="developer-links">
-                    
-                    <a href="https://wa.me/917993976247" target="_blank" class="dev-social-link">
-    <i class="fab fa-whatsapp"></i>
-</a>
-                    <a href="https://smartnlightinnovation.netlify.app" target="_blank" class="dev-social-link">
+                    <a href="https://www.linkedin.com/in/laxmi-nivas-morishetty-02468m/" target="_blank" class="dev-social-link">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                    <a href="https://laxminivasmorishetty.netlify.app" target="_blank" class="dev-social-link">
                         <i class="fas fa-globe"></i>
                     </a>
-                    <a href="mailto:smartnlightinnovations@gmail.com" target="_blank" class="dev-social-link">
-    <i class="fas fa-envelope"></i>
-</a>
+                    <a href="https://instagram.com/laxminivasmorishetty" target="_blank" class="dev-social-link">
+                        <i class="fab fa-instagram"></i>
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 
     <footer>
-        <p>© <span id="year"></span> Smart N Light Innovations - E-Vault. All rights reserved.</p>
+        <p>© <span id="year"></span> Sphoorthy Engineering College - E-Vault. All rights reserved.</p>
     </footer>
 
     <!-- Bootstrap JS Bundle with Popper -->
@@ -1555,7 +1549,7 @@
         let currentMapView = 'street';
         let currentLayer;
         let boundaries = {};
-        let geocoder = L.Control.Geocoder.nominatim();
+        let geocoder;
         let currentDrawControl = null;
 
         // Initialize map with multiple layers
@@ -1563,7 +1557,6 @@
             // Default coordinates (Sphoorthy Engineering College)
             const defaultCoords = [17.5415, 78.3930];
             
-             loadRecentSearches();
             // Create map
             map = L.map('map', {
                 center: defaultCoords,
@@ -1572,23 +1565,10 @@
                 attributionControl: true
             });
 
-
-            // Set up search input focus event
-    document.getElementById('mapSearchInput').addEventListener('focus', function() {
-        if (this.value === '') {
-            showRecentSearches();
-        }
-    });
-    
-    // Add search icon click handler
-    document.querySelector('.map-search-box i').addEventListener('click', function() {
-        const query = document.getElementById('mapSearchInput').value;
-        if (query) {
-            searchPlaces(query);
-        } else {
-            showRecentSearches();
-        }
-    });
+            // Initialize geocoder properly
+            geocoder = new L.Control.Geocoder({
+                defaultMarkGeocode: false
+            });
 
             // Define different map layers
             const streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -1668,6 +1648,9 @@
             drawControl = new L.Control.Draw(drawOptions);
             map.addControl(drawControl);
 
+            // Initialize map search
+            initMapSearch();
+
             // Set up event listeners for drawing
             map.on(L.Draw.Event.CREATED, function (e) {
                 const layer = e.layer;
@@ -1683,7 +1666,6 @@
                     // Get the actual drawn radius and update the input field
                     const drawnRadius = layer.getRadius();
                     document.getElementById('radius').value = Math.round(drawnRadius);
-                    console.log('Circle drawn with radius:', drawnRadius, 'Input field updated to:', Math.round(drawnRadius));
                 } else if (layer instanceof L.Rectangle) {
                     type = 'rectangle';
                 } else if (layer instanceof L.Polygon) {
@@ -1724,7 +1706,6 @@
                         // Update radius input when circle is edited
                         const newRadius = layer.getRadius();
                         document.getElementById('radius').value = Math.round(newRadius);
-                        console.log('Circle edited, new radius:', newRadius);
                     } else if (layer instanceof L.Rectangle) {
                         type = 'rectangle';
                     } else if (layer instanceof L.Polygon) {
@@ -1777,17 +1758,22 @@
                     if (layers.length > 0 && layers[0] instanceof L.Circle) {
                         layers[0].setRadius(radius);
                         updateBoundaryCoords(layers[0], 'circle');
-                        console.log('Radius input changed to:', radius);
                     }
                 }
             });
 
-            // Add search functionality
-            document.getElementById('searchAddress').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    searchLocation(this.value);
-                }
-            });
+            // Add search functionality to header search box
+            const searchAddressInput = document.getElementById('searchAddress');
+            if (searchAddressInput) {
+                searchAddressInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        const query = this.value.trim();
+                        if (query) {
+                            searchLocation(query);
+                        }
+                    }
+                });
+            }
 
             // Get current location after a short delay
             setTimeout(() => {
@@ -1802,6 +1788,117 @@
             
             // Initialize toast container
             initToastContainer();
+        }
+
+        // Map search functionality
+        function initMapSearch() {
+            const searchInput = document.getElementById('mapSearchInput');
+            const searchResults = document.getElementById('searchResults');
+            let searchTimeout;
+            
+            if (!searchInput) return;
+            
+            // Add event listener for real-time search
+            searchInput.addEventListener('input', function(e) {
+                clearTimeout(searchTimeout);
+                const query = e.target.value.trim();
+                
+                if (query.length < 2) {
+                    searchResults.style.display = 'none';
+                    return;
+                }
+                
+                searchTimeout = setTimeout(() => {
+                    searchMapLocation(query);
+                }, 500);
+            });
+            
+            // Search on Enter key press
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const query = e.target.value.trim();
+                    if (query) {
+                        searchMapLocation(query);
+                    }
+                }
+            });
+            
+            // Clear search when clicking outside
+            document.addEventListener('click', function(e) {
+                if (searchInput && !searchInput.contains(e.target) && 
+                    searchResults && !searchResults.contains(e.target)) {
+                    searchResults.style.display = 'none';
+                }
+            });
+        }
+
+        // Search location on map
+        function searchMapLocation(query) {
+            const searchResults = document.getElementById('searchResults');
+            if (!searchResults) return;
+            
+            // Show loading state
+            searchResults.innerHTML = '<div class="search-result-item"><i class="fas fa-spinner fa-spin"></i> Searching...</div>';
+            searchResults.style.display = 'block';
+            
+            // Use Nominatim API directly for better search
+            const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5`;
+            
+            fetch(url)
+                .then(response => response.json())
+                .then(results => {
+                    searchResults.innerHTML = '';
+                    
+                    if (!results || results.length === 0) {
+                        searchResults.innerHTML = '<div class="search-result-item text-muted">No results found</div>';
+                        return;
+                    }
+                    
+                    // Show up to 5 results
+                    results.slice(0, 5).forEach(function(result, index) {
+                        const item = document.createElement('div');
+                        item.className = 'search-result-item';
+                        item.innerHTML = `
+                            <div class="search-result-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div class="search-result-content">
+                                <div class="search-result-name">${result.display_name.split(',')[0] || 'Location'}</div>
+                                <div class="search-result-address">${result.display_name || 'Address not available'}</div>
+                                <div class="search-result-coords">${parseFloat(result.lat).toFixed(6)}, ${parseFloat(result.lon).toFixed(6)}</div>
+                            </div>
+                        `;
+                        
+                        item.addEventListener('click', function() {
+                            // Move map to location
+                            const lat = parseFloat(result.lat);
+                            const lng = parseFloat(result.lon);
+                            map.setView([lat, lng], 16);
+                            
+                            // Add marker
+                            L.marker([lat, lng])
+                                .addTo(map)
+                                .bindPopup(`
+                                    <strong>${result.display_name.split(',')[0] || 'Location'}</strong><br>
+                                    ${result.display_name || ''}<br>
+                                    ${lat.toFixed(6)}, ${lng.toFixed(6)}
+                                `)
+                                .openPopup();
+                            
+                            // Clear search
+                            document.getElementById('mapSearchInput').value = '';
+                            searchResults.style.display = 'none';
+                            
+                            showToast(`Location found: ${result.display_name.split(',')[0] || 'Search result'}`, 'success');
+                        });
+                        
+                        searchResults.appendChild(item);
+                    });
+                })
+                .catch(error => {
+                    console.error('Search error:', error);
+                    searchResults.innerHTML = '<div class="search-result-item text-danger">Search error. Please try again.</div>';
+                });
         }
 
         // Set map view type
@@ -1847,263 +1944,37 @@
             showToast(`${type.charAt(0).toUpperCase() + type.slice(1)} view activated`, 'success');
         }
 
-
-        // Search functionality
-let searchTimeout = null;
-let searchMarker = null;
-let recentSearches = [];
-
-// Handle search input
-function handleSearchInput(query) {
-    clearTimeout(searchTimeout);
-    
-    if (query.length < 2) {
-        hideSearchResults();
-        return;
-    }
-    
-    searchTimeout = setTimeout(() => {
-        searchPlaces(query);
-    }, 300);
-}
-
-// Search places using Nominatim
-async function searchPlaces(query) {
-    const resultsContainer = document.getElementById('searchResults');
-    resultsContainer.innerHTML = '<div class="search-result-item"><i class="fas fa-spinner fa-spin search-result-icon"></i><div class="search-result-content">Searching...</div></div>';
-    showSearchResults();
-    
-    try {
-        // Use Nominatim API for place search
-        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=10&addressdetails=1`);
-        const data = await response.json();
-        
-        if (data.length === 0) {
-            resultsContainer.innerHTML = '<div class="search-result-item"><i class="fas fa-exclamation-circle search-result-icon"></i><div class="search-result-content">No results found</div></div>';
-            return;
-        }
-        
-        let html = '';
-        data.forEach((place, index) => {
-            const name = place.display_name.split(',')[0];
-            const address = place.display_name.length > 100 
-                ? place.display_name.substring(0, 100) + '...'
-                : place.display_name;
-            
-            html += `
-                <div class="search-result-item" onclick="selectSearchResult(${index}, ${place.lat}, ${place.lon}, '${name.replace(/'/g, "\\'")}', '${address.replace(/'/g, "\\'")}')">
-                    <i class="fas fa-map-marker-alt search-result-icon"></i>
-                    <div class="search-result-content">
-                        <div class="search-result-name">${name}</div>
-                        <div class="search-result-address">${address}</div>
-                        <div class="search-result-coords">${parseFloat(place.lat).toFixed(6)}, ${parseFloat(place.lon).toFixed(6)}</div>
-                    </div>
-                </div>
-            `;
-        });
-        
-        resultsContainer.innerHTML = html;
-        
-        // Store search results for later use
-        window.searchResults = data;
-        
-    } catch (error) {
-        console.error('Search error:', error);
-        resultsContainer.innerHTML = '<div class="search-result-item"><i class="fas fa-exclamation-triangle search-result-icon"></i><div class="search-result-content">Search failed. Please try again.</div></div>';
-    }
-}
-
-// Select search result
-function selectSearchResult(index, lat, lon, name, address) {
-    const result = window.searchResults[index];
-    if (!result) return;
-    
-    // Clear previous search marker
-    if (searchMarker) {
-        map.removeLayer(searchMarker);
-    }
-    
-    // Add new marker
-    searchMarker = L.marker([lat, lon], {
-        icon: L.divIcon({
-            className: 'search-location-marker',
-            html: '<div style="background: #ff5722; color: white; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border: 3px solid white; box-shadow: 0 0 15px rgba(0,0,0,0.3);"><i class="fas fa-map-pin" style="font-size: 16px;"></i></div>',
-            iconSize: [36, 36],
-            iconAnchor: [18, 36]
-        })
-    }).addTo(map);
-    
-    // Add popup
-    searchMarker.bindPopup(`
-        <strong>${name}</strong><br>
-        ${address}<br>
-        <small>Lat: ${lat.toFixed(6)}<br>Lng: ${lon.toFixed(6)}</small>
-    `).openPopup();
-    
-    // Center map on selected location
-    map.setView([lat, lon], 16);
-    
-    // Update search input
-    document.getElementById('mapSearchInput').value = name;
-    
-    // Hide search results
-    hideSearchResults();
-    
-    // Add to recent searches
-    addToRecentSearches({ lat, lon, name, address });
-    
-    showToast(`Location found: ${name}`, 'success');
-}
-
-// Show search results
-function showSearchResults() {
-    document.getElementById('searchResults').style.display = 'block';
-}
-
-// Hide search results
-function hideSearchResults() {
-    document.getElementById('searchResults').style.display = 'none';
-}
-
-// Add to recent searches
-function addToRecentSearches(location) {
-    // Remove if already exists
-    recentSearches = recentSearches.filter(item => 
-        item.lat !== location.lat || item.lon !== location.lon
-    );
-    
-    // Add to beginning
-    recentSearches.unshift(location);
-    
-    // Keep only last 5
-    if (recentSearches.length > 5) {
-        recentSearches.pop();
-    }
-    
-    // Store in localStorage
-    localStorage.setItem('recentSearches', JSON.stringify(recentSearches));
-}
-
-// Load recent searches
-function loadRecentSearches() {
-    const stored = localStorage.getItem('recentSearches');
-    if (stored) {
-        recentSearches = JSON.parse(stored);
-    }
-}
-
-// Show recent searches
-function showRecentSearches() {
-    const resultsContainer = document.getElementById('searchResults');
-    
-    if (recentSearches.length === 0) {
-        resultsContainer.innerHTML = '<div class="search-result-item"><i class="fas fa-clock search-result-icon"></i><div class="search-result-content">No recent searches</div></div>';
-        showSearchResults();
-        return;
-    }
-    
-    let html = '<div class="search-result-item" style="background: #f8f9fa; font-weight: 600;"><i class="fas fa-history search-result-icon"></i><div class="search-result-content">Recent Searches</div></div>';
-    
-    recentSearches.forEach((place, index) => {
-        const address = place.address.length > 80 
-            ? place.address.substring(0, 80) + '...'
-            : place.address;
-            
-        html += `
-            <div class="search-result-item" onclick="selectSearchResultFromRecent(${index})">
-                <i class="fas fa-history search-result-icon" style="color: #666;"></i>
-                <div class="search-result-content">
-                    <div class="search-result-name">${place.name}</div>
-                    <div class="search-result-address">${address}</div>
-                </div>
-            </div>
-        `;
-    });
-    
-    resultsContainer.innerHTML = html;
-    showSearchResults();
-}
-
-// Select from recent searches
-function selectSearchResultFromRecent(index) {
-    const place = recentSearches[index];
-    if (!place) return;
-    
-    // Clear previous search marker
-    if (searchMarker) {
-        map.removeLayer(searchMarker);
-    }
-    
-    // Add new marker
-    searchMarker = L.marker([place.lat, place.lon], {
-        icon: L.divIcon({
-            className: 'search-location-marker',
-            html: '<div style="background: #ff5722; color: white; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border: 3px solid white; box-shadow: 0 0 15px rgba(0,0,0,0.3);"><i class="fas fa-map-pin" style="font-size: 16px;"></i></div>',
-            iconSize: [36, 36],
-            iconAnchor: [18, 36]
-        })
-    }).addTo(map);
-    
-    // Add popup
-    searchMarker.bindPopup(`
-        <strong>${place.name}</strong><br>
-        ${place.address}<br>
-        <small>Lat: ${place.lat.toFixed(6)}<br>Lng: ${place.lon.toFixed(6)}</small>
-    `).openPopup();
-    
-    // Center map on selected location
-    map.setView([place.lat, place.lon], 16);
-    
-    // Update search input
-    document.getElementById('mapSearchInput').value = place.name;
-    
-    // Hide search results
-    hideSearchResults();
-    
-    showToast(`Location: ${place.name}`, 'success');
-}
-
-// Clear search
-function clearSearch() {
-    if (searchMarker) {
-        map.removeLayer(searchMarker);
-        searchMarker = null;
-    }
-    document.getElementById('mapSearchInput').value = '';
-    hideSearchResults();
-}
-
-// Search location from header search box
-function searchLocationFromHeader(query) {
-    if (!query.trim()) return;
-    
-    // Update map search input
-    document.getElementById('mapSearchInput').value = query;
-    
-    // Trigger search
-    searchPlaces(query);
-}
-
-        // Search location
+        // Search location (header search box)
         function searchLocation(query) {
             if (!query.trim()) return;
             
-            geocoder.geocode(query, function(results) {
-                if (results && results.length > 0) {
-                    const result = results[0];
-                    map.setView(result.center, 16);
-                    
-                    // Add marker for searched location
-                    L.marker(result.center)
-                        .addTo(map)
-                        .bindPopup(`<b>${result.name || 'Searched Location'}</b><br>${result.center.lat.toFixed(6)}, ${result.center.lng.toFixed(6)}`)
-                        .openPopup();
-                    
-                    showToast(`Location found: ${result.name}`, 'success');
-                } else {
-                    showToast('Location not found. Try a different search term.', 'error');
-                }
-            });
+            // Use Nominatim API directly
+            const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`;
+            
+            fetch(url)
+                .then(response => response.json())
+                .then(results => {
+                    if (results && results.length > 0) {
+                        const result = results[0];
+                        const lat = parseFloat(result.lat);
+                        const lng = parseFloat(result.lon);
+                        map.setView([lat, lng], 16);
+                        
+                        // Add marker for searched location
+                        L.marker([lat, lng])
+                            .addTo(map)
+                            .bindPopup(`<b>${result.display_name.split(',')[0] || 'Location'}</b><br>${lat.toFixed(6)}, ${lng.toFixed(6)}`)
+                            .openPopup();
+                        
+                        showToast(`Location found: ${result.display_name.split(',')[0]}`, 'success');
+                    } else {
+                        showToast('Location not found. Try a different search term.', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Search error:', error);
+                    showToast('Search error. Please try again.', 'error');
+                });
         }
 
         // Get current location
@@ -2687,13 +2558,13 @@ function searchLocationFromHeader(query) {
                                 <div class="location-radius">Type: ${boundary.type}</div>
                                 <div class="boundary-actions">
                                     <button class="action-btn view" onclick="viewBoundary('${boundary.name}')">
-                                        <i class="fas fa-eye"></i> View
+                                        <i class="fas fa-eye"></i> <span class="d-none d-md-inline">View</span>
                                     </button>
                                     <button class="action-btn edit" onclick="editBoundary('${boundary.name}')">
-                                        <i class="fas fa-edit"></i> Edit
+                                        <i class="fas fa-edit"></i> <span class="d-none d-md-inline">Edit</span>
                                     </button>
                                     <button class="action-btn delete" onclick="deleteBoundary('${boundary.name}')">
-                                        <i class="fas fa-trash"></i> Delete
+                                        <i class="fas fa-trash"></i> <span class="d-none d-md-inline">Delete</span>
                                     </button>
                                 </div>
                             </div>

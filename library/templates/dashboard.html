@@ -1690,23 +1690,14 @@
             <h1>E-Vault</h1>
             <p class="subtitle">A Safe Repository for Knowledge - Secure Document Access</p>
             
-             <div class="user-info">
-    <p>
-        <i class="fas fa-user"></i>
-        <span style="display: flex; align-items: center; flex-wrap: wrap; gap: 8px;">
-            Welcome back, <strong>{{ user_profile.name if user_profile else username }}</strong>!
-            <span class="role-badge">
-                <i class="fas fa-{{ 'user-shield' if user_role == 'admin' else 'user-graduate' }}"></i>
-                {{ user_role|title }}
-            </span>
-        </span>
-    </p>
+            <div class="user-info">
     <p>
         <i class="fas fa-map-marker-alt"></i>
         <span class="location-content">
             <span class="location-text">Location: {{ location }}</span>
-            <button onclick="checkLocationManually()" class="btn btn-sm btn-outline-light ms-2" style="padding: 2px 8px; font-size: 0.8rem;">
-                <i class="fas fa-sync-alt"></i> Check
+            <button onclick="checkLocationManually()" class="btn btn-sm btn-outline-light ms-2" 
+                    style="padding: 2px 8px; font-size: 0.8rem;">
+                <i class="fas fa-sync-alt"></i> Check Now
             </button>
         </span>
     </p>
@@ -1940,640 +1931,1088 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-    // Set current year in footer
-    document.getElementById('year').textContent = new Date().getFullYear();
+   // ================================
+// CONTINUOUS LOCATION MONITORING SYSTEM
+// ================================
 
-    // Enhanced PDF Viewer with security and zoom functionality
-    let currentPdfId = '';
-    let currentZoom = 100;
-    let isMobile = window.innerWidth <= 768;
-    
-    // PDF data storage - FIXED: Use data passed from Flask
-    const pdfData = {{ all_pdfs_data | tojson | safe }};
-    console.log('Loaded PDF data:', pdfData);
+let locationCheckInterval;
+let isCheckingLocation = false;
+const LOCATION_CHECK_INTERVAL = 10000; // 10 seconds
+let locationWarningModal = null;
+let currentZoom = 100;
+let isMobile = window.innerWidth <= 768;
 
-    // Search functionality with debouncing
-    let searchTimeout;
-
-    // Close mobile navbar when a nav link is clicked
-    document.addEventListener('DOMContentLoaded', function() {
-        const navLinks = document.querySelectorAll('.nav-link');
-        const navbarToggler = document.querySelector('.navbar-toggler');
-        const navbarCollapse = document.querySelector('.navbar-collapse');
+// Promise wrapper for geolocation
+function getCurrentPosition(options = {}) {
+    return new Promise((resolve, reject) => {
+        if (!navigator.geolocation) {
+            reject(new Error('Geolocation is not supported'));
+            return;
+        }
         
-        navLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                // Check if navbar is collapsed (mobile view)
-                if (navbarCollapse.classList.contains('show')) {
-                    // Trigger click on navbar toggler to close it
-                    navbarToggler.click();
-                }
-            });
-        });
+        const defaultOptions = {
+            enableHighAccuracy: true,
+            timeout: 15000, // 15 seconds
+            maximumAge: 0 // Don't use cached location
+        };
+        
+        navigator.geolocation.getCurrentPosition(
+            resolve,
+            reject,
+            { ...defaultOptions, ...options }
+        );
     });
+}
 
-
-    // One-time location check on page load
-    function checkLocationOnLoad() {
-        // Only check if we have geolocation and user is verified
-        if (navigator.geolocation && "{{ location_verified|default('false') }}" === "true") {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const lat = position.coords.latitude;
-                    const lon = position.coords.longitude;
-                    
-                    // One-time verification
-                    fetch('/check-boundary', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            latitude: lat,
-                            longitude: lon
-                        })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (!data.success && data.redirect) {
-                            // User is outside boundary - redirect
-                            window.location.href = data.redirect_url;
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error checking location:', error);
-                    });
-                },
-                (error) => {
-                    console.log('Location not available:', error.message);
-                }
-            );
-        }
-    }
-
-    // Manual location check button functionality
-    function checkLocationManually() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const lat = position.coords.latitude;
-                    const lon = position.coords.longitude;
-                    
-                    fetch('/check-boundary', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            latitude: lat,
-                            longitude: lon
-                        })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            alert('✅ You are within the allowed area: ' + data.location);
-                        } else {
-                            alert('⚠️ ' + data.message);
-                            if (data.redirect) {
-                                window.location.href = data.redirect_url;
-                            }
-                        }
-                    })
-                    .catch(error => {
-                        alert('Error checking location: ' + error.message);
-                    });
-                },
-                (error) => {
-                    alert('Please enable location services to check your position.');
-                }
-            );
-        } else {
-            alert('Geolocation is not supported by your browser.');
-        }
-    }
-
-    // Run one-time check on page load
-    document.addEventListener('DOMContentLoaded', checkLocationOnLoad);
-
-    // AJAX pagination function
-    function loadPage(page, searchQuery = '') {
-        const params = new URLSearchParams();
-        params.append('page', page);
-        if (searchQuery) {
-            params.append('search', searchQuery);
-        }
-
-        // Show loading state
-        showLoadingState();
-
-        fetch(`{{ url_for("dashboard") }}?${params.toString()}`, {
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.success) {
-                // Update PDF grid
-                document.querySelector('.pdf-grid').innerHTML = data.pdfs_html;
-                
-                // Update pagination
-                document.getElementById('paginationContainer').innerHTML = data.pagination_html;
-                
-                // Update browser URL without reload
-                const newUrl = `{{ url_for("dashboard") }}?${params.toString()}`;
-                window.history.pushState({ 
-                    page: page, 
-                    search: searchQuery,
-                    timestamp: Date.now()
-                }, '', newUrl);
-                
-                // Re-attach event listeners
-                attachPaginationListeners();
-                initializePdfViewers();
-                
-                // Scroll to top smoothly
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                
-                // Update search input value
-                document.getElementById('searchInput').value = searchQuery;
-            } else {
-                console.error('Failed to load page:', data);
-                // Fallback to full page reload
-                window.location.href = `{{ url_for("dashboard") }}?${params.toString()}`;
-            }
-        })
-        .catch(error => {
-            console.error('Error loading page:', error);
-            // Fallback to full page reload
-            window.location.href = `{{ url_for("dashboard") }}?${params.toString()}`;
-        })
-        .finally(() => {
-            hideLoadingState();
-        });
-    }
-
-    // Show loading state
-    function showLoadingState() {
-        const pdfGrid = document.querySelector('.pdf-grid');
-        const paginationContainer = document.getElementById('paginationContainer');
+// Perform location check
+async function performContinuousLocationCheck() {
+    if (isCheckingLocation) return;
+    
+    isCheckingLocation = true;
+    
+    try {
+        console.log('Performing location check...');
+        const position = await getCurrentPosition();
+        const { latitude, longitude } = position.coords;
         
-        // Save original content
-        pdfGrid.setAttribute('data-original-content', pdfGrid.innerHTML);
-        if (paginationContainer) {
-            paginationContainer.setAttribute('data-original-content', paginationContainer.innerHTML);
-        }
-        
-        // Show loading in PDF grid
-        pdfGrid.innerHTML = `
-            <div class="no-results" style="grid-column: 1 / -1;">
-                <i class="fas fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 15px;"></i>
-                <h3>Loading PDFs...</h3>
-                <p>Please wait while we load the documents</p>
-            </div>
-        `;
-        
-        // Show loading in pagination
-        if (paginationContainer) {
-            const originalPagination = paginationContainer.innerHTML;
-            paginationContainer.innerHTML = `
-                <div class="pagination-container">
-                    <div class="pagination-info">
-                        <i class="fas fa-spinner fa-spin" style="margin-right: 8px;"></i>
-                        Loading...
-                    </div>
-                </div>
-            `;
-            paginationContainer.setAttribute('data-original-content', originalPagination);
-        }
-        
-        // Add loading class for CSS effects
-        pdfGrid.classList.add('loading');
-    }
-
-    // Hide loading state
-    function hideLoadingState() {
-        const pdfGrid = document.querySelector('.pdf-grid');
-        pdfGrid.classList.remove('loading');
-    }
-
-    // Attach pagination event listeners
-    function attachPaginationListeners() {
-        document.querySelectorAll('.page-link[data-page]').forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                const page = parseInt(this.getAttribute('data-page'));
-                const searchQuery = document.getElementById('searchInput').value;
-                loadPage(page, searchQuery);
-            });
-        });
-    }
-
-    // Enhanced PDF tracking function
-    function trackPdfView(pdfId, pdfTitle) {
-        // Validate PDF ID
-        if (!pdfId || pdfId === 'undefined' || pdfId === 'null') {
-            console.error('Invalid PDF ID:', pdfId);
-            return Promise.reject('Invalid PDF ID');
-        }
-        
-        // Convert to integer for consistency
-        const numericPdfId = parseInt(pdfId);
-        if (isNaN(numericPdfId)) {
-            console.error('PDF ID is not a number:', pdfId);
-            return Promise.reject('PDF ID is not a number');
-        }
-        
-        console.log('Tracking PDF view:', { pdfId: numericPdfId, pdfTitle });
-        
-        return fetch('/track-pdf-view', {
+        // Send location to server for verification
+        const response = await fetch('/api/check-location-continuous', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
             },
             body: JSON.stringify({
-                pdf_id: numericPdfId,
-                pdf_title: pdfTitle
+                latitude: latitude,
+                longitude: longitude
             })
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+        });
+        
+        const data = await response.json();
+        
+        if (!data.success) {
+            console.warn('Location check failed:', data.message);
+            
+            if (data.redirect) {
+                // User is outside boundary, redirect to location check
+                stopContinuousLocationCheck();
+                showLocationWarningModal(data.message);
+                setTimeout(() => {
+                    window.location.href = data.redirect_url;
+                }, 3000);
             }
-            return response.json();
-        })
-        .then(data => {
-            if (data.success) {
-                console.log('PDF view tracked successfully:', numericPdfId);
-                return data;
-            } else {
-                throw new Error(data.message || 'Failed to track PDF view');
+        } else {
+            console.log('✅ Location verified:', data.location);
+            updateLocationDisplay(data.location);
+        }
+        
+    } catch (error) {
+        console.error('❌ Error checking location:', error);
+        
+        if (error.code === error.PERMISSION_DENIED) {
+            showLocationWarningModal('Location permission denied. Please enable location services to continue using E-Vault.');
+        } else if (error.code === error.TIMEOUT) {
+            console.warn('Location check timeout');
+        } else {
+            console.warn('Location service unavailable:', error.message);
+        }
+    } finally {
+        isCheckingLocation = false;
+    }
+}
+
+// Start continuous location monitoring
+function startContinuousLocationCheck() {
+    // Clear any existing interval
+    stopContinuousLocationCheck();
+    
+    // Perform initial check
+    setTimeout(() => {
+        performContinuousLocationCheck();
+    }, 1000);
+    
+    // Start interval for continuous checking
+    locationCheckInterval = setInterval(performContinuousLocationCheck, LOCATION_CHECK_INTERVAL);
+    
+    console.log('🔄 Continuous location monitoring started (every 10 seconds)');
+}
+
+// Stop continuous location monitoring
+function stopContinuousLocationCheck() {
+    if (locationCheckInterval) {
+        clearInterval(locationCheckInterval);
+        locationCheckInterval = null;
+        console.log('⏹️ Continuous location monitoring stopped');
+    }
+}
+
+// Show warning modal before redirect
+function showLocationWarningModal(message) {
+    // Remove existing modal if any
+    if (locationWarningModal) {
+        document.body.removeChild(locationWarningModal);
+    }
+    
+    // Create modal
+    locationWarningModal = document.createElement('div');
+    locationWarningModal.id = 'locationWarningModal';
+    locationWarningModal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.95);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 99999;
+        backdrop-filter: blur(5px);
+    `;
+    
+    const modalContent = document.createElement('div');
+    modalContent.style.cssText = `
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        max-width: 500px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        animation: slideIn 0.5s ease;
+    `;
+    
+    modalContent.innerHTML = `
+        <div style="margin-bottom: 20px;">
+            <i class="fas fa-exclamation-triangle" style="font-size: 4rem; color: #dc3545;"></i>
+        </div>
+        <h3 style="color: #dc3545; margin-bottom: 15px; font-weight: 600;">Location Verification Required</h3>
+        <p id="locationWarningMessage" style="margin-bottom: 25px; line-height: 1.6; color: #333; font-size: 1rem;"></p>
+        <div style="display: flex; flex-direction: column; gap: 10px; align-items: center;">
+            <button id="locationCheckNow" class="btn btn-primary" style="padding: 12px 30px; width: 100%; max-width: 300px;">
+                <i class="fas fa-map-marker-alt"></i> Check Location Now
+            </button>
+            <button id="refreshPage" class="btn btn-secondary" style="padding: 12px 30px; width: 100%; max-width: 300px;">
+                <i class="fas fa-redo"></i> Refresh Page
+            </button>
+        </div>
+        <p style="margin-top: 20px; font-size: 0.9rem; color: #666; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <i class="fas fa-clock"></i> <span id="countdownTimer">Redirecting in 3 seconds...</span>
+        </p>
+    `;
+    
+    locationWarningModal.appendChild(modalContent);
+    document.body.appendChild(locationWarningModal);
+    
+    // Add CSS animations
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
             }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        #locationWarningModal .fa-exclamation-triangle {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0.5; }
+        }
+        
+        #countdownTimer {
+            animation: fadeOut 3s linear infinite alternate;
+        }
+    `;
+    document.head.appendChild(style);
+    
+    // Update message
+    document.getElementById('locationWarningMessage').textContent = message;
+    
+    // Start countdown
+    let seconds = 3;
+    const countdownElement = document.getElementById('countdownTimer');
+    const countdownInterval = setInterval(() => {
+        seconds--;
+        if (seconds > 0) {
+            countdownElement.textContent = `Redirecting in ${seconds} second${seconds > 1 ? 's' : ''}...`;
+        } else {
+            clearInterval(countdownInterval);
+        }
+    }, 1000);
+    
+    // Add event listeners
+    document.getElementById('locationCheckNow').addEventListener('click', function() {
+        clearInterval(countdownInterval);
+        document.body.removeChild(locationWarningModal);
+        locationWarningModal = null;
+        checkLocationManually();
+    });
+    
+    document.getElementById('refreshPage').addEventListener('click', function() {
+        clearInterval(countdownInterval);
+        location.reload();
+    });
+}
+
+// Update location display
+function updateLocationDisplay(locationName) {
+    const locationElement = document.querySelector('.location-text');
+    if (locationElement) {
+        locationElement.textContent = `Location: ${locationName}`;
+        
+        // Add visual feedback
+        locationElement.style.color = '#28a745';
+        locationElement.style.fontWeight = '600';
+        setTimeout(() => {
+            locationElement.style.color = '';
+            locationElement.style.fontWeight = '';
+        }, 2000);
+    }
+}
+
+// Check if location services are available
+function checkLocationAvailability() {
+    if (!navigator.geolocation) {
+        console.error('Geolocation is not supported by this browser');
+        showLocationWarningModal('Your browser does not support location services. Please use a modern browser to access E-Vault.');
+        return false;
+    }
+    
+    // Check permissions
+    if (navigator.permissions && navigator.permissions.query) {
+        navigator.permissions.query({ name: 'geolocation' }).then((result) => {
+            if (result.state === 'denied') {
+                showLocationWarningModal('Location permission denied. Please enable location services in your browser settings to continue using E-Vault.');
+                stopContinuousLocationCheck();
+            } else if (result.state === 'granted') {
+                console.log('✅ Location permission granted');
+            } else if (result.state === 'prompt') {
+                console.log('ℹ️ Location permission will be requested');
+            }
+            
+            // Listen for permission changes
+            result.onchange = function() {
+                if (this.state === 'denied') {
+                    showLocationWarningModal('Location permission has been denied. Please enable location services to continue.');
+                    stopContinuousLocationCheck();
+                } else if (this.state === 'granted') {
+                    console.log('✅ Location permission granted');
+                    startContinuousLocationCheck();
+                }
+            };
+        });
+    }
+    
+    return true;
+}
+
+// Manual location check button functionality
+function checkLocationManually() {
+    if (navigator.geolocation) {
+        // Show loading state
+        const checkBtn = document.querySelector('.btn-outline-light');
+        if (checkBtn) {
+            const originalHtml = checkBtn.innerHTML;
+            checkBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking...';
+            checkBtn.disabled = true;
+            
+            // Reset button after 5 seconds
+            setTimeout(() => {
+                checkBtn.innerHTML = originalHtml;
+                checkBtn.disabled = false;
+            }, 5000);
+        }
+        
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+                
+                fetch('/api/check-location-continuous', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        latitude: lat,
+                        longitude: lon
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Show success notification
+                        showToastNotification('✅ Location Verified', `You are within the allowed area: ${data.location}`, 'success');
+                        updateLocationDisplay(data.location);
+                    } else {
+                        showToastNotification('⚠️ Location Check Failed', data.message, 'warning');
+                        if (data.redirect) {
+                            showLocationWarningModal(data.message);
+                            setTimeout(() => {
+                                window.location.href = data.redirect_url;
+                            }, 3000);
+                        }
+                    }
+                })
+                .catch(error => {
+                    showToastNotification('❌ Error', 'Error checking location: ' + error.message, 'error');
+                });
+            },
+            (error) => {
+                let errorMessage = 'Please enable location services to check your position.';
+                if (error.code === error.PERMISSION_DENIED) {
+                    errorMessage = 'Location permission denied. Please enable location services in your browser settings.';
+                } else if (error.code === error.TIMEOUT) {
+                    errorMessage = 'Location check timeout. Please try again.';
+                }
+                showToastNotification('⚠️ Location Error', errorMessage, 'warning');
+            }
+        );
+    } else {
+        showToastNotification('❌ Browser Error', 'Geolocation is not supported by your browser.', 'error');
+    }
+}
+
+// Toast notification function
+function showToastNotification(title, message, type = 'info') {
+    // Create toast container if it doesn't exist
+    let toastContainer = document.getElementById('toastContainer');
+    if (!toastContainer) {
+        toastContainer = document.createElement('div');
+        toastContainer.id = 'toastContainer';
+        toastContainer.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        `;
+        document.body.appendChild(toastContainer);
+    }
+    
+    // Create toast
+    const toast = document.createElement('div');
+    toast.className = `toast-notification toast-${type}`;
+    toast.style.cssText = `
+        background: ${type === 'success' ? '#d4edda' : type === 'error' ? '#f8d7da' : type === 'warning' ? '#fff3cd' : '#d1ecf1'};
+        color: ${type === 'success' ? '#155724' : type === 'error' ? '#721c24' : type === 'warning' ? '#856404' : '#0c5460'};
+        border: 1px solid ${type === 'success' ? '#c3e6cb' : type === 'error' ? '#f5c6cb' : type === 'warning' ? '#ffeaa7' : '#bee5eb'};
+        border-radius: 8px;
+        padding: 15px 20px;
+        min-width: 300px;
+        max-width: 400px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        animation: slideInRight 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    `;
+    
+    const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️';
+    
+    toast.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 1.2rem;">${icon}</span>
+            <strong style="flex: 1;">${title}</strong>
+            <button onclick="this.parentElement.parentElement.remove()" style="background: none; border: none; cursor: pointer; color: inherit;">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div style="font-size: 0.9rem; margin-left: 28px;">${message}</div>
+    `;
+    
+    toastContainer.appendChild(toast);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        if (toast.parentElement) {
+            toast.style.animation = 'slideOutRight 0.3s ease';
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.remove();
+                }
+            }, 300);
+        }
+    }, 5000);
+    
+    // Add CSS animations
+    const style = document.createElement('style');
+    if (!document.querySelector('#toastAnimations')) {
+        style.id = 'toastAnimations';
+        style.textContent = `
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            
+            @keyframes slideOutRight {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+}
+
+// Initialize continuous location monitoring
+function initializeContinuousLocationMonitoring() {
+    console.log('🚀 Initializing continuous location monitoring...');
+    
+    // Check if location is supported
+    if (!checkLocationAvailability()) {
+        return;
+    }
+    
+    // Start continuous monitoring after 2 seconds delay
+    setTimeout(() => {
+        startContinuousLocationCheck();
+    }, 2000);
+    
+    // Handle page visibility changes
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            // Page is hidden, stop checking to save resources
+            console.log('📱 Page hidden, pausing location monitoring');
+            stopContinuousLocationCheck();
+        } else {
+            // Page is visible, resume checking
+            console.log('📱 Page visible, resuming location monitoring');
+            startContinuousLocationCheck();
+        }
+    });
+    
+    // Handle beforeunload to clean up
+    window.addEventListener('beforeunload', function() {
+        stopContinuousLocationCheck();
+    });
+    
+    // Listen for online/offline status
+    window.addEventListener('online', function() {
+        console.log('🌐 Online, resuming location checks');
+        startContinuousLocationCheck();
+    });
+    
+    window.addEventListener('offline', function() {
+        console.log('🌐 Offline, pausing location checks');
+        stopContinuousLocationCheck();
+        showToastNotification('⚠️ Network Offline', 'Location monitoring paused due to network issues', 'warning');
+    });
+    
+    console.log('✅ Continuous location monitoring initialized');
+}
+
+// ================================
+// EXISTING USER DASHBOARD FUNCTIONS
+// ================================
+
+// Set current year in footer
+document.getElementById('year').textContent = new Date().getFullYear();
+
+// PDF data storage
+const pdfData = {{ all_pdfs_data | tojson | safe }};
+console.log('Loaded PDF data:', pdfData);
+
+// Search functionality with debouncing
+let searchTimeout;
+
+// Close mobile navbar when a nav link is clicked
+document.addEventListener('DOMContentLoaded', function() {
+    const navLinks = document.querySelectorAll('.nav-link');
+    const navbarToggler = document.querySelector('.navbar-toggler');
+    const navbarCollapse = document.querySelector('.navbar-collapse');
+    
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            if (navbarCollapse.classList.contains('show')) {
+                navbarToggler.click();
+            }
+        });
+    });
+});
+
+// One-time location check on page load
+function checkLocationOnLoad() {
+    if (navigator.geolocation && "{{ location_verified|default('false') }}" === "true") {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+                
+                fetch('/check-boundary', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        latitude: lat,
+                        longitude: lon
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.success && data.redirect) {
+                        window.location.href = data.redirect_url;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error checking location:', error);
+                });
+            },
+            (error) => {
+                console.log('Location not available:', error.message);
+            }
+        );
+    }
+}
+
+// AJAX pagination function
+function loadPage(page, searchQuery = '') {
+    const params = new URLSearchParams();
+    params.append('page', page);
+    if (searchQuery) {
+        params.append('search', searchQuery);
+    }
+
+    // Show loading state
+    showLoadingState();
+
+    fetch(`{{ url_for("dashboard") }}?${params.toString()}`, {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            // Update PDF grid
+            document.querySelector('.pdf-grid').innerHTML = data.pdfs_html;
+            
+            // Update pagination
+            document.getElementById('paginationContainer').innerHTML = data.pagination_html;
+            
+            // Update browser URL without reload
+            const newUrl = `{{ url_for("dashboard") }}?${params.toString()}`;
+            window.history.pushState({ 
+                page: page, 
+                search: searchQuery,
+                timestamp: Date.now()
+            }, '', newUrl);
+            
+            // Re-attach event listeners
+            attachPaginationListeners();
+            initializePdfViewers();
+            
+            // Scroll to top smoothly
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Update search input value
+            document.getElementById('searchInput').value = searchQuery;
+        } else {
+            console.error('Failed to load page:', data);
+            // Fallback to full page reload
+            window.location.href = `{{ url_for("dashboard") }}?${params.toString()}`;
+        }
+    })
+    .catch(error => {
+        console.error('Error loading page:', error);
+        // Fallback to full page reload
+        window.location.href = `{{ url_for("dashboard") }}?${params.toString()}`;
+    })
+    .finally(() => {
+        hideLoadingState();
+    });
+}
+
+// Show loading state
+function showLoadingState() {
+    const pdfGrid = document.querySelector('.pdf-grid');
+    const paginationContainer = document.getElementById('paginationContainer');
+    
+    // Save original content
+    pdfGrid.setAttribute('data-original-content', pdfGrid.innerHTML);
+    if (paginationContainer) {
+        paginationContainer.setAttribute('data-original-content', paginationContainer.innerHTML);
+    }
+    
+    // Show loading in PDF grid
+    pdfGrid.innerHTML = `
+        <div class="no-results" style="grid-column: 1 / -1;">
+            <i class="fas fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 15px;"></i>
+            <h3>Loading PDFs...</h3>
+            <p>Please wait while we load the documents</p>
+        </div>
+    `;
+    
+    // Show loading in pagination
+    if (paginationContainer) {
+        const originalPagination = paginationContainer.innerHTML;
+        paginationContainer.innerHTML = `
+            <div class="pagination-container">
+                <div class="pagination-info">
+                    <i class="fas fa-spinner fa-spin" style="margin-right: 8px;"></i>
+                    Loading...
+                </div>
+            </div>
+        `;
+        paginationContainer.setAttribute('data-original-content', originalPagination);
+    }
+    
+    // Add loading class for CSS effects
+    pdfGrid.classList.add('loading');
+}
+
+// Hide loading state
+function hideLoadingState() {
+    const pdfGrid = document.querySelector('.pdf-grid');
+    pdfGrid.classList.remove('loading');
+}
+
+// Attach pagination event listeners
+function attachPaginationListeners() {
+    document.querySelectorAll('.page-link[data-page]').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const page = parseInt(this.getAttribute('data-page'));
+            const searchQuery = document.getElementById('searchInput').value;
+            loadPage(page, searchQuery);
+        });
+    });
+}
+
+// Enhanced PDF tracking function
+function trackPdfView(pdfId, pdfTitle) {
+    // Validate PDF ID
+    if (!pdfId || pdfId === 'undefined' || pdfId === 'null') {
+        console.error('Invalid PDF ID:', pdfId);
+        return Promise.reject('Invalid PDF ID');
+    }
+    
+    // Convert to integer for consistency
+    const numericPdfId = parseInt(pdfId);
+    if (isNaN(numericPdfId)) {
+        console.error('PDF ID is not a number:', pdfId);
+        return Promise.reject('PDF ID is not a number');
+    }
+    
+    console.log('Tracking PDF view:', { pdfId: numericPdfId, pdfTitle });
+    
+    return fetch('/track-pdf-view', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({
+            pdf_id: numericPdfId,
+            pdf_title: pdfTitle
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            console.log('PDF view tracked successfully:', numericPdfId);
+            return data;
+        } else {
+            throw new Error(data.message || 'Failed to track PDF view');
+        }
+    })
+    .catch(error => {
+        console.error('Error tracking PDF view:', error);
+        throw error;
+    });
+}
+
+// Enhanced PDF Viewer function with proper tracking
+function openPdfViewer(pdfId, pdfTitle) {
+    // Validate inputs
+    if (!pdfId || !pdfTitle) {
+        console.error('Missing PDF ID or title:', { pdfId, pdfTitle });
+        alert('Error: Missing PDF information');
+        return;
+    }
+    
+    console.log('Opening PDF viewer:', { pdfId, pdfTitle });
+    
+    // Track the PDF view first
+    trackPdfView(pdfId, pdfTitle)
+        .then(() => {
+            // After successful tracking, open the PDF viewer
+            openPdfViewerModal(pdfId, pdfTitle);
         })
         .catch(error => {
-            console.error('Error tracking PDF view:', error);
-            throw error;
+            console.error('Failed to track PDF view, but opening viewer anyway:', error);
+            // Still open the viewer even if tracking fails
+            openPdfViewerModal(pdfId, pdfTitle);
         });
-    }
+}
 
-    // Enhanced PDF Viewer function with proper tracking
-    function openPdfViewer(pdfId, pdfTitle) {
-        // Validate inputs
-        if (!pdfId || !pdfTitle) {
-            console.error('Missing PDF ID or title:', { pdfId, pdfTitle });
-            alert('Error: Missing PDF information');
-            return;
-        }
+// Separate function to handle the actual PDF viewer opening
+function openPdfViewerModal(pdfId, title) {
+    console.log('Opening PDF modal:', { pdfId, title, availablePDFs: Object.keys(pdfData) });
+    
+    currentPdfId = pdfId;
+    document.getElementById('pdfModalTitle').textContent = title;
+    const modal = document.getElementById('pdfModal');
+    modal.classList.add('active');
+    
+    // Disable body scroll
+    document.body.style.overflow = 'hidden';
+    
+    // Show loading indicator
+    document.querySelector('.pdf-loading').style.display = 'block';
+    
+    // Get PDF data securely - with better error handling
+    const pdfInfo = pdfData[pdfId];
+    console.log('PDF info retrieved:', pdfInfo);
+    
+    if (!pdfInfo) {
+        console.error('PDF not found in local data. PDF ID:', pdfId, 'Available PDFs:', Object.keys(pdfData));
+        document.querySelector('.pdf-loading').style.display = 'none';
         
-        console.log('Opening PDF viewer:', { pdfId, pdfTitle });
-        
-        // Track the PDF view first
-        trackPdfView(pdfId, pdfTitle)
-            .then(() => {
-                // After successful tracking, open the PDF viewer
-                openPdfViewerModal(pdfId, pdfTitle);
-            })
-            .catch(error => {
-                console.error('Failed to track PDF view, but opening viewer anyway:', error);
-                // Still open the viewer even if tracking fails
-                openPdfViewerModal(pdfId, pdfTitle);
-            });
-    }
-
-    // Separate function to handle the actual PDF viewer opening
-    function openPdfViewerModal(pdfId, title) {
-        console.log('Opening PDF modal:', { pdfId, title, availablePDFs: Object.keys(pdfData) });
-        
-        currentPdfId = pdfId;
-        document.getElementById('pdfModalTitle').textContent = title;
-        const modal = document.getElementById('pdfModal');
-        modal.classList.add('active');
-        
-        // Disable body scroll
-        document.body.style.overflow = 'hidden';
-        
-        // Show loading indicator
-        document.querySelector('.pdf-loading').style.display = 'block';
-        
-        // Get PDF data securely - with better error handling
-        const pdfInfo = pdfData[pdfId];
-        console.log('PDF info retrieved:', pdfInfo);
-        
-        if (!pdfInfo) {
-            console.error('PDF not found in local data. PDF ID:', pdfId, 'Available PDFs:', Object.keys(pdfData));
-            document.querySelector('.pdf-loading').style.display = 'none';
-            
-            // Show user-friendly error
-            const errorHtml = `
-                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: white; text-align: center; padding: 20px;">
-                    <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 20px; color: #ff6b6b;"></i>
-                    <h3>PDF Not Available</h3>
-                    <p>The requested PDF could not be found in the system.</p>
-                    <p style="font-size: 0.9rem; opacity: 0.8;">PDF ID: ${pdfId}</p>
-                    <button class="btn-toolbar" onclick="closePdfViewer()" style="margin-top: 20px;">
-                        <i class="fas fa-times"></i> Close
-                    </button>
-                </div>
-            `;
-            
-            const iframe = document.getElementById('pdfViewer');
-            iframe.srcdoc = `
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <style>
-                        body { 
-                            margin: 0; 
-                            padding: 0; 
-                            background: #1a1a1a; 
-                            color: white; 
-                            font-family: Arial, sans-serif; 
-                            display: flex; 
-                            align-items: center; 
-                            justify-content: center; 
-                            height: 100vh; 
-                        }
-                    </style>
-                </head>
-                <body>${errorHtml}</body>
-                </html>
-            `;
-            return;
-        }
-        
-        // Convert to embedded URL and load
-        const embeddedUrl = convertToEmbeddedUrl(pdfInfo.driveLink);
-        console.log('Loading PDF from URL:', embeddedUrl);
+        // Show user-friendly error
+        const errorHtml = `
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: white; text-align: center; padding: 20px;">
+                <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 20px; color: #ff6b6b;"></i>
+                <h3>PDF Not Available</h3>
+                <p>The requested PDF could not be found in the system.</p>
+                <p style="font-size: 0.9rem; opacity: 0.8;">PDF ID: ${pdfId}</p>
+                <button class="btn-toolbar" onclick="closePdfViewer()" style="margin-top: 20px;">
+                    <i class="fas fa-times"></i> Close
+                </button>
+            </div>
+        `;
         
         const iframe = document.getElementById('pdfViewer');
-        
-        // Set iframe source
-        iframe.src = embeddedUrl;
-        
-        // Set initial zoom for mobile/desktop
-        currentZoom = isMobile ? 80 : 100;
-        
-        // Hide loading indicator when PDF loads
-        iframe.onload = function() {
-            document.querySelector('.pdf-loading').style.display = 'none';
-            console.log('PDF loaded successfully:', pdfId);
-            
-            // Enhanced download protection
-            try {
-                // Disable right-click context menu
-                iframe.contentDocument.addEventListener('contextmenu', function(e) {
-                    e.preventDefault();
-                    return false;
-                });
-                
-                // Disable text selection
-                iframe.contentDocument.addEventListener('selectstart', function(e) {
-                    e.preventDefault();
-                    return false;
-                });
-                
-            } catch (e) {
-                console.log('Enhanced protection applied (cross-origin restrictions)');
-            }
-        };
-        
-        // Handle iframe loading errors
-        iframe.onerror = function() {
-            document.querySelector('.pdf-loading').style.display = 'none';
-            console.error('Error loading PDF iframe:', pdfId);
-            
-            // Show error in iframe
-            iframe.srcdoc = `
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <style>
-                        body { 
-                            margin: 0; 
-                            padding: 0; 
-                            background: #1a1a1a; 
-                            color: white; 
-                            font-family: Arial, sans-serif; 
-                            display: flex; 
-                            align-items: center; 
-                            justify-content: center; 
-                            height: 100vh; 
-                            text-align: center;
-                        }
-                        .error-content { padding: 20px; }
-                    </style>
-                </head>
-                <body>
-                    <div class="error-content">
-                        <i class="fas fa-exclamation-circle" style="font-size: 3rem; margin-bottom: 20px; color: #ff6b6b;"></i>
-                        <h3>Error Loading PDF</h3>
-                        <p>There was an error loading the PDF document.</p>
-                        <p style="font-size: 0.9rem; opacity: 0.8;">Please try again or contact support.</p>
-                    </div>
-                </body>
-                </html>
-            `;
-        };
-        
-        // Set timeout for loading
-        setTimeout(() => {
-            if (document.querySelector('.pdf-loading').style.display !== 'none') {
-                document.querySelector('.pdf-loading').style.display = 'none';
-                console.log('PDF loading timeout');
-            }
-        }, 10000); // 10 second timeout
+        iframe.srcdoc = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <style>
+                    body { 
+                        margin: 0; 
+                        padding: 0; 
+                        background: #1a1a1a; 
+                        color: white; 
+                        font-family: Arial, sans-serif; 
+                        display: flex; 
+                        align-items: center; 
+                        justify-content: center; 
+                        height: 100vh; 
+                    }
+                </style>
+            </head>
+            <body>${errorHtml}</body>
+            </html>
+        `;
+        return;
     }
-
-    // Initialize PDF viewers with proper event handling
-    function initializePdfViewers() {
-        // Remove any existing event listeners first
-        document.querySelectorAll('.pdf-card .btn-primary').forEach(button => {
-            button.replaceWith(button.cloneNode(true));
-        });
+    
+    // Convert to embedded URL and load
+    const embeddedUrl = convertToEmbeddedUrl(pdfInfo.driveLink);
+    console.log('Loading PDF from URL:', embeddedUrl);
+    
+    const iframe = document.getElementById('pdfViewer');
+    
+    // Set iframe source
+    iframe.src = embeddedUrl;
+    
+    // Set initial zoom for mobile/desktop
+    currentZoom = isMobile ? 80 : 100;
+    
+    // Hide loading indicator when PDF loads
+    iframe.onload = function() {
+        document.querySelector('.pdf-loading').style.display = 'none';
+        console.log('PDF loaded successfully:', pdfId);
         
-        // Add new event listeners
-        document.querySelectorAll('.pdf-card .btn-primary').forEach(button => {
+        // Enhanced download protection
+        try {
+            // Disable right-click context menu
+            iframe.contentDocument.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection
+            iframe.contentDocument.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+        } catch (e) {
+            console.log('Enhanced protection applied (cross-origin restrictions)');
+        }
+    };
+    
+    // Handle iframe loading errors
+    iframe.onerror = function() {
+        document.querySelector('.pdf-loading').style.display = 'none';
+        console.error('Error loading PDF iframe:', pdfId);
+        
+        // Show error in iframe
+        iframe.srcdoc = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <style>
+                    body { 
+                        margin: 0; 
+                        padding: 0; 
+                        background: #1a1a1a; 
+                        color: white; 
+                        font-family: Arial, sans-serif; 
+                        display: flex; 
+                        align-items: center; 
+                        justify-content: center; 
+                        height: 100vh; 
+                        text-align: center;
+                    }
+                    .error-content { padding: 20px; }
+                </style>
+            </head>
+            <body>
+                <div class="error-content">
+                    <i class="fas fa-exclamation-circle" style="font-size: 3rem; margin-bottom: 20px; color: #ff6b6b;"></i>
+                    <h3>Error Loading PDF</h3>
+                    <p>There was an error loading the PDF document.</p>
+                    <p style="font-size: 0.9rem; opacity: 0.8;">Please try again or contact support.</p>
+                </div>
+            </body>
+            </html>
+        `;
+    };
+    
+    // Set timeout for loading
+    setTimeout(() => {
+        if (document.querySelector('.pdf-loading').style.display !== 'none') {
+            document.querySelector('.pdf-loading').style.display = 'none';
+            console.log('PDF loading timeout');
+        }
+    }, 10000); // 10 second timeout
+}
+
+// Initialize PDF viewers with proper event handling
+function initializePdfViewers() {
+    // Remove any existing event listeners first
+    document.querySelectorAll('.pdf-card .btn-primary').forEach(button => {
+        button.replaceWith(button.cloneNode(true));
+    });
+    
+    // Add new event listeners
+    document.querySelectorAll('.pdf-card .btn-primary').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const pdfCard = this.closest('.pdf-card');
+            const pdfId = pdfCard.getAttribute('data-pdf-id');
+            const pdfTitle = pdfCard.querySelector('.pdf-title').textContent;
+            
+            if (!pdfId) {
+                console.error('No PDF ID found on card:', pdfCard);
+                alert('Error: PDF ID not found');
+                return;
+            }
+            
+            console.log('PDF button clicked:', { pdfId, pdfTitle });
+            openPdfViewer(pdfId, pdfTitle);
+        });
+    });
+    
+    // Also handle direct onclick events for backward compatibility
+    document.querySelectorAll('button[onclick*="openPdfViewer"]').forEach(button => {
+        const onclick = button.getAttribute('onclick');
+        const match = onclick.match(/openPdfViewer\('([^']+)',\s*'([^']+)'\)/);
+        if (match) {
+            const pdfId = match[1];
+            const pdfTitle = match[2];
+            button.removeAttribute('onclick');
             button.addEventListener('click', function(e) {
                 e.preventDefault();
-                e.stopPropagation();
-                
-                const pdfCard = this.closest('.pdf-card');
-                const pdfId = pdfCard.getAttribute('data-pdf-id');
-                const pdfTitle = pdfCard.querySelector('.pdf-title').textContent;
-                
-                if (!pdfId) {
-                    console.error('No PDF ID found on card:', pdfCard);
-                    alert('Error: PDF ID not found');
-                    return;
-                }
-                
-                console.log('PDF button clicked:', { pdfId, pdfTitle });
                 openPdfViewer(pdfId, pdfTitle);
             });
-        });
-        
-        // Also handle direct onclick events for backward compatibility
-        document.querySelectorAll('button[onclick*="openPdfViewer"]').forEach(button => {
-            const onclick = button.getAttribute('onclick');
-            const match = onclick.match(/openPdfViewer\('([^']+)',\s*'([^']+)'\)/);
-            if (match) {
-                const pdfId = match[1];
-                const pdfTitle = match[2];
-                button.removeAttribute('onclick');
-                button.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    openPdfViewer(pdfId, pdfTitle);
-                });
-            }
-        });
-    }
-
-    // Convert Google Drive URL to embedded viewer
-    function convertToEmbeddedUrl(driveUrl) {
-        if (driveUrl.includes('/file/d/')) {
-            const fileId = driveUrl.match(/\/file\/d\/([^\/]+)/)[1];
-            return `https://drive.google.com/file/d/${fileId}/preview?embedded=true&toolbar=0&navpanes=0`;
         }
-        return driveUrl;
-    }
+    });
+}
 
-    // Close modal function
-    function closePdfViewer() {
-        const modal = document.getElementById('pdfModal');
-        modal.classList.remove('active');
-        const iframe = document.getElementById('pdfViewer');
-        iframe.src = '';
-        document.body.style.overflow = '';
-        document.querySelector('.pdf-loading').style.display = 'none';
-        console.log('PDF viewer closed');
+// Convert Google Drive URL to embedded viewer
+function convertToEmbeddedUrl(driveUrl) {
+    if (driveUrl.includes('/file/d/')) {
+        const fileId = driveUrl.match(/\/file\/d\/([^\/]+)/)[1];
+        return `https://drive.google.com/file/d/${fileId}/preview?embedded=true&toolbar=0&navpanes=0`;
     }
+    return driveUrl;
+}
 
-    // Setup Escape key to close modal
-    function setupEscapeKey() {
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closePdfViewer();
-            }
-        });
-    }
+// Close modal function
+function closePdfViewer() {
+    const modal = document.getElementById('pdfModal');
+    modal.classList.remove('active');
+    const iframe = document.getElementById('pdfViewer');
+    iframe.src = '';
+    document.body.style.overflow = '';
+    document.querySelector('.pdf-loading').style.display = 'none';
+    console.log('PDF viewer closed');
+}
 
-    // Handle browser back/forward buttons for pagination
-    function setupBrowserNavigation() {
-        window.addEventListener('popstate', function(event) {
-            if (event.state && event.state.timestamp) {
-                // This is a pagination state, load the appropriate page
-                const page = event.state.page || 1;
-                const search = event.state.search || '';
-                document.getElementById('searchInput').value = search;
-                loadPage(page, search);
-            }
-        });
-    }
+// Setup Escape key to close modal
+function setupEscapeKey() {
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closePdfViewer();
+        }
+    });
+}
 
-    // Enhanced search with AJAX
-    function performSearch() {
+// Handle browser back/forward buttons for pagination
+function setupBrowserNavigation() {
+    window.addEventListener('popstate', function(event) {
+        if (event.state && event.state.timestamp) {
+            // This is a pagination state, load the appropriate page
+            const page = event.state.page || 1;
+            const search = event.state.search || '';
+            document.getElementById('searchInput').value = search;
+            loadPage(page, search);
+        }
+    });
+}
+
+// Enhanced search with AJAX
+function performSearch() {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        const searchTerm = document.getElementById('searchInput').value;
+        loadPage(1, searchTerm);
+    }, 500);
+}
+
+// Clear search and reset to page 1
+function clearSearch() {
+    document.getElementById('searchInput').value = '';
+    loadPage(1, '');
+}
+
+// Enter key support for search
+function handleSearchKeyPress(e) {
+    if (e.key === 'Enter') {
         clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
-            const searchTerm = document.getElementById('searchInput').value;
-            loadPage(1, searchTerm);
-        }, 500);
+        performSearch();
     }
+}
 
-    // Clear search and reset to page 1
-    function clearSearch() {
-        document.getElementById('searchInput').value = '';
-        loadPage(1, '');
+// Clear search when input is emptied
+function handleSearchInput(e) {
+    if (e.target.value === '') {
+        clearTimeout(searchTimeout);
+        clearSearch();
     }
+}
 
-    // Enter key support for search
-    function handleSearchKeyPress(e) {
-        if (e.key === 'Enter') {
-            clearTimeout(searchTimeout);
-            performSearch();
-        }
+// Mobile detection
+function checkMobileStatus() {
+    isMobile = window.innerWidth <= 768;
+}
+
+// Initialize all event listeners and functionality
+function initializeApp() {
+    console.log('Initializing E-Vault application...');
+    
+    // Initialize mobile detection
+    checkMobileStatus();
+    
+    // Attach initial pagination listeners
+    attachPaginationListeners();
+    
+    // Initialize PDF viewers
+    initializePdfViewers();
+    
+    // Setup search functionality
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', handleSearchInput);
+        searchInput.addEventListener('keypress', handleSearchKeyPress);
+        searchInput.addEventListener('input', performSearch);
     }
-
-    // Clear search when input is emptied
-    function handleSearchInput(e) {
-        if (e.target.value === '') {
-            clearTimeout(searchTimeout);
-            clearSearch();
-        }
+    
+    // Setup PDF viewer controls
+    const closeButton = document.getElementById('closePdfModal');
+    if (closeButton) {
+        closeButton.addEventListener('click', closePdfViewer);
     }
+    
+    setupEscapeKey();
+    setupBrowserNavigation();
+    
+    // Initialize continuous location monitoring
+    initializeContinuousLocationMonitoring();
+    
+    console.log('E-Vault application initialized successfully');
+}
 
-    // Mobile detection
-    function checkMobileStatus() {
-        isMobile = window.innerWidth <= 768;
-    }
+// Responsive initialization
+function initResponsive() {
+    checkMobileStatus();
+}
 
-    // Initialize all event listeners and functionality
-    function initializeApp() {
-        console.log('Initializing E-Vault application...');
-        
-        // Initialize mobile detection
-        checkMobileStatus();
-        
-        // Attach initial pagination listeners
-        attachPaginationListeners();
-        
-        // Initialize PDF viewers
-        initializePdfViewers();
-        
-        // Setup search functionality
-        const searchInput = document.getElementById('searchInput');
-        if (searchInput) {
-            searchInput.addEventListener('input', handleSearchInput);
-            searchInput.addEventListener('keypress', handleSearchKeyPress);
-            searchInput.addEventListener('input', performSearch);
-        }
-        
-        // Setup PDF viewer controls
-        const closeButton = document.getElementById('closePdfModal');
-        if (closeButton) {
-            closeButton.addEventListener('click', closePdfViewer);
-        }
-        
-        setupEscapeKey();
-        setupBrowserNavigation();
-        
-        console.log('E-Vault application initialized successfully');
-    }
+// Event listeners for window events
+window.addEventListener('resize', initResponsive);
+window.addEventListener('orientationchange', function() {
+    setTimeout(initResponsive, 100);
+});
 
-    // Responsive initialization
-    function initResponsive() {
-        checkMobileStatus();
-    }
+// Initialize the application when DOM is loaded
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeApp);
+} else {
+    // DOM already loaded
+    initializeApp();
+}
 
-    // Event listeners for window events
-    window.addEventListener('resize', initResponsive);
-    window.addEventListener('orientationchange', function() {
-        setTimeout(initResponsive, 100);
-    });
+// Enhanced error handling
+window.addEventListener('error', function(e) {
+    console.error('Global error:', e.error);
+});
 
-    // Initialize the application when DOM is loaded
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initializeApp);
-    } else {
-        // DOM already loaded
-        initializeApp();
-    }
-
-    // Enhanced error handling
-    window.addEventListener('error', function(e) {
-        console.error('Global error:', e.error);
-    });
-
-    // Handle unhandled promise rejections
-    window.addEventListener('unhandledrejection', function(e) {
-        console.error('Unhandled promise rejection:', e.reason);
-    });
+// Handle unhandled promise rejections
+window.addEventListener('unhandledrejection', function(e) {
+    console.error('Unhandled promise rejection:', e.reason);
+});
 </script>
 </body>
 </html>

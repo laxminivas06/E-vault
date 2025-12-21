@@ -1085,7 +1085,7 @@
     </style>
 </head>
 <body>
-      <!-- Navigation -->
+    <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('welcome') }}">
@@ -1096,11 +1096,10 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('admin_dashboard') }}"><i class="fas fa-file-pdf me-1"></i>PDF Management</a>
                     </li>
-                     <li class="nav-item">
+                    <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('admin_users') }}">
                             <i class="fas fa-users me-1"></i>
                             User Management
@@ -1128,7 +1127,8 @@
             </div>
         </div>
     </nav>
-<br>
+    <br>
+    
     <!-- Header -->
     <header class="dashboard-header">
         <div class="container">
@@ -1138,163 +1138,202 @@
                 </div>
             </div>
             <h1>PDF Management</h1>
-            <p class="subtitle">  Manage System PDFs - Add, Remove, and Monitor PDF Documents with Ease.</p>
-<!-- In the User Info section, add this button -->
-<div class="user-info">
-    <p>
-        <i class="fas fa-user"></i>
-        <span style="display: flex; align-items: center; flex-wrap: wrap; gap: 8px;">
-            Welcome back, <strong>{{ username }}</strong>!
-            <span class="role-badge">
-                <i class="fas fa-user-shield"></i>
-                Administrator
-            </span>
-        </span>
-    </p>
-    <p>
-        <i class="fas fa-map-marker-alt"></i>
-        Location: {{ location }}
-        <button onclick="checkLocationManually()" class="btn btn-sm btn-outline-light ms-2" style="padding: 2px 8px; font-size: 0.8rem;">
-            <i class="fas fa-sync-alt"></i> Check Location
-        </button>
-    </p>
-</div>
-           
+            <p class="subtitle">Manage System PDFs - Add, Remove, and Monitor PDF Documents with Ease.</p>
+            
+            <!-- User Info Section -->
+            <div class="user-info">
+                <p>
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span class="location-content">
+                        <span class="location-text">Location: {{ location }}</span>
+                        <button onclick="checkLocationManually()" class="btn btn-sm btn-outline-light ms-2" 
+                                style="padding: 2px 8px; font-size: 0.8rem;">
+                            <i class="fas fa-sync-alt"></i> Check Now
+                        </button>
+                    </span>
+                </p>
+            </div>
         </div>
     </header>
 
- 
-
-           
-
-           <!-- PDF Management Section -->
-<div class="documents-section">
-    <div class="section-header">
-        <h2 class="section-title">
-            <i class="fas fa-book"></i>
-            PDF Management ({{ total_pdfs }} PDFs)
-        </h2>
-        <div class="d-flex flex-column flex-md-row gap-2 gap-md-3 align-items-start align-items-md-center w-100">
-            <!-- Search Bar -->
-            <div class="search-container flex-grow-1 w-100">
-                <div class="input-group input-group-lg input-group-sm-md">
-                    <span class="input-group-text bg-light border-end-0">
-                        <i class="fas fa-search text-muted"></i>
-                    </span>
-                    <input type="text" 
-                           class="form-control border-start-0" 
-                           id="pdfSearch" 
-                           placeholder="Search PDFs by title..."
-                           onkeyup="searchPDFs()">
-                   
-                </div>
-            </div>
-            <button class="btn btn-primary btn-sm-md w-100 w-md-auto" data-bs-toggle="modal" data-bs-target="#addPdfModal">
-                <i class="fas fa-plus"></i> <span class="d-none d-sm-inline">Add PDF</span>
-                <span class="d-inline d-sm-none">Add</span>
-            </button>
-        </div>
-    </div>
-
-                <!-- PDF List -->
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Title</th>
-                                <th>Date</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                       <tbody id="pdfTableBody">
-    {% for pdf in pdfs %}
-    <tr>
-        <td><strong>{{ pdf.id }}</strong></td>
-        <td class="pdf-title">{{ pdf.title }}</td>
-        <td>{{ pdf.upload_date }}</td>
-        <td>
-            <div class="action-buttons">
-                <a href="{{ pdf.drive_link }}" target="_blank" class="btn btn-sm btn-outline-primary" title="View PDF">
-                    <i class="fas fa-eye"></i>
-                    <span class="d-none d-md-inline ms-1">View</span>
-                </a>
-                <button class="btn btn-sm btn-outline-danger" onclick="deletePdf('{{ pdf.id }}')" title="Delete PDF">
-                    <i class="fas fa-trash"></i>
-                    <span class="d-none d-md-inline ms-1">Delete</span>
-                </button>
-            </div>
-        </td>
-    </tr>
-    {% endfor %}
-</tbody>
-                    </table>
-                </div>
-
-                <!-- Pagination -->
-                <div class="pagination-container">
-                    <div class="pagination-info">
-                        Showing {{ (page - 1) * per_page + 1 }} to {{ [page * per_page, total_pdfs]|min }} of {{ total_pdfs }} PDFs
-                    </div>
-                    <nav aria-label="PDF pagination">
-                        <ul class="pagination">
-                            <!-- Previous Page -->
-                            {% if page > 1 %}
-                            <li class="page-item">
-                                <a class="page-link" href="{{ url_for('admin_dashboard', page=page-1) }}" aria-label="Previous">
-                                    <i class="fas fa-chevron-left"></i>
-                                </a>
-                            </li>
-                            {% else %}
-                            <li class="page-item disabled">
-                                <span class="page-link"><i class="fas fa-chevron-left"></i></span>
-                            </li>
-                            {% endif %}
-                            
-                            <!-- Page Numbers -->
-                            {% set start_page = [1, page-2]|max %}
-                            {% set end_page = [start_page + 4, total_pages]|min %}
-                            
-                            {% if start_page > 1 %}
-                            <li class="page-item"><a class="page-link" href="{{ url_for('admin_dashboard', page=1) }}">1</a></li>
-                            {% if start_page > 2 %}
-                            <li class="page-item disabled"><span class="page-link">...</span></li>
-                            {% endif %}
-                            {% endif %}
-                            
-                            {% for page_num in range(start_page, end_page + 1) %}
-                                {% if page_num == page %}
-                                <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
-                                {% else %}
-                                <li class="page-item"><a class="page-link" href="{{ url_for('admin_dashboard', page=page_num) }}">{{ page_num }}</a></li>
+    <!-- Main Content -->
+    <div class="dashboard-main">
+        <div class="container">
+            <!-- PDF Management Section -->
+            <div class="documents-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-book"></i>
+                        PDF Management<span id="pdfCount"> ({{ total_pdfs }} PDFs)</span>
+                    </h2>
+                    <div class="d-flex flex-column flex-md-row gap-2 gap-md-3 align-items-start align-items-md-center w-100">
+                        <!-- Search Bar -->
+                        <div class="search-container flex-grow-1 w-100">
+                            <div class="input-group input-group-lg input-group-sm-md">
+                                <span class="input-group-text bg-light border-end-0">
+                                    <i class="fas fa-search text-muted"></i>
+                                </span>
+                                <input type="text" 
+                                       class="form-control border-start-0" 
+                                       id="pdfSearch" 
+                                       placeholder="Search PDFs by title..."
+                                       value="{{ search_query or '' }}"
+                                       onkeyup="searchPDFs()">
+                                {% if search_query %}
+                                <button class="btn btn-outline-secondary" type="button" onclick="clearPDFSearch()">
+                                    <i class="fas fa-times"></i>
+                                </button>
                                 {% endif %}
-                            {% endfor %}
-                            
-                            {% if end_page < total_pages %}
-                            {% if end_page < total_pages - 1 %}
-                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary btn-sm-md w-100 w-md-auto" data-bs-toggle="modal" data-bs-target="#addPdfModal">
+                            <i class="fas fa-plus"></i> <span class="d-none d-sm-inline">Add PDF</span>
+                            <span class="d-inline d-sm-none">Add</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- PDF Table Container -->
+                <div id="pdfTableContainer">
+                    <!-- Table will be loaded dynamically -->
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Title</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pdfTableBody">
+                                {% if pdfs %}
+                                    {% for pdf in pdfs %}
+                                    <tr>
+                                        <td><strong>{{ pdf.id }}</strong></td>
+                                        <td class="pdf-title">{{ pdf.title }}</td>
+                                        <td>{{ pdf.upload_date }}</td>
+                                        <td>
+                                            <div class="action-buttons">
+                                                <a href="{{ pdf.drive_link }}" target="_blank" class="btn btn-sm btn-outline-primary" title="View PDF">
+                                                    <i class="fas fa-eye"></i>
+                                                    <span class="d-none d-md-inline ms-1">View</span>
+                                                </a>
+                                                <button class="btn btn-sm btn-outline-danger" onclick="deletePdf('{{ pdf.id }}')" title="Delete PDF">
+                                                    <i class="fas fa-trash"></i>
+                                                    <span class="d-none d-md-inline ms-1">Delete</span>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="4" class="text-center py-4">
+                                            <div class="alert alert-info">
+                                                <i class="fas fa-info-circle me-2"></i>
+                                                {% if search_query %}
+                                                    No PDFs found for "{{ search_query }}"
+                                                {% else %}
+                                                    No PDFs found
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="pagination-container">
+                        <div class="pagination-info">
+                            Showing {{ (page - 1) * per_page + 1 }} to {{ [page * per_page, total_pdfs]|min }} of {{ total_pdfs }} PDFs
+                            {% if search_query %}
+                                for "{{ search_query }}"
                             {% endif %}
-                            <li class="page-item"><a class="page-link" href="{{ url_for('admin_dashboard', page=total_pages) }}">{{ total_pages }}</a></li>
-                            {% endif %}
-                            
-                            <!-- Next Page -->
-                            {% if page < total_pages %}
-                            <li class="page-item">
-                                <a class="page-link" href="{{ url_for('admin_dashboard', page=page+1) }}" aria-label="Next">
-                                    <i class="fas fa-chevron-right"></i>
-                                </a>
-                            </li>
-                            {% else %}
-                            <li class="page-item disabled">
-                                <span class="page-link"><i class="fas fa-chevron-right"></i></span>
-                            </li>
-                            {% endif %}
-                        </ul>
-                    </nav>
+                        </div>
+                        <nav aria-label="PDF pagination">
+                            <ul class="pagination">
+                                <!-- Previous Page -->
+                                {% if page > 1 %}
+                                <li class="page-item">
+                                    <a class="page-link" 
+                                       href="javascript:void(0)" 
+                                       onclick="loadPDFs({{ page-1 }}, '{{ search_query }}')" 
+                                       aria-label="Previous">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </a>
+                                </li>
+                                {% else %}
+                                <li class="page-item disabled">
+                                    <span class="page-link"><i class="fas fa-chevron-left"></i></span>
+                                </li>
+                                {% endif %}
+                                
+                                <!-- Page Numbers -->
+                                {% set start_page = [1, page-2]|max %}
+                                {% set end_page = [start_page + 4, total_pages]|min %}
+                                
+                                {% if start_page > 1 %}
+                                <li class="page-item">
+                                    <a class="page-link" href="javascript:void(0)" onclick="loadPDFs(1, '{{ search_query }}')">1</a>
+                                </li>
+                                {% if start_page > 2 %}
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                                {% endif %}
+                                {% endif %}
+                                
+                                {% for page_num in range(start_page, end_page + 1) %}
+                                    {% if page_num == page %}
+                                    <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
+                                    {% else %}
+                                    <li class="page-item">
+                                        <a class="page-link" 
+                                           href="javascript:void(0)" 
+                                           onclick="loadPDFs({{ page_num }}, '{{ search_query }}')">
+                                            {{ page_num }}
+                                        </a>
+                                    </li>
+                                    {% endif %}
+                                {% endfor %}
+                                
+                                {% if end_page < total_pages %}
+                                {% if end_page < total_pages - 1 %}
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                                {% endif %}
+                                <li class="page-item">
+                                    <a class="page-link" 
+                                       href="javascript:void(0)" 
+                                       onclick="loadPDFs({{ total_pages }}, '{{ search_query }}')">
+                                        {{ total_pages }}
+                                    </a>
+                                </li>
+                                {% endif %}
+                                
+                                <!-- Next Page -->
+                                {% if page < total_pages %}
+                                <li class="page-item">
+                                    <a class="page-link" 
+                                       href="javascript:void(0)" 
+                                       onclick="loadPDFs({{ page+1 }}, '{{ search_query }}')" 
+                                       aria-label="Next">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                                {% else %}
+                                <li class="page-item disabled">
+                                    <span class="page-link"><i class="fas fa-chevron-right"></i></span>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    </div>
                 </div>
             </div>
 
             <br>
+            
             <!-- Bulk Upload Section -->
             <div class="documents-section">
                 <div class="section-header">
@@ -1329,16 +1368,12 @@
                 </div>
             </div>
 
-             <!-- Developer Section -->
-    <section class="card-section">
-        <div class="container">
-            <div class="developer-section animate__animated animate__fadeInUp">
-                
-            <div class="developer-info">
-                <p style="font-size: 1.1rem;">E-Vault System developed by</p> 
+            <!-- Developer Section -->
+            <div class="developer-section">
+                <div class="developer-info">
+                    <p style="font-size: 1.1rem;">E-Vault System developed by</p> 
                     <strong>Team Smart N Light Innovations</strong>
-               
-            </div>
+                </div>
                 
                 <!-- SmartNLight Innovation Logo -->
                 <a href="https://smartnlightinnovation.netlify.app" target="_blank" class="developer-logo">
@@ -1347,16 +1382,15 @@
                 
                 <!-- Developer Contact Links -->
                 <div class="developer-links">
-                    
                     <a href="https://wa.me/917993976247" target="_blank" class="dev-social-link">
-    <i class="fab fa-whatsapp"></i>
-</a>
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
                     <a href="https://smartnlightinnovation.netlify.app" target="_blank" class="dev-social-link">
                         <i class="fas fa-globe"></i>
                     </a>
                     <a href="mailto:smartnlightinnovations@gmail.com" target="_blank" class="dev-social-link">
-    <i class="fas fa-envelope"></i>
-</a>
+                        <i class="fas fa-envelope"></i>
+                    </a>
                 </div>
             </div>
         </div>
@@ -1399,126 +1433,721 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- JavaScript Code -->
     <script>
-        // Set current year in footer
-        document.getElementById('year').textContent = new Date().getFullYear();
+        // ================================
+        // CONTINUOUS LOCATION MONITORING SYSTEM
+        // ================================
 
-        // Excel Upload functionality
-        document.getElementById('uploadPdfsForm')?.addEventListener('submit', async function(e) {
-            e.preventDefault();
+        let locationCheckInterval;
+        let isCheckingLocation = false;
+        const LOCATION_CHECK_INTERVAL = 10000; // 10 seconds
+        let locationWarningModal = null;
+
+        // Promise wrapper for geolocation
+        function getCurrentPosition(options = {}) {
+            return new Promise((resolve, reject) => {
+                if (!navigator.geolocation) {
+                    reject(new Error('Geolocation is not supported'));
+                    return;
+                }
+                
+                const defaultOptions = {
+                    enableHighAccuracy: true,
+                    timeout: 15000, // 15 seconds
+                    maximumAge: 0 // Don't use cached location
+                };
+                
+                navigator.geolocation.getCurrentPosition(
+                    resolve,
+                    reject,
+                    { ...defaultOptions, ...options }
+                );
+            });
+        }
+
+        // Perform location check
+        async function performContinuousLocationCheck() {
+            if (isCheckingLocation) return;
             
-            const formData = new FormData(this);
+            isCheckingLocation = true;
             
             try {
-                const response = await fetch('/admin/upload-pdfs-excel', {
+                console.log('Performing location check...');
+                const position = await getCurrentPosition();
+                const { latitude, longitude } = position.coords;
+                
+                // Send location to server for verification
+                const response = await fetch('/api/check-location-continuous', {
                     method: 'POST',
-                    body: formData
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        latitude: latitude,
+                        longitude: longitude
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (!data.success) {
+                    console.warn('Location check failed:', data.message);
+                    
+                    if (data.redirect) {
+                        // User is outside boundary, redirect to location check
+                        stopContinuousLocationCheck();
+                        showLocationWarningModal(data.message);
+                        setTimeout(() => {
+                            window.location.href = data.redirect_url;
+                        }, 3000);
+                    }
+                } else {
+                    console.log('✅ Location verified:', data.location);
+                    updateLocationDisplay(data.location);
+                }
+                
+            } catch (error) {
+                console.error('❌ Error checking location:', error);
+                
+                if (error.code === error.PERMISSION_DENIED) {
+                    showLocationWarningModal('Location permission denied. Please enable location services to continue using E-Vault.');
+                } else if (error.code === error.TIMEOUT) {
+                    console.warn('Location check timeout');
+                } else {
+                    console.warn('Location service unavailable:', error.message);
+                }
+            } finally {
+                isCheckingLocation = false;
+            }
+        }
+
+        // Start continuous location monitoring
+        function startContinuousLocationCheck() {
+            // Clear any existing interval
+            stopContinuousLocationCheck();
+            
+            // Perform initial check
+            setTimeout(() => {
+                performContinuousLocationCheck();
+            }, 1000);
+            
+            // Start interval for continuous checking
+            locationCheckInterval = setInterval(performContinuousLocationCheck, LOCATION_CHECK_INTERVAL);
+            
+            console.log('🔄 Continuous location monitoring started (every 10 seconds)');
+        }
+
+        // Stop continuous location monitoring
+        function stopContinuousLocationCheck() {
+            if (locationCheckInterval) {
+                clearInterval(locationCheckInterval);
+                locationCheckInterval = null;
+                console.log('⏹️ Continuous location monitoring stopped');
+            }
+        }
+
+        // Show warning modal before redirect
+        function showLocationWarningModal(message) {
+            // Remove existing modal if any
+            if (locationWarningModal) {
+                document.body.removeChild(locationWarningModal);
+            }
+            
+            // Create modal
+            locationWarningModal = document.createElement('div');
+            locationWarningModal.id = 'locationWarningModal';
+            locationWarningModal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.95);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 99999;
+                backdrop-filter: blur(5px);
+            `;
+            
+            const modalContent = document.createElement('div');
+            modalContent.style.cssText = `
+                background: white;
+                padding: 30px;
+                border-radius: 15px;
+                max-width: 500px;
+                width: 90%;
+                text-align: center;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+                animation: slideIn 0.5s ease;
+            `;
+            
+            modalContent.innerHTML = `
+                <div style="margin-bottom: 20px;">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 4rem; color: #dc3545;"></i>
+                </div>
+                <h3 style="color: #dc3545; margin-bottom: 15px; font-weight: 600;">Location Verification Required</h3>
+                <p id="locationWarningMessage" style="margin-bottom: 25px; line-height: 1.6; color: #333; font-size: 1rem;"></p>
+                <div style="display: flex; flex-direction: column; gap: 10px; align-items: center;">
+                    <button id="locationCheckNow" class="btn btn-primary" style="padding: 12px 30px; width: 100%; max-width: 300px;">
+                        <i class="fas fa-map-marker-alt"></i> Check Location Now
+                    </button>
+                    <button id="refreshPage" class="btn btn-secondary" style="padding: 12px 30px; width: 100%; max-width: 300px;">
+                        <i class="fas fa-redo"></i> Refresh Page
+                    </button>
+                </div>
+                <p style="margin-top: 20px; font-size: 0.9rem; color: #666; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <i class="fas fa-clock"></i> <span id="countdownTimer">Redirecting in 3 seconds...</span>
+                </p>
+            `;
+            
+            locationWarningModal.appendChild(modalContent);
+            document.body.appendChild(locationWarningModal);
+            
+            // Add CSS animations
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideIn {
+                    from {
+                        opacity: 0;
+                        transform: translateY(-30px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+                
+                @keyframes pulse {
+                    0% { transform: scale(1); }
+                    50% { transform: scale(1.05); }
+                    100% { transform: scale(1); }
+                }
+                
+                #locationWarningModal .fa-exclamation-triangle {
+                    animation: pulse 2s infinite;
+                }
+                
+                @keyframes fadeOut {
+                    from { opacity: 1; }
+                    to { opacity: 0.5; }
+                }
+                
+                #countdownTimer {
+                    animation: fadeOut 3s linear infinite alternate;
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // Update message
+            document.getElementById('locationWarningMessage').textContent = message;
+            
+            // Start countdown
+            let seconds = 3;
+            const countdownElement = document.getElementById('countdownTimer');
+            const countdownInterval = setInterval(() => {
+                seconds--;
+                if (seconds > 0) {
+                    countdownElement.textContent = `Redirecting in ${seconds} second${seconds > 1 ? 's' : ''}...`;
+                } else {
+                    clearInterval(countdownInterval);
+                }
+            }, 1000);
+            
+            // Add event listeners
+            document.getElementById('locationCheckNow').addEventListener('click', function() {
+                clearInterval(countdownInterval);
+                document.body.removeChild(locationWarningModal);
+                locationWarningModal = null;
+                checkLocationManually();
+            });
+            
+            document.getElementById('refreshPage').addEventListener('click', function() {
+                clearInterval(countdownInterval);
+                location.reload();
+            });
+        }
+
+        // Update location display
+        function updateLocationDisplay(locationName) {
+            const locationElement = document.querySelector('.location-text');
+            if (locationElement) {
+                locationElement.textContent = `Location: ${locationName}`;
+                
+                // Add visual feedback
+                locationElement.style.color = '#28a745';
+                locationElement.style.fontWeight = '600';
+                setTimeout(() => {
+                    locationElement.style.color = '';
+                    locationElement.style.fontWeight = '';
+                }, 2000);
+            }
+        }
+
+        // Check if location services are available
+        function checkLocationAvailability() {
+            if (!navigator.geolocation) {
+                console.error('Geolocation is not supported by this browser');
+                showLocationWarningModal('Your browser does not support location services. Please use a modern browser to access E-Vault.');
+                return false;
+            }
+            
+            // Check permissions
+            if (navigator.permissions && navigator.permissions.query) {
+                navigator.permissions.query({ name: 'geolocation' }).then((result) => {
+                    if (result.state === 'denied') {
+                        showLocationWarningModal('Location permission denied. Please enable location services in your browser settings to continue using E-Vault.');
+                        stopContinuousLocationCheck();
+                    } else if (result.state === 'granted') {
+                        console.log('✅ Location permission granted');
+                    } else if (result.state === 'prompt') {
+                        console.log('ℹ️ Location permission will be requested');
+                    }
+                    
+                    // Listen for permission changes
+                    result.onchange = function() {
+                        if (this.state === 'denied') {
+                            showLocationWarningModal('Location permission has been denied. Please enable location services to continue.');
+                            stopContinuousLocationCheck();
+                        } else if (this.state === 'granted') {
+                            console.log('✅ Location permission granted');
+                            startContinuousLocationCheck();
+                        }
+                    };
+                });
+            }
+            
+            return true;
+        }
+
+        // Manual location check button functionality
+        function checkLocationManually() {
+            if (navigator.geolocation) {
+                // Show loading state
+                const checkBtn = document.querySelector('.btn-outline-light');
+                if (checkBtn) {
+                    const originalHtml = checkBtn.innerHTML;
+                    checkBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking...';
+                    checkBtn.disabled = true;
+                    
+                    // Reset button after 5 seconds
+                    setTimeout(() => {
+                        checkBtn.innerHTML = originalHtml;
+                        checkBtn.disabled = false;
+                    }, 5000);
+                }
+                
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        
+                        fetch('/api/check-location-continuous', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                latitude: lat,
+                                longitude: lon
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Show success notification
+                                showToastNotification('✅ Location Verified', `You are within the allowed area: ${data.location}`, 'success');
+                                updateLocationDisplay(data.location);
+                            } else {
+                                showToastNotification('⚠️ Location Check Failed', data.message, 'warning');
+                                if (data.redirect) {
+                                    showLocationWarningModal(data.message);
+                                    setTimeout(() => {
+                                        window.location.href = data.redirect_url;
+                                    }, 3000);
+                                }
+                            }
+                        })
+                        .catch(error => {
+                            showToastNotification('❌ Error', 'Error checking location: ' + error.message, 'error');
+                        });
+                    },
+                    (error) => {
+                        let errorMessage = 'Please enable location services to check your position.';
+                        if (error.code === error.PERMISSION_DENIED) {
+                            errorMessage = 'Location permission denied. Please enable location services in your browser settings.';
+                        } else if (error.code === error.TIMEOUT) {
+                            errorMessage = 'Location check timeout. Please try again.';
+                        }
+                        showToastNotification('⚠️ Location Error', errorMessage, 'warning');
+                    }
+                );
+            } else {
+                showToastNotification('❌ Browser Error', 'Geolocation is not supported by your browser.', 'error');
+            }
+        }
+
+        // Toast notification function
+        function showToastNotification(title, message, type = 'info') {
+            // Create toast container if it doesn't exist
+            let toastContainer = document.getElementById('toastContainer');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.id = 'toastContainer';
+                toastContainer.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    z-index: 9999;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
+                `;
+                document.body.appendChild(toastContainer);
+            }
+            
+            // Create toast
+            const toast = document.createElement('div');
+            toast.className = `toast-notification toast-${type}`;
+            toast.style.cssText = `
+                background: ${type === 'success' ? '#d4edda' : type === 'error' ? '#f8d7da' : type === 'warning' ? '#fff3cd' : '#d1ecf1'};
+                color: ${type === 'success' ? '#155724' : type === 'error' ? '#721c24' : type === 'warning' ? '#856404' : '#0c5460'};
+                border: 1px solid ${type === 'success' ? '#c3e6cb' : type === 'error' ? '#f5c6cb' : type === 'warning' ? '#ffeaa7' : '#bee5eb'};
+                border-radius: 8px;
+                padding: 15px 20px;
+                min-width: 300px;
+                max-width: 400px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                animation: slideInRight 0.3s ease;
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+            `;
+            
+            const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️';
+            
+            toast.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 1.2rem;">${icon}</span>
+                    <strong style="flex: 1;">${title}</strong>
+                    <button onclick="this.parentElement.parentElement.remove()" style="background: none; border: none; cursor: pointer; color: inherit;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div style="font-size: 0.9rem; margin-left: 28px;">${message}</div>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.style.animation = 'slideOutRight 0.3s ease';
+                    setTimeout(() => {
+                        if (toast.parentElement) {
+                            toast.remove();
+                        }
+                    }, 300);
+                }
+            }, 5000);
+            
+            // Add CSS animations
+            const style = document.createElement('style');
+            if (!document.querySelector('#toastAnimations')) {
+                style.id = 'toastAnimations';
+                style.textContent = `
+                    @keyframes slideInRight {
+                        from {
+                            transform: translateX(100%);
+                            opacity: 0;
+                        }
+                        to {
+                            transform: translateX(0);
+                            opacity: 1;
+                        }
+                    }
+                    
+                    @keyframes slideOutRight {
+                        from {
+                            transform: translateX(0);
+                            opacity: 1;
+                        }
+                        to {
+                            transform: translateX(100%);
+                            opacity: 0;
+                        }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+        }
+
+        // Initialize continuous location monitoring
+        function initializeContinuousLocationMonitoring() {
+            console.log('🚀 Initializing continuous location monitoring...');
+            
+            // Check if location is supported
+            if (!checkLocationAvailability()) {
+                return;
+            }
+            
+            // Start continuous monitoring after 2 seconds delay
+            setTimeout(() => {
+                startContinuousLocationCheck();
+            }, 2000);
+            
+            // Handle page visibility changes
+            document.addEventListener('visibilitychange', function() {
+                if (document.hidden) {
+                    // Page is hidden, stop checking to save resources
+                    console.log('📱 Page hidden, pausing location monitoring');
+                    stopContinuousLocationCheck();
+                } else {
+                    // Page is visible, resume checking
+                    console.log('📱 Page visible, resuming location monitoring');
+                    startContinuousLocationCheck();
+                }
+            });
+            
+            // Handle beforeunload to clean up
+            window.addEventListener('beforeunload', function() {
+                stopContinuousLocationCheck();
+            });
+            
+            // Listen for online/offline status
+            window.addEventListener('online', function() {
+                console.log('🌐 Online, resuming location checks');
+                startContinuousLocationCheck();
+            });
+            
+            window.addEventListener('offline', function() {
+                console.log('🌐 Offline, pausing location checks');
+                stopContinuousLocationCheck();
+                showToastNotification('⚠️ Network Offline', 'Location monitoring paused due to network issues', 'warning');
+            });
+            
+            console.log('✅ Continuous location monitoring initialized');
+        }
+
+        // ================================
+        // PDF SEARCH AND PAGINATION SYSTEM
+        // ================================
+
+        // Global variables for PDF management
+        let currentPage = {{ page }};
+        let currentPerPage = {{ per_page }};
+        let currentSearchQuery = "{{ search_query or '' }}";
+        let searchTimeout = null;
+        let isLoading = false;
+
+        // AJAX function to load PDFs with search and pagination
+        async function loadPDFs(page = 1, searchQuery = '') {
+            if (isLoading) return;
+            
+            isLoading = true;
+            
+            try {
+                // Show loading state
+                const tableContainer = document.getElementById('pdfTableContainer');
+                const originalContent = tableContainer.innerHTML;
+                
+                tableContainer.innerHTML = `
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2 text-muted">Loading PDFs...</p>
+                    </div>
+                `;
+                
+                // Build URL
+                let url = `/admin?page=${page}&per_page=${currentPerPage}`;
+                if (searchQuery.trim() !== '') {
+                    url += `&search=${encodeURIComponent(searchQuery)}`;
+                }
+                url += `&_=${Date.now()}`; // Prevent caching
+                
+                // Fetch data
+                const response = await fetch(url, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                
+                if (response.ok) {
+                    const html = await response.text();
+                    
+                    // Parse the HTML and extract just the table and pagination
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newContent = doc.querySelector('.documents-section')?.innerHTML || html;
+                    
+                    // Update the content
+                    tableContainer.innerHTML = newContent;
+                    
+                    // Update current page and search query
+                    currentPage = page;
+                    currentSearchQuery = searchQuery;
+                    
+                    // Update section title
+                    updateSectionTitle();
+                    
+                    // Re-attach event listeners
+                    attachEventListeners();
+                    
+                } else {
+                    // Restore original content on error
+                    tableContainer.innerHTML = originalContent;
+                    showToastNotification('❌ Error', 'Error loading PDFs. Please try again.', 'error');
+                }
+                
+            } catch (error) {
+                console.error('Error loading PDFs:', error);
+                showToastNotification('❌ Network Error', 'Please check your internet connection.', 'error');
+            } finally {
+                isLoading = false;
+            }
+        }
+
+        // Search PDFs with debounce
+        function searchPDFs() {
+            const searchInput = document.getElementById('pdfSearch');
+            const searchQuery = searchInput.value.trim();
+            
+            // Update clear button visibility
+            const clearBtn = searchInput.parentElement.querySelector('.btn-outline-secondary');
+            if (clearBtn) {
+                clearBtn.style.display = searchQuery ? 'block' : 'none';
+            }
+            
+            // Clear previous timeout
+            clearTimeout(searchTimeout);
+            
+            // Set new timeout with debounce (500ms)
+            searchTimeout = setTimeout(() => {
+                // Reset to first page when searching
+                loadPDFs(1, searchQuery);
+            }, 500);
+        }
+
+        // Clear PDF search
+        function clearPDFSearch() {
+            const searchInput = document.getElementById('pdfSearch');
+            searchInput.value = '';
+            
+            // Hide clear button
+            const clearBtn = searchInput.parentElement.querySelector('.btn-outline-secondary');
+            if (clearBtn) {
+                clearBtn.style.display = 'none';
+            }
+            
+            // Reset search
+            loadPDFs(1, '');
+        }
+
+        // Update section title with search result count
+        function updateSectionTitle() {
+            const sectionTitle = document.querySelector('.section-title');
+            const pdfCountElement = sectionTitle.querySelector('#pdfCount');
+            const totalPDFs = {{ total_pdfs }};
+            
+            if (pdfCountElement) {
+                if (currentSearchQuery) {
+                    // Get the filtered count from the pagination info
+                    const paginationInfo = document.querySelector('.pagination-info');
+                    if (paginationInfo) {
+                        const text = paginationInfo.textContent;
+                        const match = text.match(/of (\d+) PDFs/);
+                        if (match) {
+                            pdfCountElement.textContent = ` (${match[1]} results for "${currentSearchQuery}")`;
+                        } else {
+                            pdfCountElement.textContent = ` (Search Results)`;
+                        }
+                    }
+                } else {
+                    pdfCountElement.textContent = ` (${totalPDFs} PDFs)`;
+                }
+            }
+        }
+
+        // Attach event listeners to dynamic content
+        function attachEventListeners() {
+            // Delete buttons
+            document.querySelectorAll('.btn-outline-danger').forEach(button => {
+                button.addEventListener('click', function() {
+                    const pdfId = this.getAttribute('onclick')?.match(/\('(.+?)'\)/)?.[1];
+                    if (pdfId) {
+                        deletePdf(pdfId);
+                    }
+                });
+            });
+            
+            // Pagination links
+            document.querySelectorAll('.pagination a.page-link').forEach(link => {
+                if (link.getAttribute('href') === 'javascript:void(0)') {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const pageNum = this.getAttribute('onclick')?.match(/loadPDFs\((\d+)/)?.[1];
+                        if (pageNum) {
+                            loadPDFs(parseInt(pageNum), currentSearchQuery);
+                        }
+                    });
+                }
+            });
+            
+            // Search input
+            const searchInput = document.getElementById('pdfSearch');
+            if (searchInput) {
+                searchInput.value = currentSearchQuery;
+                searchInput.addEventListener('input', searchPDFs);
+                
+                // Clear button
+                const clearBtn = searchInput.parentElement.querySelector('.btn-outline-secondary');
+                if (clearBtn) {
+                    clearBtn.style.display = currentSearchQuery ? 'block' : 'none';
+                    clearBtn.addEventListener('click', clearPDFSearch);
+                }
+            }
+        }
+
+        // Delete PDF functionality (updated to work with AJAX)
+        async function deletePdf(pdfId) {
+            if (!confirm('Are you sure you want to delete this PDF?')) return;
+            
+            try {
+                const response = await fetch(`/admin/delete-pdf/${pdfId}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCSRFToken()
+                    }
                 });
                 
                 const result = await response.json();
                 
                 if (result.success) {
-                    alert('PDFs uploaded successfully: ' + result.message);
-                    location.reload();
+                    showToastNotification('✅ Success', 'PDF deleted successfully!', 'success');
+                    // Reload current page with same search and page
+                    loadPDFs(currentPage, currentSearchQuery);
                 } else {
-                    alert('Error: ' + result.message);
+                    showToastNotification('❌ Error', result.message || 'Error deleting PDF', 'error');
                 }
             } catch (error) {
-                alert('Error uploading PDFs: ' + error.message);
+                showToastNotification('❌ Error', 'Error deleting PDF: ' + error.message, 'error');
             }
-        });
-
-
-    // One-time location check on page load
-    function checkLocationOnLoad() {
-        // Only check if we have geolocation and user is verified
-        if (navigator.geolocation && "{{ location_verified|default('false') }}" === "true") {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const lat = position.coords.latitude;
-                    const lon = position.coords.longitude;
-                    
-                    // One-time verification
-                    fetch('/check-boundary', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            latitude: lat,
-                            longitude: lon
-                        })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (!data.success && data.redirect) {
-                            // User is outside boundary - redirect
-                            window.location.href = data.redirect_url;
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error checking location:', error);
-                    });
-                },
-                (error) => {
-                    console.log('Location not available:', error.message);
-                }
-            );
         }
-    }
-
-    // Manual location check button functionality
-    function checkLocationManually() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const lat = position.coords.latitude;
-                    const lon = position.coords.longitude;
-                    
-                    fetch('/check-boundary', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            latitude: lat,
-                            longitude: lon
-                        })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            alert('✅ You are within the allowed area: ' + data.location);
-                        } else {
-                            alert('⚠️ ' + data.message);
-                            if (data.redirect) {
-                                window.location.href = data.redirect_url;
-                            }
-                        }
-                    })
-                    .catch(error => {
-                        alert('Error checking location: ' + error.message);
-                    });
-                },
-                (error) => {
-                    alert('Please enable location services to check your position.');
-                }
-            );
-        } else {
-            alert('Geolocation is not supported by your browser.');
-        }
-    }
-
-    // Run one-time check on page load
-    document.addEventListener('DOMContentLoaded', checkLocationOnLoad);
-
-       
 
         // Add PDF functionality
         async function addPdf() {
             const form = document.getElementById('addPdfForm');
             const formData = new FormData(form);
             const data = Object.fromEntries(formData.entries());
+            
+            if (!data.title || !data.drive_link) {
+                showToastNotification('⚠️ Warning', 'Please fill in all required fields', 'warning');
+                return;
+            }
             
             try {
                 const response = await fetch('/admin/add-pdf', {
@@ -1532,165 +2161,106 @@
                 const result = await response.json();
                 
                 if (result.success) {
-                    alert('PDF added successfully!');
-                    // Close the modal
+                    showToastNotification('✅ Success', 'PDF added successfully!', 'success');
                     const modal = bootstrap.Modal.getInstance(document.getElementById('addPdfModal'));
                     modal.hide();
-                    // Reset the form
                     form.reset();
-                    location.reload();
+                    // Reload PDFs to show the new one
+                    loadPDFs(1, currentSearchQuery);
                 } else {
-                    alert('Error: ' + result.message);
+                    showToastNotification('❌ Error', result.message || 'Error adding PDF', 'error');
                 }
             } catch (error) {
-                alert('Error adding PDF: ' + error.message);
+                showToastNotification('❌ Error', 'Error adding PDF: ' + error.message, 'error');
             }
         }
 
+        // Get CSRF token (if needed)
+        function getCSRFToken() {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]');
+            return csrfToken ? csrfToken.getAttribute('content') : '';
+        }
 
-        
-        // Delete PDF functionality
-        async function deletePdf(pdfId) {
-            if (!confirm('Are you sure you want to delete this PDF?')) return;
+        // Excel Upload functionality
+        document.getElementById('uploadPdfsForm')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+            submitBtn.disabled = true;
             
             try {
-                const response = await fetch(`/admin/delete-pdf/${pdfId}`, {
-                    method: 'POST'
+                const response = await fetch('/admin/upload-pdfs-excel', {
+                    method: 'POST',
+                    body: formData
                 });
                 
                 const result = await response.json();
                 
                 if (result.success) {
-                    alert('PDF deleted successfully!');
-                    location.reload();
+                    showToastNotification('✅ Success', 'PDFs uploaded successfully!', 'success');
+                    // Reload PDFs
+                    loadPDFs(1, currentSearchQuery);
+                    this.reset();
                 } else {
-                    alert('Error: ' + result.message);
+                    showToastNotification('❌ Error', result.message || 'Error uploading PDFs', 'error');
                 }
             } catch (error) {
-                alert('Error deleting PDF: ' + error.message);
-            }
-        }
-
-
-        // Close mobile navbar when a nav link is clicked
-document.addEventListener('DOMContentLoaded', function() {
-    const navLinks = document.querySelectorAll('.nav-link');
-    const navbarToggler = document.querySelector('.navbar-toggler');
-    const navbarCollapse = document.querySelector('.navbar-collapse');
-    
-    navLinks.forEach(link => {
-        link.addEventListener('click', () => {
-            // Check if navbar is collapsed (mobile view)
-            if (navbarCollapse.classList.contains('show')) {
-                // Trigger click on navbar toggler to close it
-                navbarToggler.click();
+                showToastNotification('❌ Error', 'Error uploading PDFs: ' + error.message, 'error');
+            } finally {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
             }
         });
-    });
-});
 
-
-// Search PDFs functionality
-function searchPDFs() {
-    const searchTerm = document.getElementById('pdfSearch').value.toLowerCase();
-    const tableRows = document.querySelectorAll('#pdfTableBody tr');
-    let visibleCount = 0;
-    
-    tableRows.forEach(row => {
-        const title = row.querySelector('.pdf-title').textContent.toLowerCase();
-        
-        const matches = title.includes(searchTerm);
-        
-        if (matches) {
-            row.style.display = '';
-            visibleCount++;
-            
-            // Highlight matching text
-            if (searchTerm) {
-                highlightText(row.querySelector('.pdf-title'), searchTerm);
-            } else {
-                removeHighlights(row);
-            }
-        } else {
-            row.style.display = 'none';
-            removeHighlights(row);
+        // Change items per page
+        function changePerPage(value) {
+            currentPerPage = parseInt(value);
+            loadPDFs(1, currentSearchQuery);
         }
-    });
-    
-    // Update the PDF count display
-    const pdfCountElement = document.querySelector('.section-title');
-    const originalCount = {{ total_pdfs }};
-    if (searchTerm) {
-        pdfCountElement.innerHTML = `<i class="fas fa-book"></i> PDF Management (${visibleCount} of ${originalCount})`;
-    } else {
-        pdfCountElement.innerHTML = `<i class="fas fa-book"></i> PDF Management (${originalCount})`;
-    }
-}
 
-// Highlight matching text
-function highlightText(cell, searchTerm) {
-    const text = cell.textContent;
-    const regex = new RegExp(`(${searchTerm})`, 'gi');
-    const highlighted = text.replace(regex, '<span class="highlight">$1</span>');
-    cell.innerHTML = highlighted;
-}
-
-// Remove highlights
-function removeHighlights(row) {
-    const cells = row.querySelectorAll('td');
-    cells.forEach(cell => {
-        // Only restore original text for title cells
-        if (cell.classList.contains('pdf-title')) {
-            const originalText = cell.textContent;
-            cell.innerHTML = originalText;
-        }
-    });
-}
-
-// Clear PDF search
-function clearPDFSearch() {
-    document.getElementById('pdfSearch').value = '';
-    searchPDFs();
-}
-
-// Initialize search on page load
-document.addEventListener('DOMContentLoaded', function() {
-    // Add event listener for Enter key
-    document.getElementById('pdfSearch')?.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            searchPDFs();
-        }
-    });
-    
-    // Initialize table animations
-    const tableRows = document.querySelectorAll('.table tbody tr');
-    tableRows.forEach((row, index) => {
-        row.style.opacity = '0';
-        row.style.transform = 'translateY(10px)';
-        
-        setTimeout(() => {
-            row.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-            row.style.opacity = '1';
-            row.style.transform = 'translateY(0)';
-        }, index * 50);
-    });
-});
-
-        // Animation on load
+        // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
-            // Animate cards and table rows
-            const cards = document.querySelectorAll('.card');
-            cards.forEach((card, index) => {
-                card.style.opacity = '0';
-                card.style.transform = 'translateY(20px)';
+            // Set current year in footer
+            document.getElementById('year').textContent = new Date().getFullYear();
+            
+            // Initialize search input
+            const searchInput = document.getElementById('pdfSearch');
+            if (searchInput) {
+                searchInput.value = currentSearchQuery;
                 
-                setTimeout(() => {
-                    card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-                    card.style.opacity = '1';
-                    card.style.transform = 'translateY(0)';
-                }, index * 100 + 200);
-            });
-
+                // Add Enter key support
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        searchPDFs();
+                    }
+                });
+                
+                // Add clear button if there's a search query
+                if (currentSearchQuery) {
+                    const inputGroup = searchInput.parentElement;
+                    if (!inputGroup.querySelector('.btn-outline-secondary')) {
+                        const clearBtn = document.createElement('button');
+                        clearBtn.className = 'btn btn-outline-secondary';
+                        clearBtn.type = 'button';
+                        clearBtn.innerHTML = '<i class="fas fa-times"></i>';
+                        clearBtn.onclick = clearPDFSearch;
+                        inputGroup.appendChild(clearBtn);
+                    }
+                }
+            }
+            
+            // Initialize continuous location monitoring
+            initializeContinuousLocationMonitoring();
+            
+            // Attach event listeners
+            attachEventListeners();
+            
+            // Animation on load
             const tableRows = document.querySelectorAll('.table tbody tr');
             tableRows.forEach((row, index) => {
                 row.style.opacity = '0';
@@ -1702,6 +2272,31 @@ document.addEventListener('DOMContentLoaded', function() {
                     row.style.transform = 'translateY(0)';
                 }, index * 50);
             });
+            
+            // Close mobile navbar when a nav link is clicked
+            const navLinks = document.querySelectorAll('.nav-link');
+            const navbarToggler = document.querySelector('.navbar-toggler');
+            const navbarCollapse = document.querySelector('.navbar-collapse');
+            
+            if (navbarToggler && navbarCollapse) {
+                navLinks.forEach(link => {
+                    link.addEventListener('click', () => {
+                        if (navbarCollapse.classList.contains('show')) {
+                            navbarToggler.click();
+                        }
+                    });
+                });
+            }
+        });
+
+        // Handle page visibility for search
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                // Page became visible, refresh search if needed
+                if (currentSearchQuery) {
+                    loadPDFs(currentPage, currentSearchQuery);
+                }
+            }
         });
     </script>
 </body>
