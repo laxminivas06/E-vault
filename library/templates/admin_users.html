@@ -1883,38 +1883,42 @@
                     </button>
                 </form>
                 
-                <div class="mt-3">
-                    <a href="/admin/download-users-template" class="btn btn-outline-primary btn-sm">
-                        <i class="fas fa-download"></i> Download Users Template
-                    </a>
-                </div>
+               <div class="mt-3">
+    <button class="btn btn-outline-primary btn-sm" onclick="downloadTemplate()">
+        <i class="fas fa-download"></i> Download Users Template
+    </button>
+</div>
             </div>
         </div>
 
-        <!-- Developer Section -->
-        <div class="developer-section">
+         <!-- Developer Section -->
+    <section class="card-section">
+        <div class="container">
+            <div class="developer-section animate__animated animate__fadeInUp">
+                
             <div class="developer-info">
                 <p style="font-size: 1.1rem;">E-Vault System developed by</p> 
-                <strong>Laxmi Nivas Morishetty</strong>
-                <p style="font-size: 0.9rem; color: rgba(255,255,255,0.9);"> Founder & CEO @Smart N Light Innovations</p>
+                    <strong>Team Smart N Light Innovations</strong>
+               
             </div>
-            
-            <!-- SmartNLight Innovation Logo -->
-            <a href="https://smartnlightinnovation.netlify.app" target="_blank" class="developer-logo">
-                <img src="/static/images/4.png" alt="SmartNLight Innovation Logo">
-            </a>
-            
-            <!-- Developer Contact Links -->
-            <div class="developer-links">
-                <a href="https://www.linkedin.com/in/laxmi-nivas-morishetty-02468m/" target="_blank" class="dev-social-link">
-                    <i class="fab fa-linkedin"></i>
+                
+                <!-- SmartNLight Innovation Logo -->
+                <a href="https://smartnlightinnovation.netlify.app" target="_blank" class="developer-logo">
+                    <img src="/static/images/4.png" alt="SmartNLight Innovation Logo">
                 </a>
-                <a href="https://laxminivasmorishetty.netlify.app" target="_blank" class="dev-social-link">
-                    <i class="fas fa-globe"></i>
-                </a>
-                <a href="https://instagram.com/laxminivasmorishetty" target="_blank" class="dev-social-link">
-                    <i class="fab fa-instagram"></i>
-                </a>
+                
+                <!-- Developer Contact Links -->
+                <div class="developer-links">
+                    
+                    <a href="https://wa.me/917993976247" target="_blank" class="dev-social-link">
+    <i class="fab fa-whatsapp"></i>
+</a>
+                    <a href="https://smartnlightinnovation.netlify.app" target="_blank" class="dev-social-link">
+                        <i class="fas fa-globe"></i>
+                    </a>
+                    <a href="mailto:smartnlightinnovations@gmail.com" target="_blank" class="dev-social-link">
+    <i class="fas fa-envelope"></i>
+</a>
             </div>
         </div>
     </div>
@@ -1963,7 +1967,7 @@
     </div>
 
     <footer>
-        <p>© <span id="year"></span> Sphoorthy Engineering College - E-Vault. All rights reserved.</p>
+        <p>© <span id="year"></span> Smart N Light Innovations - E-Vault. All rights reserved.</p>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -2059,6 +2063,70 @@
             // Load users with search
             loadUsers(currentPage, currentPerPage, searchQuery);
         }
+
+        function downloadTemplate() {
+    // Show loading indicator
+    const downloadBtn = event.target;
+    const originalText = downloadBtn.innerHTML;
+    downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Downloading...';
+    downloadBtn.disabled = true;
+    
+    // Create download request
+    fetch('/admin/download-users-template', {
+        method: 'GET'
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.blob();
+    })
+    .then(blob => {
+        // Create download link
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'users_upload_template.xlsx';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        
+        // Show success message
+        showNotification('Template downloaded successfully!', 'success');
+    })
+    .catch(error => {
+        console.error('Download error:', error);
+        showNotification('Failed to download template. Please try again.', 'error');
+    })
+    .finally(() => {
+        // Restore button
+        downloadBtn.innerHTML = originalText;
+        downloadBtn.disabled = false;
+    });
+}
+
+// Add this helper function for notifications if not already present
+function showNotification(message, type = 'info') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+    notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    notification.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    // Add to document
+    document.body.appendChild(notification);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+        }
+    }, 5000);
+}
 
         // Clear search functionality
         function clearUserSearch() {
