@@ -91,13 +91,13 @@ class Config:
     ALLOWED_DOCUMENT_EXTENSIONS = {'pdf'}
     ALLOWED_EXCEL_EXTENSIONS = {'xlsx', 'xls', 'csv'}
 
-    # Company Branding - Aivontraa
+    # Company Branding - Aivontraa Automation Private Limited
     APP_NAME = "Vault E-Library"
     COLLEGE_NAME = "Sphoorthy Engineering College"
-    COMPANY_NAME = "Aivontraa"
+    COMPANY_NAME = "Aivontraa Automation Private Limited"
     COMPANY_URL = "https://aivontraa.com/"
     COMPANY_LOGO_URL = "https://aivontraa.com/assets/images/ai.png"
-    DEVELOPER_CREDIT = "Developed by Aivontraa"
+    DEVELOPER_CREDIT = "Developed by Aivontraa Automation Private Limited"
     SUPPORT_EMAIL = "support@aivontraa.com"
 
     # Pagination Defaults

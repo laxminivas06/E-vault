@@ -768,5 +768,203 @@
     "date": "2026-11-08",
     "time": "22:54:16",
     "hour": 22
+  },
+  {
+    "id": 71,
+    "username": "admin@aivontraa.com",
+    "action": "admin_google_login",
+    "location": "Administrative Console",
+    "pdf_id": null,
+    "timestamp": "2026-11-08T23:44:31.811808",
+    "date": "2026-11-08",
+    "time": "23:44:31",
+    "hour": 23
+  },
+  {
+    "id": 72,
+    "username": "saikumar@gmail.com",
+    "action": "contact_submitted",
+    "location": "Unknown",
+    "pdf_id": null,
+    "timestamp": "2026-11-08T23:44:31.871753",
+    "date": "2026-11-08",
+    "time": "23:44:31",
+    "hour": 23
+  },
+  {
+    "id": 73,
+    "username": "pre_login_student",
+    "action": "location_verified",
+    "location": "shee",
+    "pdf_id": null,
+    "timestamp": "2026-11-08T23:44:31.955969",
+    "date": "2026-11-08",
+    "time": "23:44:31",
+    "hour": 23
+  },
+  {
+    "id": 74,
+    "username": "admin",
+    "action": "failed_student_login",
+    "location": "Sphoorthy Engineering College Campus",
+    "pdf_id": null,
+    "timestamp": "2026-11-08T23:44:31.969583",
+    "date": "2026-11-08",
+    "time": "23:44:31",
+    "hour": 23
+  },
+  {
+    "id": 75,
+    "username": "23N81A0501",
+    "action": "student_login",
+    "location": "Sphoorthy Engineering College Campus",
+    "pdf_id": null,
+    "timestamp": "2026-11-08T23:44:31.982221",
+    "date": "2026-11-08",
+    "time": "23:44:31",
+    "hour": 23
+  },
+  {
+    "id": 76,
+    "username": "23N81A0501",
+    "action": "student_login",
+    "location": "Sphoorthy Engineering College Campus",
+    "pdf_id": null,
+    "timestamp": "2026-11-08T23:44:31.991259",
+    "date": "2026-11-08",
+    "time": "23:44:31",
+    "hour": 23
+  },
+  {
+    "id": 77,
+    "username": "23N81A0501",
+    "action": "student_login",
+    "location": "Sphoorthy Engineering College Campus",
+    "pdf_id": null,
+    "timestamp": "2026-11-08T23:44:32.000749",
+    "date": "2026-11-08",
+    "time": "23:44:32",
+    "hour": 23
+  },
+  {
+    "id": 78,
+    "username": "23N81A0501",
+    "action": "failed_student_login",
+    "location": "Sphoorthy Engineering College Campus",
+    "pdf_id": null,
+    "timestamp": "2026-11-08T23:44:32.009172",
+    "date": "2026-11-08",
+    "time": "23:44:32",
+    "hour": 23
+  },
+  {
+    "id": 79,
+    "username": "99X99A9999",
+    "action": "failed_student_login",
+    "location": "Sphoorthy Engineering College Campus",
+    "pdf_id": null,
+    "timestamp": "2026-11-08T23:44:32.018466",
+    "date": "2026-11-08",
+    "time": "23:44:32",
+    "hour": 23
+  },
+  {
+    "id": 80,
+    "username": "admin@aivontraa.com",
+    "action": "admin_google_login",
+    "location": "Administrative Console",
+    "pdf_id": null,
+    "timestamp": "2026-11-08T23:45:23.932162",
+    "date": "2026-11-08",
+    "time": "23:45:23",
+    "hour": 23
+  },
+  {
+    "id": 81,
+    "username": "saikumar@gmail.com",
+    "action": "contact_submitted",
+    "location": "Unknown",
+    "pdf_id": null,
+    "timestamp": "2026-11-08T23:45:24.015356",
+    "date": "2026-11-08",
+    "time": "23:45:24",
+    "hour": 23
+  },
+  {
+    "id": 82,
+    "username": "pre_login_student",
+    "action": "location_verified",
+    "location": "shee",
+    "pdf_id": null,
+    "timestamp": "2026-11-08T23:45:24.107299",
+    "date": "2026-11-08",
+    "time": "23:45:24",
+    "hour": 23
+  },
+  {
+    "id": 83,
+    "username": "admin",
+    "action": "failed_student_login",
+    "location": "Sphoorthy Engineering College Campus",
+    "pdf_id": null,
+    "timestamp": "2026-11-08T23:45:24.122759",
+    "date": "2026-11-08",
+    "time": "23:45:24",
+    "hour": 23
+  },
+  {
+    "id": 84,
+    "username": "23N81A0501",
+    "action": "student_login",
+    "location": "Sphoorthy Engineering College Campus",
+    "pdf_id": null,
+    "timestamp": "2026-11-08T23:45:24.134587",
+    "date": "2026-11-08",
+    "time": "23:45:24",
+    "hour": 23
+  },
+  {
+    "id": 85,
+    "username": "23N81A0501",
+    "action": "student_login",
+    "location": "Sphoorthy Engineering College Campus",
+    "pdf_id": null,
+    "timestamp": "2026-11-08T23:45:24.145437",
+    "date": "2026-11-08",
+    "time": "23:45:24",
+    "hour": 23
+  },
+  {
+    "id": 86,
+    "username": "23N81A0501",
+    "action": "student_login",
+    "location": "Sphoorthy Engineering College Campus",
+    "pdf_id": null,
+    "timestamp": "2026-11-08T23:45:24.155574",
+    "date": "2026-11-08",
+    "time": "23:45:24",
+    "hour": 23
+  },
+  {
+    "id": 87,
+    "username": "23N81A0501",
+    "action": "failed_student_login",
+    "location": "Sphoorthy Engineering College Campus",
+    "pdf_id": null,
+    "timestamp": "2026-11-08T23:45:24.167828",
+    "date": "2026-11-08",
+    "time": "23:45:24",
+    "hour": 23
+  },
+  {
+    "id": 88,
+    "username": "99X99A9999",
+    "action": "failed_student_login",
+    "location": "Sphoorthy Engineering College Campus",
+    "pdf_id": null,
+    "timestamp": "2026-11-08T23:45:24.178374",
+    "date": "2026-11-08",
+    "time": "23:45:24",
+    "hour": 23
   }
 ]
