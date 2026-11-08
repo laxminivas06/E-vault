@@ -25,7 +25,7 @@
 
             <h3 class="fw-bold text-dark mb-2">Campus Geolocation Check</h3>
             <p class="text-muted small mb-4" id="locationStatusText">
-                {{ app_name }} requires active geolocation verification to confirm you are within {{ college_name }} premises before granting document access.
+                {{ app_name }} requires active geolocation verification to confirm you are within {{ college_name }} premises before accessing the student digital library.
             </p>
 
             <!-- Status Indicator Card -->
@@ -122,10 +122,10 @@ function requestDeviceLocation() {
                     detail.textContent = `Welcome to ${data.location || 'College Campus'}. Redirecting...`;
                     spinner.classList.add('d-none');
                     icon.className = 'fas fa-circle-check text-success';
-                    showToast('Location verified! Redirecting to dashboard...', 'success');
+                    showToast('Location verified! Redirecting...', 'success');
 
                     setTimeout(() => {
-                        window.location.href = data.redirect_url || '/dashboard';
+                        window.location.href = data.redirect_url || '/login';
                     }, 1200);
                 } else {
                     header.textContent = 'Outside Authorized Boundary';

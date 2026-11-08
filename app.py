@@ -104,6 +104,7 @@ def api_stats():
 def login():
     """
     Dedicated Student Login Portal:
+    - Enforces campus geolocation verification BEFORE student login.
     - Authenticates using Rule Number and Date of Birth (DDMMYYYY).
     - Validates against registered student records.
     - Clear validation messages.
@@ -112,6 +113,11 @@ def login():
         if session.get('user_role') == 'admin':
             return redirect(url_for('admin_dashboard'))
         return redirect(url_for('dashboard'))
+
+    # REQUIRE CAMPUS LOCATION VERIFICATION BEFORE STUDENT LOGIN
+    if not session.get('location_verified'):
+        flash('Campus Geolocation Required: Please verify your campus location before signing in.', 'info')
+        return redirect(url_for('location_check'))
 
     if request.method == 'POST':
         # Accept Rule Number (or Username) and Date of Birth (or Password)
@@ -131,17 +137,20 @@ def login():
         # Student authentication
         success, msg, user = AuthService.authenticate_student(rule_number, dob)
         if success and user:
+            # Preserve the verified location from before login
+            current_loc = session.get('verified_location', Config.DEFAULT_CAMPUS_NAME)
             session.clear()
             session['user_id'] = user['username']
             session['user_name'] = user.get('name', user['username'])
             session['user_role'] = 'student'
             session['login_time'] = datetime.now().isoformat()
             session['auth_method'] = 'credentials'
+            session['location_verified'] = True
+            session['verified_location'] = current_loc
             session.permanent = True
 
-            current_loc = session.get('verified_location', 'Campus')
             db.log_access(user['username'], 'student_login', current_loc)
-            logger.info(f"Student logged in: {user['username']}")
+            logger.info(f"Student logged in: {user['username']} at {current_loc}")
 
             flash(f"Welcome back, {user.get('name', user['username'])}!", 'success')
             intended = session.pop('intended_url', None)
@@ -216,15 +225,24 @@ def logout():
     db.log_access(username, 'logout', loc)
     session.clear()
     flash('You have been securely logged out.', 'info')
-    return redirect(url_for('login'))
+    return redirect(url_for('welcome'))
 
 # ==================== GEOLOCATION VERIFICATION ====================
 
 @app.route('/location-check', methods=['GET', 'POST'])
 def location_check():
-    """Initial location verification page."""
-    if not session.get('user_id'):
-        return redirect(url_for('login'))
+    """
+    Initial location verification page:
+    - Executed BEFORE student login.
+    - Does NOT require prior login.
+    - Once verified within campus boundary, forwards students directly to login (or dashboard if already logged in).
+    """
+    if session.get('user_role') == 'admin':
+        return redirect(url_for('admin_dashboard'))
+
+    # If student is already logged in AND location is verified, go directly to dashboard
+    if session.get('user_id') and session.get('location_verified'):
+        return redirect(url_for('dashboard'))
 
     if request.method == 'POST':
         data = request.get_json(silent=True) or request.form
@@ -237,17 +255,22 @@ def location_check():
             session['verified_location'] = loc_name or Config.DEFAULT_CAMPUS_NAME
             session['last_location_check'] = datetime.now().isoformat()
 
-            db.log_access(session.get('user_id'), 'location_verified', loc_name)
+            user_identifier = session.get('user_id', 'pre_login_student')
+            db.log_access(user_identifier, 'location_verified', loc_name)
 
             intended = session.pop('intended_url', None)
-            target_url = intended or (url_for('admin_dashboard') if session.get('user_role') == 'admin' else url_for('dashboard'))
+            if session.get('user_id'):
+                target_url = intended or url_for('dashboard')
+            else:
+                target_url = intended or url_for('login')
 
             if request.is_json:
                 return jsonify({'success': True, 'location': loc_name, 'redirect_url': target_url})
-            flash(f"Location verified: {loc_name}", 'success')
+            flash(f"Location verified: {loc_name}. Please sign in to continue.", 'success')
             return redirect(target_url)
         else:
-            msg = "You are currently outside the authorized campus boundary."
+            session['location_verified'] = False
+            msg = "You are currently outside the authorized campus boundary. Access to the digital library is restricted to campus premises."
             if request.is_json:
                 return jsonify({'success': False, 'message': msg}), 403
             flash(msg, 'error')

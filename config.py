@@ -46,8 +46,14 @@ class Config:
     ]
 
     # Google OAuth 2.0 Settings
-    GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '')
-    GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET', '')
+    GOOGLE_CLIENT_ID = os.environ.get(
+        'GOOGLE_CLIENT_ID',
+        '493060599897-3eno2tujsceqc4guk9itf43l7s2jfpj9.apps.googleusercontent.com'
+    )
+    GOOGLE_CLIENT_SECRET = os.environ.get(
+        'GOOGLE_CLIENT_SECRET',
+        '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'
+    )
 
     credentials_path = DATA_DIR / 'credentials.json'
     if credentials_path.exists() and not (GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET):
