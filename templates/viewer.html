@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ pdf_title }} - Protected View</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #0f172a;
+            position: relative;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        /* Complete Print Suppression */
+        @media print {
+            body, * {
+                display: none !important;
+                visibility: hidden !important;
+            }
+        }
+
+        /* Document Iframe */
+        .pdf-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #ffffff;
+        }
+
+        /* Diagonal Security Watermark Repeating Grid */
+        .watermark-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            grid-gap: 60px;
+            align-content: space-around;
+            justify-content: space-around;
+            padding: 30px;
+            overflow: hidden;
+            opacity: 0.18;
+        }
+
+        .watermark-item {
+            transform: rotate(-30deg);
+            color: #000000;
+            font-size: 1rem;
+            font-weight: 800;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            text-align: center;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Security Watermark Repeating Across Entire Viewer -->
+    <div class="watermark-grid" aria-hidden="true">
+        {% for _ in range(24) %}
+        <div class="watermark-item">{{ watermark_text }}</div>
+        {% endfor %}
+    </div>
+
+    <!-- Protected Embedded Document -->
+    <iframe class="pdf-frame" src="{{ embed_url }}" sandbox="allow-scripts allow-same-origin" title="{{ pdf_title }}"></iframe>
+
+    <script>
+        // Content Protection: Disable right-click & key shortcuts
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            return false;
+        });
+
+        document.addEventListener('keydown', function(e) {
+            // Block Ctrl/Cmd + P (Print), S (Save), U (View Source)
+            if ((e.ctrlKey || e.metaKey) && ['p', 's', 'u'].includes(e.key.toLowerCase())) {
+                e.preventDefault();
+                alert('Document printing and downloading is restricted on this platform.');
+                return false;
+            }
+            // Block F12
+            if (e.key === 'F12') {
+                e.preventDefault();
+                return false;
+            }
+        });
+    </script>
+</body>
+</html>
+

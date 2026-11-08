@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}{{ error_title|default('Error') }} - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="text-center mb-4">
+    <div class="logo-container mb-3">
+        <div class="college-logo mx-auto">
+            <img src="{{ url_for('static', filename='images/college_logo.png') }}" alt="{{ college_name }}" class="img-fluid" onerror="this.style.display='none'">
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center py-2">
+    <div class="col-12 col-md-8 col-lg-6 col-xl-5 text-center">
+        <div class="vault-card p-5">
+            <div class="display-1 fw-bold text-primary mb-2">
+                {{ error_code|default('404') }}
+            </div>
+            
+            <h3 class="fw-bold text-dark mb-2">
+                {{ error_title|default('Page Not Found') }}
+            </h3>
+            
+            <p class="text-muted small mb-4">
+                {{ error_message|default('The resource you are looking for might have been removed, had its name changed, or is temporarily unavailable.') }}
+            </p>
+            
+            <div class="d-flex flex-wrap justify-content-center gap-2">
+                {% if session.get('user_id') %}
+                <a href="{{ url_for('dashboard') if session.get('user_role') != 'admin' else url_for('admin_dashboard') }}" class="btn-vault btn-vault-primary py-2 px-4">
+                    <i class="fas fa-home me-1"></i> Return to Dashboard
+                </a>
+                {% else %}
+                <a href="{{ url_for('welcome') }}" class="btn-vault btn-vault-primary py-2 px-4">
+                    <i class="fas fa-home me-1"></i> Return to Home
+                </a>
+                <a href="{{ url_for('login') }}" class="btn-vault btn-vault-secondary py-2 px-4">
+                    <i class="fas fa-right-to-bracket me-1"></i> Sign In
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

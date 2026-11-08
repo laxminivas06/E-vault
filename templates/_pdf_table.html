@@ -1,0 +1,70 @@
+<div class="table-responsive-vault">
+    <table class="vault-table">
+        <thead>
+            <tr>
+                <th style="width: 70px;">ID</th>
+                <th>Document Title</th>
+                <th style="width: 140px;">Upload Date</th>
+                <th style="width: 120px;">File Size</th>
+                <th style="width: 140px; text-align: right;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if pdfs %}
+                {% for pdf in pdfs %}
+                <tr>
+                    <td><span class="badge bg-light text-dark border">#{{ pdf.id }}</span></td>
+                    <td>
+                        <strong class="text-dark">{{ pdf.title|safe_text('Untitled') }}</strong>
+                    </td>
+                    <td><span class="text-muted small">{{ pdf.upload_date|safe_text('Recent') }}</span></td>
+                    <td><span class="badge bg-light text-muted border">{{ pdf.file_size|safe_text('N/A') }}</span></td>
+                    <td style="text-align: right;">
+                        <div class="d-inline-flex gap-1">
+                            <button type="button" class="btn-vault btn-vault-secondary btn-sm py-1 px-2" onclick="openSecurePdfViewer('{{ pdf.id }}', '{{ pdf.title|replace('\'', '\\\'') }}')" title="Preview Document">
+                                <i class="fas fa-eye text-primary"></i>
+                            </button>
+                            <button type="button" class="btn-vault btn-vault-secondary btn-sm py-1 px-2 text-danger" onclick="confirmDeletePdf('{{ pdf.id }}', '{{ pdf.title|replace('\'', '\\\'') }}')" title="Delete Document">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="5" class="text-center py-4 text-muted">
+                        <i class="fas fa-folder-open me-2"></i> No PDF documents found matching your query.
+                    </td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+
+{% if total_pages > 1 %}
+<div class="d-flex flex-column flex-sm-row justify-content-between align-items-center mt-3 gap-2">
+    <div class="text-muted small">
+        Showing Page <strong>{{ page }}</strong> of <strong>{{ total_pages }}</strong> ({{ total_pdfs }} Documents)
+    </div>
+    <ul class="pagination-vault mb-0">
+        <li class="page-item {% if page <= 1 %}disabled{% endif %}">
+            <a class="page-link" href="javascript:void(0)" onclick="loadAdminPdfPage({{ page - 1 }})">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+        </li>
+        {% set start_page = [1, page - 2]|max %}
+        {% set end_page = [start_page + 4, total_pages]|min %}
+        {% for p in range(start_page, end_page + 1) %}
+        <li class="page-item {% if p == page %}active{% endif %}">
+            <a class="page-link" href="javascript:void(0)" onclick="loadAdminPdfPage({{ p }})">{{ p }}</a>
+        </li>
+        {% endfor %}
+        <li class="page-item {% if page >= total_pages %}disabled{% endif %}">
+            <a class="page-link" href="javascript:void(0)" onclick="loadAdminPdfPage({{ page + 1 }})">
+                <i class="fas fa-chevron-right"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+{% endif %}

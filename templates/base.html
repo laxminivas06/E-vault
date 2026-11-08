@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>{% block title %}{{ app_name }}{% endblock %} - {{ college_name }}</title>
+    
+    <!-- Google Fonts - Poppins (Design System Standard) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap 5.3 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- FontAwesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Animate.css for Smooth Cohesive Transitions -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    
+    <!-- Application CSS (Contact Page Design Language) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <!-- Google Identity Services (GIS) for Admin Authentication -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    
+    {% block extra_head %}{% endblock %}
+</head>
+<body data-logged-in="{{ 'true' if session.get('user_id') else 'false' }}">
+
+    <!-- Navigation (Frosted Glass Header) -->
+    <nav class="navbar navbar-expand-lg app-navbar">
+        <div class="container-fluid px-3 px-md-4">
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+                <div class="brand-icon">
+                    <i class="fas fa-vault"></i>
+                </div>
+                <span>{{ app_name }}</span>
+            </a>
+
+            <!-- Mobile Toggler -->
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fas fa-bars-staggered text-dark"></i>
+            </button>
+
+            <!-- Navbar Menu -->
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <!-- Left/Center Items -->
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ps-lg-3">
+                    {% if session.get('user_role') == 'admin' %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'admin_dashboard' %}active{% endif %}" href="{{ url_for('admin_dashboard') }}">
+                            <i class="fas fa-file-pdf"></i> Documents
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'admin_users' %}active{% endif %}" href="{{ url_for('admin_users') }}">
+                            <i class="fas fa-users"></i> Users
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'admin_location' %}active{% endif %}" href="{{ url_for('admin_location') }}">
+                            <i class="fas fa-map-location-dot"></i> Boundaries
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'admin_statistics' %}active{% endif %}" href="{{ url_for('admin_statistics') }}">
+                            <i class="fas fa-chart-line"></i> Analytics
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'admin_contacts' %}active{% endif %}" href="{{ url_for('admin_contacts') }}">
+                            <i class="fas fa-headset"></i> Messages
+                        </a>
+                    </li>
+                    {% elif session.get('user_id') %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}" href="{{ url_for('dashboard') }}">
+                            <i class="fas fa-book-open"></i> E-Library
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'contact' %}active{% endif %}" href="{{ url_for('contact') }}">
+                            <i class="fas fa-envelope"></i> Help & Support
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'welcome' %}active{% endif %}" href="{{ url_for('welcome') }}">
+                            <i class="fas fa-home"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'location_check' %}active{% endif %}" href="{{ url_for('location_check') }}">
+                            <i class="fas fa-lock-open"></i> Access Library
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'contact' %}active{% endif %}" href="{{ url_for('contact') }}">
+                            <i class="fas fa-circle-question"></i> Help & Support
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+
+                <!-- Right Items (User, Location & Auth) -->
+                <div class="d-flex flex-column flex-lg-row align-items-start align-items-lg-center gap-2 gap-lg-3 mt-3 mt-lg-0">
+                    {% if session.get('user_id') %}
+                    <!-- Real-Time Location Pill (Continuous 5-Second Campus Geolocation) -->
+                    <div class="location-pill {% if not location_verified %}unverified{% endif %}" id="navbar-location-pill" data-tooltip="5-Second Campus Geolocation Verification">
+                        <span class="status-dot"></span>
+                        <span id="navbar-location-text">{{ verified_location|safe_text('Campus Area') }}</span>
+                    </div>
+
+                    <!-- Role & Identity Badge -->
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge-role {{ session.get('user_role') }}">
+                            {{ session.get('user_role')|safe_text('User') }}
+                        </span>
+                        <span class="fw-semibold text-dark text-truncate" style="max-width: 140px;" data-tooltip="{{ user_name }}">
+                            {{ user_name|safe_text(session.get('user_id')) }}
+                        </span>
+                    </div>
+
+                    <!-- Logout Button -->
+                    <a href="{{ url_for('logout') }}" class="btn-vault btn-vault-secondary btn-sm py-1 px-3">
+                        <i class="fas fa-arrow-right-from-bracket"></i>
+                        <span>Logout</span>
+                    </a>
+                    {% else %}
+                    <!-- Unauthenticated Guest Links -->
+                    <div class="d-flex align-items-center gap-2">
+                        <a href="{{ url_for('login') }}" class="btn-vault btn-vault-primary btn-sm py-1 px-3">
+                            <i class="fas fa-user-graduate"></i>
+                            <span>Student Login</span>
+                        </a>
+                        <a href="{{ url_for('admin_login') }}" class="btn-vault btn-vault-secondary btn-sm py-1 px-3" title="Dedicated Administrator Sign-In">
+                            <i class="fab fa-google"></i>
+                            <span>Admin Portal</span>
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="py-4">
+        <div class="container-fluid px-3 px-md-4">
+            <!-- Flash Alert Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="row justify-content-center mb-3">
+                        <div class="col-12 col-lg-10">
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show border-0 shadow-sm" role="alert">
+                                    <i class="fas fa-{{ 'circle-exclamation' if category == 'error' else 'circle-check' if category == 'success' else 'circle-info' }} me-2"></i>
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <!-- Minimal Clean Company Branding Footer (Requirement 1) -->
+    <footer class="company-footer">
+        <div class="container text-center">
+            <a href="{{ company_url }}" target="_blank" rel="noopener noreferrer" class="footer-branding-container" title="Visit {{ company_name }} Official Website">
+                <img src="{{ company_logo_url }}" alt="{{ company_name }} Logo" class="company-footer-logo">
+                <span class="company-footer-text">Developed by <strong>{{ company_name }}</strong></span>
+            </a>
+        </div>
+    </footer>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container"></div>
+
+    <!-- Bootstrap 5 Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Application Core JS -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

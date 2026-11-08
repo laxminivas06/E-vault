@@ -1,0 +1,243 @@
+{% extends "base.html" %}
+
+{% block title %}Contact &amp; Support - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-2 py-md-4">
+    <div class="col-12 col-xl-11">
+
+        <!-- Header Section (Contact Page Glowing Standard) -->
+        <div class="text-center mb-4">
+            <div class="logo-container mb-3">
+                <div class="college-logo mx-auto">
+                    <img src="{{ url_for('static', filename='images/college_logo.png') }}" alt="{{ college_name }}" class="img-fluid" onerror="this.style.display='none'">
+                </div>
+            </div>
+            <h1 class="text-white fw-bold mb-2" style="font-size: 2.4rem;">Contact &amp; Support</h1>
+            <p class="text-white-50 subtitle mb-0" style="max-width: 680px; margin: 0 auto;">
+                Have a question, access issue, or book request? Reach out to our dedicated support team.
+            </p>
+        </div>
+
+        <div class="row g-4">
+            <!-- Contact Form Column -->
+            <div class="col-12 col-lg-8">
+                <div class="vault-card p-4 p-md-5 h-100">
+                    <h3 class="fw-bold text-dark mb-1">
+                        <i class="fas fa-headset text-primary me-2"></i>Send Support Request
+                    </h3>
+                    <p class="text-muted small mb-4">Select your inquiry type and describe your question or issue in detail.</p>
+
+                    <form method="POST" action="{{ url_for('contact') }}" id="contactSupportForm" novalidate>
+                        <!-- Category Coin Style Selector (Requirement 4) -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold text-dark small mb-2">
+                                <i class="fas fa-layer-group text-primary me-1"></i> Inquiry Category *
+                            </label>
+                            <div class="message-type-grid">
+                                <!-- Option 1: Login Problems -->
+                                <div class="message-type-btn">
+                                    <input type="radio" id="type_login" name="message_type" value="login_problems" checked>
+                                    <label for="type_login">
+                                        <i class="fas fa-key"></i>
+                                        <span>Login Problems</span>
+                                    </label>
+                                </div>
+
+                                <!-- Option 2: Library Access Issues -->
+                                <div class="message-type-btn">
+                                    <input type="radio" id="type_access" name="message_type" value="library_access">
+                                    <label for="type_access">
+                                        <i class="fas fa-location-dot"></i>
+                                        <span>Library Access</span>
+                                    </label>
+                                </div>
+
+                                <!-- Option 3: Book-Related Issues -->
+                                <div class="message-type-btn">
+                                    <input type="radio" id="type_books" name="message_type" value="book_issues">
+                                    <label for="type_books">
+                                        <i class="fas fa-book-open"></i>
+                                        <span>Book Issues</span>
+                                    </label>
+                                </div>
+
+                                <!-- Option 4: Technical Difficulties -->
+                                <div class="message-type-btn">
+                                    <input type="radio" id="type_tech" name="message_type" value="technical_difficulties">
+                                    <label for="type_tech">
+                                        <i class="fas fa-laptop-code"></i>
+                                        <span>Technical Issues</span>
+                                    </label>
+                                </div>
+
+                                <!-- Option 5: General Queries -->
+                                <div class="message-type-btn">
+                                    <input type="radio" id="type_general" name="message_type" value="general_queries">
+                                    <label for="type_general">
+                                        <i class="fas fa-circle-question"></i>
+                                        <span>General Queries</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- User Input Fields -->
+                        <div class="row g-3">
+                            <div class="col-12 col-sm-6">
+                                <label for="name" class="form-label fw-semibold small text-dark mb-1">
+                                    <i class="fas fa-user text-primary me-1"></i> Your Name *
+                                </label>
+                                <input type="text" class="form-control" id="name" name="name" value="{{ user_name }}" required placeholder="e.g. Rahul Sharma">
+                            </div>
+
+                            <div class="col-12 col-sm-6">
+                                <label for="email" class="form-label fw-semibold small text-dark mb-1">
+                                    <i class="fas fa-envelope text-primary me-1"></i> Email Address *
+                                </label>
+                                <input type="email" class="form-control" id="email" name="email" required placeholder="name@domain.com">
+                            </div>
+
+                            <div class="col-12">
+                                <label for="contact_number" class="form-label fw-semibold small text-dark mb-1">
+                                    <i class="fas fa-phone text-primary me-1"></i> Contact Number (Optional)
+                                </label>
+                                <input type="tel" class="form-control" id="contact_number" name="contact_number" placeholder="e.g. +91 98765 43210">
+                            </div>
+
+                            <div class="col-12">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <label for="message" class="form-label fw-semibold small text-dark mb-0">
+                                        <i class="fas fa-message text-primary me-1"></i> Message Details *
+                                    </label>
+                                    <span class="small text-muted" id="charCount">0 / 1000</span>
+                                </div>
+                                <textarea class="form-control" id="message" name="message" rows="5" maxlength="1000" required placeholder="Describe your inquiry, problem, or request with relevant details..."></textarea>
+                            </div>
+
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-submit w-100" id="contactSubmitBtn">
+                                    <i class="fas fa-paper-plane me-2"></i> Submit Inquiry
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Company Official Contact & Institutional Info Column (Requirement 4) -->
+            <div class="col-12 col-lg-4">
+                <div class="d-flex flex-column gap-4 h-100">
+
+                    <!-- Official Company Contact Information Card -->
+                    <div class="vault-card p-4">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <div class="doc-icon text-primary mb-0" style="width: 48px; height: 48px; font-size: 1.4rem; background: var(--primary-light); border-radius: 12px;">
+                                <i class="fas fa-building text-primary"></i>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold text-dark mb-0">{{ company_name }} Support</h5>
+                                <div class="text-muted small">Platform Engineering Team</div>
+                            </div>
+                        </div>
+
+                        <p class="text-muted small mb-3">
+                            For system technical issues, platform maintenance inquiries, or institutional onboarding:
+                        </p>
+
+                        <div class="p-3 rounded-3 mb-3" style="background: #f8fafc; border: 1px solid var(--border);">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <i class="fas fa-envelope text-primary"></i>
+                                <span class="fw-semibold text-dark small">{{ support_email }}</span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="fas fa-globe text-primary"></i>
+                                <a href="{{ company_url }}" target="_blank" rel="noopener noreferrer" class="small fw-semibold text-primary">
+                                    {{ company_url }}
+                                    <i class="fas fa-arrow-up-right-from-square ms-1" style="font-size: 0.75rem;"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <a href="{{ company_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary w-100 py-2 fs-6">
+                            <i class="fas fa-external-link-alt me-1"></i> Visit {{ company_name }} Official Site
+                        </a>
+                    </div>
+
+                    <!-- College Central Library Hours & Location -->
+                    <div class="vault-card p-4 flex-grow-1">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <div class="doc-icon text-primary mb-0" style="width: 48px; height: 48px; font-size: 1.4rem; background: var(--primary-light); border-radius: 12px;">
+                                <i class="fas fa-building-columns text-primary"></i>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold text-dark mb-0">{{ college_name }}</h5>
+                                <div class="text-muted small">Central Digital Library</div>
+                            </div>
+                        </div>
+
+                        <ul class="list-unstyled mb-0 d-flex flex-column gap-3 small text-muted">
+                            <li class="d-flex align-items-start gap-2">
+                                <i class="fas fa-location-dot text-primary mt-1"></i>
+                                <span>Sagar Road, Nadargul Village, Near Vanasthalipuram, Hyderabad, Telangana 501510</span>
+                            </li>
+                            <li class="d-flex align-items-center gap-2">
+                                <i class="fas fa-clock text-primary"></i>
+                                <span>Mon &ndash; Sat: 9:00 AM &ndash; 5:00 PM</span>
+                            </li>
+                            <li class="d-flex align-items-center gap-2">
+                                <i class="fas fa-shield-halved text-success"></i>
+                                <span>Campus Geofence: Active Verification</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const messageInput = document.getElementById('message');
+    const charCount = document.getElementById('charCount');
+    const form = document.getElementById('contactSupportForm');
+
+    if (messageInput && charCount) {
+        messageInput.addEventListener('input', function() {
+            const count = this.value.length;
+            charCount.textContent = count + ' / 1000';
+            if (count > 900) {
+                charCount.classList.add('text-danger');
+            } else {
+                charCount.classList.remove('text-danger');
+            }
+        });
+    }
+
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const message = messageInput ? messageInput.value.trim() : '';
+
+            if (!name || !email || !message) {
+                e.preventDefault();
+                alert('Please fill out all required fields marked with *');
+                return false;
+            }
+
+            const submitBtn = document.getElementById('contactSubmitBtn');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Submitting Message...';
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

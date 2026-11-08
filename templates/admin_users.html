@@ -1,0 +1,401 @@
+{% extends "base.html" %}
+
+{% block title %}User Management - {{ app_name }}{% endblock %}
+
+{% block content %}
+<!-- Header Banner (Contact Page Visual Standard) -->
+<div class="text-center mb-4">
+    <div class="logo-container mb-3">
+        <div class="college-logo mx-auto">
+            <img src="{{ url_for('static', filename='images/college_logo.png') }}" alt="{{ college_name }}" class="img-fluid" onerror="this.style.display='none'">
+        </div>
+    </div>
+    <h1 class="text-white fw-bold mb-1" style="font-size: 2.2rem;">User Directory</h1>
+    <p class="text-white-50 subtitle mb-3">{{ college_name }} &bull; Student &amp; Academic Enrollment</p>
+    
+    <!-- Admin Info Glass Card -->
+    <div class="user-info text-white d-inline-flex flex-wrap justify-content-center align-items-center gap-3 px-4 py-2">
+        <span><i class="fab fa-google text-warning me-1"></i> <strong>Admin:</strong> {{ session.get('user_id') }}</span>
+        <span class="role-badge"><i class="fas fa-users-gear text-info me-1"></i> User Directory Access</span>
+    </div>
+</div>
+
+<div class="row mb-4 align-items-center">
+    <div class="col-12 col-md-6 mb-3 mb-md-0">
+        <h3 class="fw-bold text-white mb-1">
+            <i class="fas fa-users-gear text-warning me-2"></i>User Records
+        </h3>
+        <p class="text-white-50 small mb-0">Manage student accounts, role permissions, and academic enrollment.</p>
+    </div>
+    
+    <div class="col-12 col-md-6 d-flex flex-wrap justify-content-md-end gap-2">
+        <button type="button" class="btn-vault btn-vault-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
+            <i class="fas fa-user-plus"></i> Add User
+        </button>
+        <button type="button" class="btn-vault btn-vault-secondary" data-bs-toggle="modal" data-bs-target="#uploadUsersModal">
+            <i class="fas fa-file-import"></i> Bulk Import
+        </button>
+        <a href="{{ url_for('admin_download_users_template') }}" class="btn-vault btn-vault-secondary" title="Download sample import spreadsheet">
+            <i class="fas fa-file-excel text-success"></i> Template
+        </a>
+    </div>
+</div>
+
+<!-- Table Card -->
+<div class="vault-card p-4">
+    <div class="row align-items-center mb-3">
+        <div class="col-12 col-md-6 mb-2 mb-md-0">
+            <h5 class="fw-bold text-dark mb-0">Enrolled Users</h5>
+            <div class="text-muted small" id="usersCountLabel">Total Registered: <strong>{{ total_users }}</strong></div>
+        </div>
+        <div class="col-12 col-md-6 d-flex justify-content-md-end">
+            <div class="search-wrapper w-100">
+                <i class="fas fa-magnifying-glass search-icon"></i>
+                <input type="text" id="adminUserSearchInput" placeholder="Filter by roll number, name, or role..." value="{{ search_query|safe_text }}">
+            </div>
+        </div>
+    </div>
+
+    <!-- Users Table Container -->
+    <div id="adminUserTableContainer">
+        <div class="table-responsive-vault">
+            <table class="vault-table">
+                <thead>
+                    <tr>
+                        <th style="width: 70px;">ID</th>
+                        <th>Username / Roll No</th>
+                        <th>Full Name</th>
+                        <th style="width: 120px;">Role</th>
+                        <th style="width: 130px;">Credentials</th>
+                        <th style="width: 140px;">Registered</th>
+                        <th style="width: 100px; text-align: right;">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="userTableBody">
+                    {% if users %}
+                        {% for user in users %}
+                        <tr>
+                            <td><span class="badge bg-light text-dark border">#{{ user.id }}</span></td>
+                            <td><strong class="text-dark">{{ user.username }}</strong></td>
+                            <td>{{ user.name|safe_text('Student') }}</td>
+                            <td>
+                                <span class="badge-role {{ user.role }}">{{ user.role|safe_text('Student') }}</span>
+                            </td>
+                            <td>
+                                <span class="text-muted small">Protected</span>
+                            </td>
+                            <td><span class="text-muted small">{{ user.created_at[:10] if user.created_at else 'Recent' }}</span></td>
+                            <td style="text-align: right;">
+                                {% if user.username != session.get('user_id') %}
+                                <button type="button" class="btn-vault btn-vault-secondary btn-sm py-1 px-2 text-danger" onclick="confirmDeleteUser('{{ user.username }}')" title="Delete User">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                                {% else %}
+                                <span class="badge bg-light text-muted border small">Current</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center py-4 text-muted">
+                                <i class="fas fa-user-slash me-2"></i> No users found.
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        {% if total_pages > 1 %}
+        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center mt-3 gap-2" id="userPaginationWrapper">
+            <div class="text-muted small">
+                Showing Page <strong>{{ page }}</strong> of <strong>{{ total_pages }}</strong> ({{ total_users }} Users)
+            </div>
+            <ul class="pagination-vault mb-0">
+                <li class="page-item {% if page <= 1 %}disabled{% endif %}">
+                    <a class="page-link" href="javascript:void(0)" onclick="loadAdminUserPage({{ page - 1 }})">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                </li>
+                {% set start_page = [1, page - 2]|max %}
+                {% set end_page = [start_page + 4, total_pages]|min %}
+                {% for p in range(start_page, end_page + 1) %}
+                <li class="page-item {% if p == page %}active{% endif %}">
+                    <a class="page-link" href="javascript:void(0)" onclick="loadAdminUserPage({{ p }})">{{ p }}</a>
+                </li>
+                {% endfor %}
+                <li class="page-item {% if page >= total_pages %}disabled{% endif %}">
+                    <a class="page-link" href="javascript:void(0)" onclick="loadAdminUserPage({{ page + 1 }})">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Modal: Add User -->
+<div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: var(--radius-lg);">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold" id="addUserModalLabel">Enroll User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form id="addUserForm">
+                    <div class="mb-3">
+                        <label for="newUsername" class="form-label fw-semibold small text-dark mb-1">Username / Roll No *</label>
+                        <input type="text" class="form-control" id="newUsername" name="username" required placeholder="e.g. 23N81A0599" style="text-transform: uppercase;">
+                    </div>
+                    <div class="mb-3">
+                        <label for="newName" class="form-label fw-semibold small text-dark mb-1">Full Name *</label>
+                        <input type="text" class="form-control" id="newName" name="name" required placeholder="e.g. Priya Reddy">
+                    </div>
+                    <div class="mb-3">
+                        <label for="newRole" class="form-label fw-semibold small text-dark mb-1">Role *</label>
+                        <select class="form-select" id="newRole" name="role">
+                            <option value="student" selected>Student</option>
+                            <option value="admin">Administrator</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newPassword" class="form-label fw-semibold small text-dark mb-1">Password / Date of Birth *</label>
+                        <input type="text" class="form-control" id="newPassword" name="password" required placeholder="DDMMYYYY (e.g. 15082003) or secure password">
+                        <div class="form-text small text-muted">For students, use 8-digit DOB in DDMMYYYY format.</div>
+                    </div>
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+                        <button type="button" class="btn-vault btn-vault-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn-vault btn-vault-primary" id="btnSaveUser">Enroll User</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Bulk Upload Users -->
+<div class="modal fade" id="uploadUsersModal" tabindex="-1" aria-labelledby="uploadUsersModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: var(--radius-lg);">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold" id="uploadUsersModalLabel">Bulk Import Students</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form method="POST" action="{{ url_for('admin_upload_users_excel') }}" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="usersSpreadsheetFile" class="form-label fw-semibold small text-dark mb-1">Select CSV or Excel Spreadsheet *</label>
+                        <input type="file" class="form-control" id="usersSpreadsheetFile" name="file" accept=".csv, .xlsx, .xls" required>
+                        <div class="form-text small text-muted">Required columns: <code>username</code>, <code>name</code>, <code>password</code>, <code>role</code></div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mt-4">
+                        <a href="{{ url_for('admin_download_users_template') }}" class="small text-primary">
+                            <i class="fas fa-download me-1"></i> Download Template
+                        </a>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn-vault btn-vault-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn-vault btn-vault-primary">Upload & Import</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+let userSearchTimeout = null;
+let currentSearch = "{{ search_query|safe_text }}";
+let currentPage = {{ page }};
+
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('adminUserSearchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            clearTimeout(userSearchTimeout);
+            userSearchTimeout = setTimeout(() => {
+                currentSearch = this.value.trim();
+                loadAdminUserPage(1);
+            }, 400);
+        });
+    }
+
+    // Add User Form
+    const userForm = document.getElementById('addUserForm');
+    if (userForm) {
+        userForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnSaveUser');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Enrolling...';
+
+            const payload = {
+                username: document.getElementById('newUsername').value.trim(),
+                name: document.getElementById('newName').value.trim(),
+                role: document.getElementById('newRole').value,
+                password: document.getElementById('newPassword').value.trim()
+            };
+
+            fetch('/admin/add-user', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(data => {
+                btn.disabled = false;
+                btn.textContent = 'Enroll User';
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('addUserModal'));
+                    if (modal) modal.hide();
+                    userForm.reset();
+                    loadAdminUserPage(1);
+                } else {
+                    showToast(data.message || 'Error saving user.', 'error');
+                }
+            })
+            .catch(err => {
+                btn.disabled = false;
+                btn.textContent = 'Enroll User';
+                showToast('Failed to connect to server.', 'error');
+            });
+        });
+    }
+});
+
+function loadAdminUserPage(page) {
+    const container = document.getElementById('adminUserTableContainer');
+    container.style.opacity = '0.5';
+
+    const params = new URLSearchParams();
+    params.set('page', page);
+    if (currentSearch) params.set('search', currentSearch);
+
+    fetch(`/admin/search-users?${params.toString()}`)
+    .then(res => res.json())
+    .then(data => {
+        container.style.opacity = '1';
+        if (data.success) {
+            currentPage = data.page;
+            renderUserTableRows(data.users);
+            renderUserPagination(data);
+        } else {
+            showToast('Failed to load users.', 'error');
+        }
+    })
+    .catch(err => {
+        container.style.opacity = '1';
+        showToast('Error loading user data.', 'error');
+    });
+}
+
+function renderUserTableRows(users) {
+    const tbody = document.getElementById('userTableBody');
+    if (!users || users.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-muted"><i class="fas fa-user-slash me-2"></i> No users found.</td></tr>';
+        return;
+    }
+
+    let rowsHtml = '';
+    const currentUserId = '{{ session.get("user_id") }}';
+
+    users.forEach(u => {
+        const isSelf = u.username.toUpperCase() === currentUserId.toUpperCase();
+        const roleBadge = u.role === 'admin' 
+            ? '<span class="badge-role admin">Admin</span>' 
+            : '<span class="badge-role student">Student</span>';
+        
+        const actionHtml = isSelf 
+            ? '<span class="badge bg-light text-muted border small">Current</span>' 
+            : `<button type="button" class="btn-vault btn-vault-secondary btn-sm py-1 px-2 text-danger" onclick="confirmDeleteUser('${u.username}')" title="Delete User"><i class="fas fa-trash"></i></button>`;
+
+        rowsHtml += `
+            <tr>
+                <td><span class="badge bg-light text-dark border">#${u.id}</span></td>
+                <td><strong class="text-dark">${safeText(u.username)}</strong></td>
+                <td>${safeText(u.name, 'Student')}</td>
+                <td>${roleBadge}</td>
+                <td><span class="text-muted small">Protected</span></td>
+                <td><span class="text-muted small">${u.created_at ? u.created_at.substring(0, 10) : 'Recent'}</span></td>
+                <td style="text-align: right;">${actionHtml}</td>
+            </tr>
+        `;
+    });
+    tbody.innerHTML = rowsHtml;
+}
+
+function renderUserPagination(data) {
+    const wrapper = document.getElementById('userPaginationWrapper');
+    if (!wrapper) return;
+
+    if (data.total_pages <= 1) {
+        wrapper.innerHTML = `<div class="text-muted small">Showing all ${data.total_users} Users</div>`;
+        return;
+    }
+
+    let pagesHtml = `
+        <div class="text-muted small">
+            Showing Page <strong>${data.page}</strong> of <strong>${data.total_pages}</strong> (${data.total_users} Users)
+        </div>
+        <ul class="pagination-vault mb-0">
+            <li class="page-item ${data.page <= 1 ? 'disabled' : ''}">
+                <a class="page-link" href="javascript:void(0)" onclick="loadAdminUserPage(${data.page - 1})">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+            </li>
+    `;
+
+    const start = Math.max(1, data.page - 2);
+    const end = Math.min(start + 4, data.total_pages);
+
+    for (let p = start; p <= end; p++) {
+        pagesHtml += `
+            <li class="page-item ${p === data.page ? 'active' : ''}">
+                <a class="page-link" href="javascript:void(0)" onclick="loadAdminUserPage(${p})">${p}</a>
+            </li>
+        `;
+    }
+
+    pagesHtml += `
+            <li class="page-item ${data.page >= data.total_pages ? 'disabled' : ''}">
+                <a class="page-link" href="javascript:void(0)" onclick="loadAdminUserPage(${data.page + 1})">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            </li>
+        </ul>
+    `;
+    wrapper.innerHTML = pagesHtml;
+}
+
+function confirmDeleteUser(username) {
+    if (confirm(`Are you sure you want to delete user "${username}"? This will revoke all document access.`)) {
+        fetch(`/admin/delete-user/${username}`, {
+            method: 'POST',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                showToast(data.message, 'success');
+                loadAdminUserPage(currentPage);
+            } else {
+                showToast(data.message || 'Error deleting user.', 'error');
+            }
+        })
+        .catch(err => {
+            showToast('Server error deleting user.', 'error');
+        });
+    }
+}
+</script>
+{% endblock %}

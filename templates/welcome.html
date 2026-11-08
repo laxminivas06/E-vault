@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-12 col-xl-10">
+
+        <!-- Header Section (Contact Page Glowing Standard) -->
+        <div class="text-center mb-4">
+            <div class="logo-container mb-3">
+                <div class="college-logo mx-auto">
+                    <img src="{{ url_for('static', filename='images/college_logo.png') }}" alt="{{ college_name }}" class="img-fluid" onerror="this.style.display='none'">
+                </div>
+            </div>
+            <h1 class="text-white fw-bold mb-2" style="font-size: 2.5rem;">{{ app_name }}</h1>
+            <p class="text-white-50 subtitle mb-4" style="max-width: 650px; margin: 0 auto; font-size: 1.1rem;">
+                Official Institutional Repository &bull; {{ college_name }}
+            </p>
+        </div>
+
+        <!-- Preserved TV / Laptop & Floating Books Animation Section (Requirement 6) -->
+        <div class="tv-section mb-4">
+            <div class="tv-container">
+                <div class="tv">
+                    <div class="tv-screen">
+                        <div class="tv-content">
+                            <!-- Floating Interactive Books -->
+                            <div class="tv-books">
+                                <div class="book" title="Click to animate">PDF</div>
+                                <div class="book" title="Click to animate">DOC</div>
+                                <div class="book" title="Click to animate">EPUB</div>
+                                <div class="book" title="Click to animate">PDF</div>
+                            </div>
+                            <!-- Studying Figure & Phone Animation -->
+                            <div class="person">
+                                <div class="person-head"></div>
+                                <div class="person-body"></div>
+                            </div>
+                            <div class="phone"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tv-stand"></div>
+            </div>
+            <p class="text-center mt-3 text-white mb-0 fw-medium" style="font-size: 0.95rem; opacity: 0.9;">
+                <i class="fas fa-satellite-dish text-warning me-2"></i>Access knowledge securely verified within authorized campus perimeter.
+            </p>
+        </div>
+
+        <!-- Core Action Buttons -->
+        <div class="text-center mb-5">
+            <div class="d-flex flex-wrap justify-content-center gap-3">
+                {% if session.get('user_id') %}
+                <a href="{{ url_for('dashboard') }}" class="btn btn-submit" style="max-width: 280px; margin: 0;">
+                    <i class="fas fa-book-open me-2"></i> Go to E-Library
+                </a>
+                {% else %}
+                <a href="{{ url_for('location_check') }}" class="btn btn-submit" style="max-width: 260px; margin: 0;">
+                    <i class="fas fa-lock-open me-2"></i> Access Library
+                </a>
+                <a href="{{ url_for('admin_login') }}" class="btn btn-secondary" style="max-width: 230px; margin: 0; border-radius: 50px;">
+                    <i class="fab fa-google text-primary me-2"></i> Admin Sign-In
+                </a>
+                <a href="{{ url_for('contact') }}" class="btn btn-secondary" style="max-width: 210px; margin: 0; border-radius: 50px;">
+                    <i class="fas fa-headset me-2"></i> Support
+                </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Live Platform Statistics Cards -->
+        <div class="row g-3 mb-4">
+            <div class="col-12 col-md-4">
+                <div class="vault-card text-center py-4">
+                    <div class="text-primary mb-2" style="font-size: 2rem;">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <div class="display-6 fw-bold text-dark mb-1">{{ stats.total_pdfs }}+</div>
+                    <div class="text-muted fw-medium small">Curated Academic Documents</div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="vault-card text-center py-4">
+                    <div class="text-primary mb-2" style="font-size: 2rem;">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <div class="display-6 fw-bold text-dark mb-1">{{ stats.total_users }}+</div>
+                    <div class="text-muted fw-medium small">Enrolled Students &amp; Faculty</div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="vault-card text-center py-4">
+                    <div class="text-success mb-2" style="font-size: 2rem;">
+                        <i class="fas fa-location-crosshairs"></i>
+                    </div>
+                    <div class="display-6 fw-bold text-dark mb-1">5s GPS</div>
+                    <div class="text-muted fw-medium small">Continuous Boundary Checks</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Key Features Grid (Contact Page Cards with Accent Stripe) -->
+        <div class="row g-4 mb-4">
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="vault-card h-100 p-4">
+                    <div class="doc-icon text-primary mb-3" style="width: 48px; height: 48px; font-size: 1.5rem; background: var(--primary-light); border-radius: 12px;">
+                        <i class="fas fa-shield-halved"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Campus Geofencing</h5>
+                    <p class="text-muted small mb-0">Documents are accessible only while students reside within the authorized college campus boundary.</p>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="vault-card h-100 p-4">
+                    <div class="doc-icon text-primary mb-3" style="width: 48px; height: 48px; font-size: 1.5rem; background: var(--primary-light); border-radius: 12px;">
+                        <i class="fab fa-google"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Google Admin Auth</h5>
+                    <p class="text-muted small mb-0">Administrators authenticate via institutional Google Workspace accounts with strict backend authorization.</p>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="vault-card h-100 p-4">
+                    <div class="doc-icon text-primary mb-3" style="width: 48px; height: 48px; font-size: 1.5rem; background: var(--primary-light); border-radius: 12px;">
+                        <i class="fas fa-id-card"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Student Verification</h5>
+                    <p class="text-muted small mb-0">Quick and reliable access via college-assigned Rule Number and registered Date of Birth.</p>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="vault-card h-100 p-4">
+                    <div class="doc-icon text-primary mb-3" style="width: 48px; height: 48px; font-size: 1.5rem; background: var(--primary-light); border-radius: 12px;">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Ultra-Fast Search</h5>
+                    <p class="text-muted small mb-0">Instant search by title, subject, and department with zero-lag server-side pagination.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Interactive book click animation
+    const books = document.querySelectorAll('.book');
+    books.forEach(book => {
+        book.addEventListener('click', function() {
+            this.style.animation = 'none';
+            setTimeout(() => {
+                this.style.animation = 'book-appear 4s infinite';
+            }, 20);
+        });
+    });
+});
+</script>
+{% endblock %}

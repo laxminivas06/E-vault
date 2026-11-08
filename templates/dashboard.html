@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+
+{% block title %}E-Library Dashboard - {{ app_name }}{% endblock %}
+
+{% block content %}
+<!-- Header Banner (Contact Page Visual Standard) -->
+<div class="text-center mb-4">
+    <div class="logo-container mb-3">
+        <div class="college-logo mx-auto">
+            <img src="{{ url_for('static', filename='images/college_logo.png') }}" alt="{{ college_name }}" class="img-fluid" onerror="this.style.display='none'">
+        </div>
+    </div>
+    <h1 class="text-white fw-bold mb-1" style="font-size: 2.2rem;">{{ app_name }}</h1>
+    <p class="text-white-50 subtitle mb-3">Academic Repository &bull; {{ college_name }}</p>
+    
+    <!-- User Info Glass Card (Contact Page Feature) -->
+    <div class="user-info text-white d-inline-flex flex-wrap justify-content-center align-items-center gap-3 px-4 py-2">
+        <span><i class="fas fa-id-badge text-warning me-1"></i> <strong>Rule No:</strong> {{ session.get('user_id') }}</span>
+        <span><i class="fas fa-user-graduate text-info me-1"></i> <strong>Name:</strong> {{ user_name|safe_text(session.get('user_id')) }}</span>
+        <span class="role-badge"><i class="fas fa-shield-alt text-success me-1"></i> Campus Verified</span>
+    </div>
+</div>
+
+<div class="row mb-4 align-items-center">
+    <div class="col-12 col-md-6 mb-3 mb-md-0">
+        <h3 class="fw-bold text-white mb-1">
+            <i class="fas fa-book-open text-warning me-2"></i>Curated Courseware
+        </h3>
+        <p class="text-white-50 small mb-0">Browse and study syllabus courseware, engineering notes, and reference books.</p>
+    </div>
+    
+    <div class="col-12 col-md-6 d-flex justify-content-md-end">
+        <!-- Search Input -->
+        <div class="search-wrapper">
+            <i class="fas fa-magnifying-glass search-icon"></i>
+            <input type="text" id="documentSearchInput" placeholder="Search by title, subject, branch..." value="{{ search_query|safe_text }}">
+        </div>
+    </div>
+</div>
+
+<!-- Quick Statistics Bar -->
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-4">
+        <div class="vault-card py-3 px-3 d-flex align-items-center gap-3">
+            <div class="doc-icon text-primary mb-0" style="width: 40px; height: 40px; font-size: 1.25rem;">
+                <i class="fas fa-file-pdf"></i>
+            </div>
+            <div>
+                <div class="fs-5 fw-bold text-dark" id="statTotalPdfs">{{ total_pdfs }}</div>
+                <div class="text-muted small">Available Documents</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4">
+        <div class="vault-card py-3 px-3 d-flex align-items-center gap-3">
+            <div class="doc-icon text-success mb-0" style="width: 40px; height: 40px; font-size: 1.25rem; background: var(--success-light); color: var(--success);">
+                <i class="fas fa-book-reader"></i>
+            </div>
+            <div>
+                <div class="fs-5 fw-bold text-dark">{{ user_stats.documents_viewed }}</div>
+                <div class="text-muted small">Viewed by You</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-4">
+        <div class="vault-card py-3 px-3 d-flex align-items-center gap-3">
+            <div class="doc-icon text-secondary mb-0" style="width: 40px; height: 40px; font-size: 1.25rem; background: #f0f9ff; color: var(--secondary);">
+                <i class="fas fa-shield-check"></i>
+            </div>
+            <div>
+                <div class="fs-5 fw-bold text-dark text-truncate" style="max-width: 200px;">{{ verified_location|safe_text('Campus') }}</div>
+                <div class="text-muted small">Verified Geofence Location</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Document Cards Grid Container -->
+<div id="documentsContainer">
+    {% if pdfs %}
+    <div class="document-grid" id="documentsGrid">
+        {% for pdf in pdfs %}
+        <div class="document-card" data-pdf-id="{{ pdf.id }}">
+            <div>
+                <div class="doc-icon">
+                    <i class="fas fa-file-lines"></i>
+                </div>
+                <h3 class="doc-title" data-tooltip="{{ pdf.title|safe_text }}">{{ pdf.title|safe_text('Academic Document') }}</h3>
+                <div class="doc-meta">
+                    <span><i class="fas fa-calendar me-1"></i> {{ pdf.upload_date|safe_text('Recent') }}</span>
+                    {% if pdf.file_size and pdf.file_size != 'N/A' %}
+                    <span><i class="fas fa-hard-drive me-1"></i> {{ pdf.file_size|safe_text }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div>
+                <button type="button" class="btn-vault btn-vault-primary w-100 py-2" onclick="openSecurePdfViewer('{{ pdf.id }}', '{{ pdf.title|replace('\'', '\\\'') }}')">
+                    <i class="fas fa-eye"></i> View Document
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination Controls -->
+    {% if total_pages > 1 %}
+    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center mt-4 gap-3">
+        <div class="text-muted small">
+            Showing Page <strong>{{ page }}</strong> of <strong>{{ total_pages }}</strong> ({{ total_pdfs }} Documents)
+        </div>
+        <ul class="pagination-vault mb-0">
+            <!-- Previous Button -->
+            <li class="page-item {% if page <= 1 %}disabled{% endif %}">
+                <a class="page-link" href="{{ url_for('dashboard', page=page-1, search=search_query) }}" data-page="{{ page-1 }}">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+            </li>
+
+            <!-- Page Numbers -->
+            {% set start_page = [1, page - 2]|max %}
+            {% set end_page = [start_page + 4, total_pages]|min %}
+            {% if end_page - start_page < 4 %}
+                {% set start_page = [1, end_page - 4]|max %}
+            {% endif %}
+
+            {% for p in range(start_page, end_page + 1) %}
+            <li class="page-item {% if p == page %}active{% endif %}">
+                <a class="page-link" href="{{ url_for('dashboard', page=p, search=search_query) }}" data-page="{{ p }}">{{ p }}</a>
+            </li>
+            {% endfor %}
+
+            <!-- Next Button -->
+            <li class="page-item {% if page >= total_pages %}disabled{% endif %}">
+                <a class="page-link" href="{{ url_for('dashboard', page=page+1, search=search_query) }}" data-page="{{ page+1 }}">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="vault-card text-center py-5 my-4">
+        <i class="fas fa-folder-open text-muted mb-3" style="font-size: 3rem;"></i>
+        <h4 class="fw-bold text-dark">No documents found</h4>
+        <p class="text-muted mb-3">Try adjusting your search criteria or clear filters to see all available documents.</p>
+        {% if search_query %}
+        <a href="{{ url_for('dashboard') }}" class="btn-vault btn-vault-secondary">
+            <i class="fas fa-rotate-left"></i> Clear Search
+        </a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+<!-- Secure Document Viewer Modal -->
+<div class="modal fade" id="documentViewerModal" tabindex="-1" aria-labelledby="documentModalTitle" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: var(--radius-lg); overflow: hidden;">
+            <div class="modal-header bg-dark text-white border-0 py-3 px-4">
+                <div class="d-flex align-items-center gap-2 text-truncate me-3">
+                    <i class="fas fa-file-pdf text-danger fs-5"></i>
+                    <h5 class="modal-title fw-bold text-truncate mb-0" id="documentModalTitle">Protected Document</h5>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" onclick="closeViewerFrame()"></button>
+            </div>
+            
+            <div class="modal-body p-0 position-relative bg-dark">
+                <!-- Viewer iframe container -->
+                <div class="viewer-container">
+                    <iframe id="secureViewerFrame" class="viewer-frame" src="" sandbox="allow-scripts allow-same-origin" title="Document Viewer"></iframe>
+                </div>
+            </div>
+            
+            <div class="modal-footer bg-light border-0 py-2 px-4 d-flex justify-content-between align-items-center">
+                <span class="text-muted small">
+                    <i class="fas fa-shield-halved text-success me-1"></i> Digital Watermark Protected &bull; Reproduction Restricted
+                </span>
+                <button type="button" class="btn-vault btn-vault-secondary btn-sm py-1 px-3" data-bs-dismiss="modal" onclick="closeViewerFrame()">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+let searchDebounceTimeout = null;
+
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('documentSearchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchDebounceTimeout);
+            searchDebounceTimeout = setTimeout(() => {
+                const query = this.value.trim();
+                const url = new URL(window.location.href);
+                if (query) {
+                    url.searchParams.set('search', query);
+                } else {
+                    url.searchParams.delete('search');
+                }
+                url.searchParams.set('page', 1);
+                window.location.href = url.toString();
+            }, 500);
+        });
+    }
+});
+
+function closeViewerFrame() {
+    const frame = document.getElementById('secureViewerFrame');
+    if (frame) {
+        frame.src = 'about:blank';
+    }
+}
+</script>
+{% endblock %}

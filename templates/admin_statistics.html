@@ -1,0 +1,259 @@
+{% extends "base.html" %}
+
+{% block title %}System Analytics - {{ app_name }}{% endblock %}
+
+{% block extra_head %}
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<!-- Header Banner (Contact Page Visual Standard) -->
+<div class="text-center mb-4">
+    <div class="logo-container mb-3">
+        <div class="college-logo mx-auto">
+            <img src="{{ url_for('static', filename='images/college_logo.png') }}" alt="{{ college_name }}" class="img-fluid" onerror="this.style.display='none'">
+        </div>
+    </div>
+    <h1 class="text-white fw-bold mb-1" style="font-size: 2.2rem;">Library Analytics</h1>
+    <p class="text-white-50 subtitle mb-3">{{ college_name }} &bull; Access &amp; Engagement Intelligence</p>
+    
+    <!-- Admin Info Glass Card -->
+    <div class="user-info text-white d-inline-flex flex-wrap justify-content-center align-items-center gap-3 px-4 py-2">
+        <span><i class="fab fa-google text-warning me-1"></i> <strong>Admin:</strong> {{ session.get('user_id') }}</span>
+        <span class="role-badge"><i class="fas fa-chart-line text-warning me-1"></i> Live Metrics</span>
+    </div>
+</div>
+
+<div class="row mb-4 align-items-center">
+    <div class="col-12 col-md-6 mb-3 mb-md-0">
+        <h3 class="fw-bold text-white mb-1">
+            <i class="fas fa-chart-line text-warning me-2"></i>Usage &amp; Security Analytics
+        </h3>
+        <p class="text-white-50 small mb-0">Monitor document reads, active users, campus verification trends, and access logs.</p>
+    </div>
+    
+    <div class="col-12 col-md-6 d-flex justify-content-md-end gap-2">
+        <a href="{{ url_for('export_statistics') }}" class="btn-vault btn-vault-primary">
+            <i class="fas fa-file-csv"></i> Export Logs (CSV)
+        </a>
+    </div>
+</div>
+
+<!-- Metrics Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3">
+        <div class="vault-card p-3 d-flex align-items-center gap-3">
+            <div class="doc-icon text-primary mb-0" style="width: 44px; height: 44px; font-size: 1.3rem;">
+                <i class="fas fa-book"></i>
+            </div>
+            <div>
+                <div class="fs-4 fw-bold text-dark">{{ stats.total_pdfs }}</div>
+                <div class="text-muted small">Catalog Documents</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="vault-card p-3 d-flex align-items-center gap-3">
+            <div class="doc-icon text-success mb-0" style="width: 44px; height: 44px; font-size: 1.3rem; background: var(--success-light); color: var(--success);">
+                <i class="fas fa-user-graduate"></i>
+            </div>
+            <div>
+                <div class="fs-4 fw-bold text-dark">{{ stats.students_count }}</div>
+                <div class="text-muted small">Enrolled Students</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="vault-card p-3 d-flex align-items-center gap-3">
+            <div class="doc-icon text-secondary mb-0" style="width: 44px; height: 44px; font-size: 1.3rem; background: #f0f9ff; color: var(--secondary);">
+                <i class="fas fa-users-viewfinder"></i>
+            </div>
+            <div>
+                <div class="fs-4 fw-bold text-dark">{{ stats.active_users }}</div>
+                <div class="text-muted small">Active Readers (30d)</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="vault-card p-3 d-flex align-items-center gap-3">
+            <div class="doc-icon text-warning mb-0" style="width: 44px; height: 44px; font-size: 1.3rem; background: var(--warning-light); color: var(--warning);">
+                <i class="fas fa-calendar-day"></i>
+            </div>
+            <div>
+                <div class="fs-4 fw-bold text-dark">{{ stats.today_activity }}</div>
+                <div class="text-muted small">Today's Interactions</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row -->
+<div class="row g-4 mb-4">
+    <!-- Hourly Usage Chart -->
+    <div class="col-12 col-lg-8">
+        <div class="vault-card p-4 h-100">
+            <h5 class="fw-bold text-dark mb-3">24-Hour Usage Distribution</h5>
+            <div style="height: 280px; position: relative;">
+                <canvas id="hourlyChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Location Breakdown -->
+    <div class="col-12 col-lg-4">
+        <div class="vault-card p-4 h-100">
+            <h5 class="fw-bold text-dark mb-3">Location Geofences</h5>
+            <div style="height: 280px; position: relative;">
+                <canvas id="locationChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Top Documents & Logs Row -->
+<div class="row g-4">
+    <!-- Top Documents -->
+    <div class="col-12 col-lg-4">
+        <div class="vault-card p-4 h-100">
+            <h5 class="fw-bold text-dark mb-3">Most Accessed Documents</h5>
+            {% if stats.top_pdfs %}
+            <div class="d-flex flex-column gap-3">
+                {% for doc in stats.top_pdfs %}
+                <div class="d-flex justify-content-between align-items-center p-2 rounded bg-light border">
+                    <div class="text-truncate me-2">
+                        <strong class="text-dark small d-block text-truncate">{{ doc.title|safe_text }}</strong>
+                        <span class="text-muted" style="font-size: 0.75rem;">Curriculum Reference</span>
+                    </div>
+                    <span class="badge bg-primary rounded-pill px-2 py-1">{{ doc.views }} views</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-muted small mb-0">No document access data recorded yet.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Access Logs Table -->
+    <div class="col-12 col-lg-8">
+        <div class="vault-card p-4 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold text-dark mb-0">Recent Access Events</h5>
+                <span class="badge bg-light text-muted border small">Last 50 Events</span>
+            </div>
+
+            <div class="table-responsive-vault" style="max-height: 380px;">
+                <table class="vault-table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Action</th>
+                            <th>Location</th>
+                            <th>Timestamp</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if recent_logs %}
+                            {% for l in recent_logs %}
+                            <tr>
+                                <td><strong class="text-dark">{{ l.username|safe_text('system') }}</strong></td>
+                                <td>
+                                    <span class="badge bg-light text-dark border">{{ l.action|replace('_', ' ')|capitalize }}</span>
+                                </td>
+                                <td><span class="text-muted small">{{ l.location|safe_text('Campus') }}</span></td>
+                                <td><span class="text-muted small">{{ l.timestamp[:19]|replace('T', ' ') if l.timestamp else 'Recent' }}</span></td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="4" class="text-center py-4 text-muted">No recent activity logs.</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 1. Hourly Chart
+    const hourlyData = {{ stats.hourly_data|tojson }};
+    const hourlyLabels = Array.from({ length: 24 }, (_, i) => `${i}:00`);
+
+    const ctxHourly = document.getElementById('hourlyChart');
+    if (ctxHourly) {
+        new Chart(ctxHourly, {
+            type: 'bar',
+            data: {
+                labels: hourlyLabels,
+                datasets: [{
+                    label: 'Access Requests',
+                    data: hourlyData,
+                    backgroundColor: 'rgba(79, 70, 229, 0.75)',
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(ctx) {
+                                return ` ${safeText(ctx.raw, 0)} accesses`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+    }
+
+    // 2. Location Distribution Chart
+    const locLabels = {{ stats.location_labels|tojson }};
+    const locData = {{ stats.location_data|tojson }};
+
+    const ctxLoc = document.getElementById('locationChart');
+    if (ctxLoc && locLabels.length > 0) {
+        new Chart(ctxLoc, {
+            type: 'doughnut',
+            data: {
+                labels: locLabels.map(l => safeText(l, 'Campus')),
+                datasets: [{
+                    data: locData,
+                    backgroundColor: [
+                        '#4f46e5', '#0ea5e9', '#10b981', '#f59e0b',
+                        '#8b5cf6', '#ec4899', '#64748b', '#14b8a6'
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { boxWidth: 12 } },
+                    tooltip: {
+                        callbacks: {
+                            label: function(ctx) {
+                                return ` ${ctx.label}: ${safeText(ctx.raw, 0)}`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

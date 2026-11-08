@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block title %}Student Login - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-2 py-md-4">
+    <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
+
+        <!-- Header Banner (Contact Page Visual Standard) -->
+        <div class="text-center mb-4">
+            <div class="logo-container mb-3">
+                <div class="college-logo mx-auto">
+                    <img src="{{ url_for('static', filename='images/college_logo.png') }}" alt="{{ college_name }}" class="img-fluid" onerror="this.style.display='none'">
+                </div>
+            </div>
+            <h1 class="text-white fw-bold mb-1" style="font-size: 2.2rem;">Access E-Library</h1>
+            <p class="text-white-50 small mb-0">{{ college_name }} &bull; Digital Repository</p>
+        </div>
+
+        <!-- Student Authentication Card -->
+        <div class="vault-card p-4 p-md-5">
+            <div class="text-center mb-4">
+                <div class="doc-icon text-primary mx-auto mb-3" style="width: 56px; height: 56px; font-size: 1.8rem; background: var(--primary-light); border-radius: 50%;">
+                    <i class="fas fa-user-graduate"></i>
+                </div>
+                <h3 class="fw-bold text-dark mb-1">Student Login</h3>
+                <p class="text-muted small">Enter your college-assigned Rule Number and Date of Birth to access library documents.</p>
+            </div>
+
+            <!-- Student Login Form -->
+            <form method="POST" action="{{ url_for('login') }}" id="studentLoginForm" novalidate>
+                <!-- Rule Number Input -->
+                <div class="mb-3">
+                    <label for="rule_number" class="form-label fw-semibold text-dark small mb-1">
+                        <i class="fas fa-id-card text-primary me-1"></i> Rule Number *
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0 text-muted">
+                            <i class="fas fa-hashtag"></i>
+                        </span>
+                        <input type="text" 
+                               class="form-control border-start-0 ps-0" 
+                               id="rule_number" 
+                               name="rule_number" 
+                               placeholder="Enter your Rule Number (e.g. 23N81A0501)" 
+                               required 
+                               autofocus
+                               autocomplete="username" 
+                               style="text-transform: uppercase;">
+                    </div>
+                    <div class="invalid-feedback small">Please provide your college Rule Number.</div>
+                </div>
+
+                <!-- Date of Birth Input -->
+                <div class="mb-4">
+                    <label for="dob" class="form-label fw-semibold text-dark small mb-1">
+                        <i class="fas fa-calendar-alt text-primary me-1"></i> Date of Birth *
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0 text-muted">
+                            <i class="fas fa-key"></i>
+                        </span>
+                        <input type="password" 
+                               class="form-control border-start-0 border-end-0 ps-0" 
+                               id="dob" 
+                               name="dob" 
+                               placeholder="DDMMYYYY (e.g. 10072005)" 
+                               required 
+                               autocomplete="current-password">
+                        <button class="btn btn-outline-secondary border-start-0 bg-white text-muted px-3" 
+                                type="button" 
+                                id="toggleDobBtn" 
+                                title="Toggle visibility"
+                                style="border: 2px solid #e5e7eb; border-left: none; margin: 0; padding: 0 14px; border-radius: 0 12px 12px 0;">
+                            <i class="fas fa-eye" id="toggleDobIcon"></i>
+                        </button>
+                    </div>
+                    <div class="form-text small text-muted mt-1">
+                        <i class="fas fa-circle-info me-1"></i> Enter your registered date of birth in <strong>DDMMYYYY</strong> format.
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-submit w-100" id="loginSubmitBtn">
+                    <i class="fas fa-book-open me-2"></i> Access Library
+                </button>
+            </form>
+
+            <hr class="my-4" style="opacity: 0.15;">
+
+            <!-- Subtle Portals and Support Links -->
+            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2 text-center text-sm-start">
+                <a href="{{ url_for('admin_login') }}" class="small text-muted text-decoration-none">
+                    <i class="fab fa-google text-primary me-1"></i> Administrator Sign-In
+                </a>
+                <a href="{{ url_for('contact') }}" class="small text-muted text-decoration-none">
+                    <i class="fas fa-headset text-primary me-1"></i> Help &amp; Support
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const toggleBtn = document.getElementById('toggleDobBtn');
+    const dobInput = document.getElementById('dob');
+    const toggleIcon = document.getElementById('toggleDobIcon');
+    const form = document.getElementById('studentLoginForm');
+    const ruleInput = document.getElementById('rule_number');
+
+    if (toggleBtn && dobInput) {
+        toggleBtn.addEventListener('click', function() {
+            if (dobInput.type === 'password') {
+                dobInput.type = 'text';
+                toggleIcon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                dobInput.type = 'password';
+                toggleIcon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        });
+    }
+
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            let valid = true;
+            if (!ruleInput.value.trim()) {
+                ruleInput.classList.add('is-invalid');
+                valid = false;
+            } else {
+                ruleInput.classList.remove('is-invalid');
+            }
+
+            if (!dobInput.value.trim()) {
+                dobInput.classList.add('is-invalid');
+                valid = false;
+            } else {
+                dobInput.classList.remove('is-invalid');
+            }
+
+            if (!valid) {
+                e.preventDefault();
+                return false;
+            }
+
+            const submitBtn = document.getElementById('loginSubmitBtn');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Verifying Credentials...';
+            }
+        });
+    }
+});
+</script>
+{% endblock %}
