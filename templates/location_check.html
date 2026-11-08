@@ -1,96 +1,102 @@
 {% extends "base.html" %}
 
-{% block title %}Campus Geolocation Verification - {{ app_name }}{% endblock %}
+{% block title %}Location Verification - {{ app_name }}{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center py-2 py-md-4">
+<div class="row justify-content-center py-2 py-md-3">
     <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
 
-        <!-- Header Banner (Contact Page Visual Standard) -->
-        <div class="text-center mb-4">
-            <div class="logo-container mb-3">
-                <div class="college-logo mx-auto">
+        <!-- Page Header -->
+        <div class="page-header-clean">
+            <div class="logo-container">
+                <div class="college-logo">
                     <img src="{{ url_for('static', filename='images/college_logo.png') }}" alt="{{ college_name }}" class="img-fluid" onerror="this.style.display='none'">
                 </div>
             </div>
-            <h1 class="text-white fw-bold mb-1" style="font-size: 2.2rem;">Location Verification</h1>
-            <p class="text-white-50 subtitle mb-0">Pre-Login Campus Geofence Security &bull; {{ college_name }}</p>
+            <h1 class="page-title">Location Verification</h1>
+            <p class="page-subtitle">Pre-Login Campus Geofence Security &bull; {{ college_name }}</p>
         </div>
 
         <!-- Verification Container Card -->
-        <div class="vault-card text-center p-4 p-md-5">
+        <div class="card shadow-sm animate__animated animate__fadeInUp">
+            <div class="card-header text-center">
+                <i class="fas fa-location-crosshairs me-2"></i>Campus Geolocation Check
+            </div>
+            <div class="card-body text-center p-4 p-md-5">
 
-            <!-- Radar Pulse Animation Target -->
-            <div class="radar-pulse-box" id="radarBox">
-                <div class="radar-pulse-ring" id="ring1"></div>
-                <div class="radar-pulse-ring" id="ring2"></div>
-                <div class="radar-pulse-ring" id="ring3"></div>
-                <div class="radar-icon-center" id="radarCenter">
-                    <i class="fas fa-location-crosshairs" id="locationIcon"></i>
+                <!-- Radar Pulse Animation Target -->
+                <div class="radar-pulse-box" id="radarBox">
+                    <div class="radar-pulse-ring" id="ring1"></div>
+                    <div class="radar-pulse-ring" id="ring2"></div>
+                    <div class="radar-pulse-ring" id="ring3"></div>
+                    <div class="radar-icon-center" id="radarCenter">
+                        <i class="fas fa-location-crosshairs" id="locationIcon"></i>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Main Status Header & Description -->
-            <h3 class="fw-bold text-dark mb-2" id="locStateHeader">Verifying Campus Location</h3>
-            <p class="text-muted small mb-4" id="locStatusDescription">
-                {{ app_name }} requires active geolocation verification to confirm you are within {{ college_name }} premises before accessing the student library.
-            </p>
+                <!-- Main Status Header & Description -->
+                <h4 class="fw-bold text-dark mb-2" id="locStateHeader">Verifying Campus Location</h4>
+                <p class="text-secondary small mb-4" id="locStatusDescription">
+                    {{ app_name }} verifies your physical device location to confirm you are within {{ college_name }} premises before accessing the student library.
+                </p>
 
-            <!-- Live Status Indicator Box -->
-            <div class="p-3 rounded-3 mb-4 text-center" id="statusBox" style="background: #f8fafc; border: 1px solid var(--border);">
-                <div class="d-flex align-items-center justify-content-center gap-2 mb-1" id="spinnerRow">
-                    <span class="spinner-border spinner-border-sm text-primary" id="locSpinner" role="status"></span>
-                    <strong class="text-dark small" id="locStateSub">Acquiring device GPS coordinates...</strong>
+                <!-- Live Status Indicator Box -->
+                <div class="p-3 rounded-3 mb-4 text-center" id="statusBox" style="background: #f8fafc; border: 1.5px solid var(--border);">
+                    <div class="d-flex align-items-center justify-content-center gap-2 mb-1" id="spinnerRow">
+                        <span class="spinner-border spinner-border-sm text-primary" id="locSpinner" role="status"></span>
+                        <strong class="text-dark small" id="locStateSub">Acquiring device GPS coordinates...</strong>
+                    </div>
+                    <div class="small text-muted" id="locCoordsDetail">Please approve browser location permissions if prompted.</div>
                 </div>
-                <div class="small text-muted" id="locCoordsDetail">Please approve browser location permissions if prompted.</div>
-            </div>
 
-            <!-- Action Buttons Area -->
-            <div class="d-flex flex-column gap-2" id="actionButtonsArea">
-                <button type="button" class="btn btn-submit w-100" id="btnVerifyNow" onclick="requestDeviceLocation()">
-                    <i class="fas fa-crosshairs me-2"></i> Verify Location Now
-                </button>
-                <a href="{{ url_for('welcome') }}" class="btn btn-secondary w-100" style="border-radius: 50px;">
-                    <i class="fas fa-arrow-left me-2"></i> Return to Homepage
-                </a>
-            </div>
-
-            <!-- Permission Denied Step-by-Step Instructions (Hidden by default, shown if permission denied) -->
-            <div class="alert alert-warning border-0 text-start mt-4 d-none rounded-3" id="permissionHelpBox" style="background: rgba(245, 158, 11, 0.1); border-left: 4px solid var(--warning) !important;">
-                <div class="d-flex align-items-center gap-2 mb-2">
-                    <i class="fas fa-triangle-exclamation text-warning fs-5"></i>
-                    <strong class="text-dark small">How to Enable Location Access:</strong>
+                <!-- Action Buttons Area -->
+                <div class="d-flex flex-column gap-2" id="actionButtonsArea">
+                    <button type="button" class="btn btn-primary w-100" id="btnVerifyNow" onclick="requestDeviceLocation()">
+                        <i class="fas fa-crosshairs me-2"></i> Verify Location Now
+                    </button>
+                    <a href="{{ url_for('welcome') }}" class="btn btn-secondary w-100">
+                        <i class="fas fa-arrow-left me-2"></i> Return to Homepage
+                    </a>
                 </div>
-                <ul class="small text-dark mb-0 ps-3" style="font-size: 0.85rem; line-height: 1.5;">
-                    <li><strong>Google Chrome / Edge (Desktop):</strong> Click the padlock or settings icon <i class="fas fa-sliders text-muted"></i> to the left of the URL address bar &rarr; Set <strong>Location</strong> to <em>Allow</em> &rarr; Reload or click Retry.</li>
-                    <li><strong>Safari (iOS / iPhone):</strong> Open <em>Settings &rarr; Safari &rarr; Location</em> &rarr; Select <em>Ask</em> or <em>Allow</em>.</li>
-                    <li><strong>Android (Chrome):</strong> Tap the 3 dots <i class="fas fa-ellipsis-vertical text-muted"></i> &rarr; <em>Settings &rarr; Site Settings &rarr; Location</em> &rarr; Allow.</li>
-                    <li>Ensure device location / GPS toggles are enabled in device settings.</li>
-                </ul>
-            </div>
 
-            <!-- Collapsible Troubleshooting Accordion -->
-            <div class="accordion mt-4 text-start" id="locationHelpAccordion">
-                <div class="accordion-item border-0 bg-light rounded-3">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed bg-transparent py-2 px-3 small text-muted" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHelp">
-                            <i class="fas fa-circle-question me-2 text-primary"></i> Need location troubleshooting help?
-                        </button>
-                    </h2>
-                    <div id="collapseHelp" class="accordion-collapse collapse" data-bs-parent="#locationHelpAccordion">
-                        <div class="accordion-body small text-muted pt-0 px-3 pb-3">
-                            <ul class="mb-0 ps-3" style="line-height: 1.6;">
-                                <li>Connect to the college campus Wi-Fi network for optimal positioning accuracy.</li>
-                                <li>Make sure GPS / Location Services are switched <strong>ON</strong> in your device settings.</li>
-                                <li>If using mobile data, move away from heavy concrete walls or near windows to obtain clean satellite reception.</li>
-                                <li>Private / Incognito windows may block location by default &ndash; try using standard browser tabs.</li>
-                            </ul>
+                <!-- Permission Denied Step-by-Step Instructions -->
+                <div class="alert alert-warning border-0 text-start mt-4 d-none rounded-3" id="permissionHelpBox" style="background: rgba(245, 158, 11, 0.1); border-left: 4px solid var(--warning) !important;">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <i class="fas fa-triangle-exclamation text-warning fs-5"></i>
+                        <strong class="text-dark small">How to Enable Location Access:</strong>
+                    </div>
+                    <ul class="small text-dark mb-0 ps-3" style="font-size: 0.85rem; line-height: 1.5;">
+                        <li><strong>Google Chrome / Edge (Desktop):</strong> Click the padlock icon <i class="fas fa-lock text-muted"></i> in the URL bar &rarr; Set <strong>Location</strong> to <em>Allow</em> &rarr; Reload.</li>
+                        <li><strong>Safari (iOS / iPhone):</strong> Open <em>Settings &rarr; Safari &rarr; Location</em> &rarr; Select <em>Ask</em> or <em>Allow</em>.</li>
+                        <li><strong>Android (Chrome):</strong> Tap the 3 dots <i class="fas fa-ellipsis-vertical text-muted"></i> &rarr; <em>Settings &rarr; Site Settings &rarr; Location</em> &rarr; Allow.</li>
+                        <li>Ensure device GPS / Location toggles are turned on in system settings.</li>
+                    </ul>
+                </div>
+
+                <!-- Collapsible Troubleshooting Accordion -->
+                <div class="accordion mt-4 text-start" id="locationHelpAccordion">
+                    <div class="accordion-item border-0 bg-light rounded-3">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed bg-transparent py-2 px-3 small text-muted" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHelp">
+                                <i class="fas fa-circle-question me-2 text-primary"></i> Need location troubleshooting help?
+                            </button>
+                        </h2>
+                        <div id="collapseHelp" class="accordion-collapse collapse" data-bs-parent="#locationHelpAccordion">
+                            <div class="accordion-body small text-muted pt-0 px-3 pb-3">
+                                <ul class="mb-0 ps-3" style="line-height: 1.6;">
+                                    <li>Connect to the college campus Wi-Fi network for optimal positioning accuracy.</li>
+                                    <li>Make sure GPS / Location Services are switched <strong>ON</strong> in your device settings.</li>
+                                    <li>If using mobile data, move away from heavy concrete walls or near windows to obtain clean satellite reception.</li>
+                                    <li>Private / Incognito windows may block location by default &ndash; try using standard browser tabs.</li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
+            </div>
         </div>
+
     </div>
 </div>
 {% endblock %}
@@ -98,47 +104,48 @@
 {% block extra_scripts %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Automatically initiate location verification when page loads
+    // Automatically trigger location verification on page load
     requestDeviceLocation();
 });
 
+let isVerifying = false;
+
 function requestDeviceLocation() {
+    if (isVerifying) return;
+    
     const header = document.getElementById('locStateHeader');
     const desc = document.getElementById('locStatusDescription');
     const sub = document.getElementById('locStateSub');
     const detail = document.getElementById('locCoordsDetail');
     const spinner = document.getElementById('locSpinner');
-    const icon = document.getElementById('locationIcon');
-    const center = document.getElementById('radarCenter');
-    const btn = document.getElementById('btnVerifyNow');
+    const radarCenter = document.getElementById('radarCenter');
+    const locationIcon = document.getElementById('locationIcon');
     const helpBox = document.getElementById('permissionHelpBox');
-    const rings = document.querySelectorAll('.radar-pulse-ring');
-
-    if (helpBox) helpBox.classList.add('d-none');
-    rings.forEach(r => r.style.display = 'block');
+    const btnVerify = document.getElementById('btnVerifyNow');
 
     if (!navigator.geolocation) {
-        header.textContent = 'Geolocation Unsupported';
-        desc.textContent = 'Your web browser does not support HTML5 Geolocation API.';
-        sub.textContent = 'Browser incompatible';
-        detail.textContent = 'Please open Vault E-Library using Chrome, Edge, Safari, or Firefox.';
-        spinner.classList.add('d-none');
-        icon.className = 'fas fa-circle-xmark';
-        center.style.background = 'var(--danger)';
-        rings.forEach(r => r.style.display = 'none');
-        btn.disabled = false;
+        showVerificationFailed(
+            'Geolocation Unsupported',
+            'Your web browser does not support HTML5 Geolocation. Please switch to Google Chrome, Microsoft Edge, or Safari.'
+        );
         return;
     }
 
-    header.textContent = 'Verifying Campus Location';
-    desc.textContent = 'Acquiring device GPS coordinates to confirm college campus boundary presence...';
-    sub.textContent = 'Acquiring GPS coordinates...';
-    detail.textContent = 'Please tap "Allow" if your browser prompts for location permission.';
-    spinner.classList.remove('d-none');
-    icon.className = 'fas fa-location-crosshairs';
-    center.style.background = 'var(--primary)';
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span> Verifying Location...';
+    isVerifying = true;
+    if (btnVerify) {
+        btnVerify.disabled = true;
+        btnVerify.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Checking Location...';
+    }
+
+    if (header) header.textContent = 'Acquiring GPS Position';
+    if (sub) sub.textContent = 'Connecting to device GPS satellites...';
+    if (detail) detail.textContent = 'Please click "Allow" if your browser requests location access.';
+    if (spinner) spinner.classList.remove('d-none');
+    if (helpBox) helpBox.classList.add('d-none');
+    if (radarCenter) {
+        radarCenter.className = 'radar-icon-center';
+        if (locationIcon) locationIcon.className = 'fas fa-location-crosshairs';
+    }
 
     navigator.geolocation.getCurrentPosition(
         function(position) {
@@ -146,98 +153,67 @@ function requestDeviceLocation() {
             const lon = position.coords.longitude;
             const accuracy = Math.round(position.coords.accuracy || 0);
 
-            sub.textContent = 'Verifying Campus Boundary...';
-            detail.textContent = `Coordinates detected (accuracy: ±${accuracy}m). Checking geofence...`;
+            if (sub) sub.textContent = 'Validating campus geofence boundary...';
+            if (detail) detail.textContent = `Coordinates: ${lat.toFixed(5)}°, ${lon.toFixed(5)}° (Accuracy: ±${accuracy}m)`;
 
-            fetch('/location-check', {
+            // Send coordinates to server for verification
+            fetch('{{ url_for("location_check") }}', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest'
                 },
-                body: JSON.stringify({ latitude: lat, longitude: lon })
+                body: JSON.stringify({
+                    latitude: lat,
+                    longitude: lon,
+                    accuracy: accuracy
+                })
             })
-            .then(res => res.json())
+            .then(response => response.json())
             .then(data => {
+                isVerifying = false;
                 if (data.success) {
-                    header.textContent = 'Campus Verified!';
-                    header.className = 'fw-bold text-success mb-2';
-                    desc.textContent = `Welcome to ${data.location || 'Sphoorthy Engineering College'}. Access granted!`;
-                    sub.textContent = 'Location Confirmed';
-                    detail.textContent = 'Redirecting to Student Login...';
-                    spinner.classList.add('d-none');
-                    icon.className = 'fas fa-circle-check';
-                    center.style.background = 'var(--success)';
-                    rings.forEach(r => r.style.display = 'none');
-                    btn.innerHTML = '<i class="fas fa-check me-2"></i> Verified &ndash; Proceeding...';
-
-                    showToast('Location verified! Proceeding to Student Login...', 'success');
-
-                    setTimeout(() => {
-                        window.location.href = data.redirect_url || '/login';
-                    }, 1000);
+                    showVerificationSuccess(data.location || 'Sphoorthy Engineering College Campus', data.redirect_url || '{{ url_for("login") }}');
                 } else {
-                    header.textContent = 'Outside Permitted Boundary';
-                    header.className = 'fw-bold text-danger mb-2';
-                    desc.textContent = data.message || 'Access is restricted to students physically located within college campus boundaries.';
-                    sub.textContent = 'Access Restricted';
-                    detail.textContent = 'You must be on campus premises to sign in to the E-Library.';
-                    spinner.classList.add('d-none');
-                    icon.className = 'fas fa-ban';
-                    center.style.background = 'var(--danger)';
-                    rings.forEach(r => r.style.display = 'none');
-                    btn.disabled = false;
-                    btn.innerHTML = '<i class="fas fa-rotate-right me-2"></i> Retry Verification';
+                    showVerificationFailed(
+                        'Outside Campus Boundary',
+                        data.message || 'You appear to be outside the authorized college campus boundary. Access to the digital library is restricted to campus grounds.',
+                        true
+                    );
                 }
             })
             .catch(err => {
-                console.error('Location verify error:', err);
-                header.textContent = 'Verification Network Error';
-                header.className = 'fw-bold text-danger mb-2';
-                desc.textContent = 'Could not communicate with the verification server. Please check your connection.';
-                spinner.classList.add('d-none');
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-rotate-right me-2"></i> Retry';
+                isVerifying = false;
+                console.error('Server verification error:', err);
+                showVerificationFailed(
+                    'Network Communication Error',
+                    'Unable to communicate with the verification server. Please ensure you are connected to the internet and try again.'
+                );
             });
         },
         function(error) {
-            spinner.classList.add('d-none');
-            rings.forEach(r => r.style.display = 'none');
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-rotate-right me-2"></i> Retry Verification';
+            isVerifying = false;
+            let title = 'Location Error';
+            let message = 'Unable to determine your location.';
+            let isPermDenied = false;
 
-            if (error.code === 1) { // PERMISSION_DENIED
-                header.textContent = 'Location Permission Denied';
-                header.className = 'fw-bold text-warning mb-2';
-                desc.textContent = 'Your browser or device has blocked location access. Location verification is required before login.';
-                sub.textContent = 'Permission Blocked';
-                detail.textContent = 'Please allow location permission in your browser and click Retry.';
-                icon.className = 'fas fa-lock';
-                center.style.background = 'var(--warning)';
-                if (helpBox) helpBox.classList.remove('d-none');
-            } else if (error.code === 2) { // POSITION_UNAVAILABLE
-                header.textContent = 'GPS Signal Unavailable';
-                header.className = 'fw-bold text-warning mb-2';
-                desc.textContent = 'Unable to acquire accurate GPS position. Please ensure device location services are enabled.';
-                sub.textContent = 'Position Unavailable';
-                detail.textContent = 'Connect to campus Wi-Fi or step near a window for better satellite reception.';
-                icon.className = 'fas fa-satellite-dish';
-                center.style.background = 'var(--warning)';
-            } else if (error.code === 3) { // TIMEOUT
-                header.textContent = 'Location Request Timed Out';
-                header.className = 'fw-bold text-warning mb-2';
-                desc.textContent = 'The GPS response took too long. Please ensure your device has a stable network connection.';
-                sub.textContent = 'Request Timed Out';
-                detail.textContent = 'Click Retry Verification to attempt acquisition again.';
-                icon.className = 'fas fa-clock-rotate-left';
-                center.style.background = 'var(--warning)';
-            } else {
-                header.textContent = 'Location Verification Notice';
-                header.className = 'fw-bold text-warning mb-2';
-                desc.textContent = 'Could not complete location verification.';
-                icon.className = 'fas fa-triangle-exclamation';
-                center.style.background = 'var(--warning)';
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    title = 'Location Permission Denied';
+                    message = 'Location access was blocked in your browser. Sphoorthy Engineering College requires location permission to verify you are on campus.';
+                    isPermDenied = true;
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    title = 'GPS Signal Unavailable';
+                    message = 'Your device was unable to establish a satellite or network location fix. Please move near a window or connect to campus Wi-Fi.';
+                    break;
+                case error.TIMEOUT:
+                    title = 'Location Request Timed Out';
+                    message = 'The location request took too long to respond. Please ensure device location is enabled and tap Retry.';
+                    break;
             }
+
+            showVerificationFailed(title, message, false, isPermDenied);
         },
         {
             enableHighAccuracy: true,
@@ -245,6 +221,73 @@ function requestDeviceLocation() {
             maximumAge: 0
         }
     );
+}
+
+function showVerificationSuccess(locationName, redirectUrl) {
+    const header = document.getElementById('locStateHeader');
+    const desc = document.getElementById('locStatusDescription');
+    const sub = document.getElementById('locStateSub');
+    const detail = document.getElementById('locCoordsDetail');
+    const spinner = document.getElementById('locSpinner');
+    const radarCenter = document.getElementById('radarCenter');
+    const locationIcon = document.getElementById('locationIcon');
+    const actions = document.getElementById('actionButtonsArea');
+
+    if (header) header.textContent = 'Campus Location Verified!';
+    if (desc) desc.textContent = `You are confirmed within ${locationName}. Redirecting to Student Login...`;
+    if (sub) sub.innerHTML = '<span class="text-success fw-bold"><i class="fas fa-circle-check me-1"></i> Verified on Campus</span>';
+    if (detail) detail.textContent = 'Secure session granted. Preparing student login...';
+    if (spinner) spinner.classList.add('d-none');
+    
+    if (radarCenter) {
+        radarCenter.className = 'radar-icon-center success animate__animated animate__pulse';
+        if (locationIcon) locationIcon.className = 'fas fa-check';
+    }
+
+    if (actions) {
+        actions.innerHTML = `
+            <a href="${redirectUrl}" class="btn btn-primary w-100 py-2">
+                <i class="fas fa-arrow-right me-2"></i> Proceed to Student Login
+            </a>
+        `;
+    }
+
+    // Auto redirect after 1.2 seconds
+    setTimeout(() => {
+        window.location.href = redirectUrl;
+    }, 1200);
+}
+
+function showVerificationFailed(title, message, isOutside = false, isPermDenied = false) {
+    const header = document.getElementById('locStateHeader');
+    const desc = document.getElementById('locStatusDescription');
+    const sub = document.getElementById('locStateSub');
+    const detail = document.getElementById('locCoordsDetail');
+    const spinner = document.getElementById('locSpinner');
+    const radarCenter = document.getElementById('radarCenter');
+    const locationIcon = document.getElementById('locationIcon');
+    const helpBox = document.getElementById('permissionHelpBox');
+    const btnVerify = document.getElementById('btnVerifyNow');
+
+    if (header) header.textContent = title;
+    if (desc) desc.textContent = message;
+    if (sub) sub.innerHTML = `<span class="text-danger fw-bold"><i class="fas fa-circle-xmark me-1"></i> ${title}</span>`;
+    if (detail) detail.textContent = isOutside ? 'Please return to campus to access digital library courseware.' : 'Please follow the troubleshooting steps below.';
+    if (spinner) spinner.classList.add('d-none');
+
+    if (radarCenter) {
+        radarCenter.className = 'radar-icon-center error animate__animated animate__shakeX';
+        if (locationIcon) locationIcon.className = 'fas fa-triangle-exclamation';
+    }
+
+    if (isPermDenied && helpBox) {
+        helpBox.classList.remove('d-none');
+    }
+
+    if (btnVerify) {
+        btnVerify.disabled = false;
+        btnVerify.innerHTML = '<i class="fas fa-rotate-right me-2"></i> Retry Location Verification';
+    }
 }
 </script>
 {% endblock %}

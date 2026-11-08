@@ -1,114 +1,159 @@
 {% extends "base.html" %}
 
-{% block title %}Student Login - {{ app_name }}{% endblock %}
+{% block title %}Library Access - {{ app_name }}{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center py-2 py-md-4">
+<div class="row justify-content-center py-2 py-md-3">
     <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
 
-        <!-- Header Banner (Contact Page Visual Standard) -->
-        <div class="text-center mb-4">
-            <div class="logo-container mb-3">
-                <div class="college-logo mx-auto">
+        <!-- Page Header -->
+        <div class="page-header-clean">
+            <div class="logo-container">
+                <div class="college-logo">
                     <img src="{{ url_for('static', filename='images/college_logo.png') }}" alt="{{ college_name }}" class="img-fluid" onerror="this.style.display='none'">
                 </div>
             </div>
-            <h1 class="text-white fw-bold mb-1" style="font-size: 2.2rem;">Access E-Library</h1>
-            <p class="text-white-50 small mb-0">{{ college_name }} &bull; Digital Repository</p>
+            <h1 class="page-title">Library Access</h1>
+            <p class="page-subtitle">{{ college_name }} &bull; Digital Repository</p>
         </div>
 
-        <!-- Student Authentication Card -->
-        <div class="vault-card p-4 p-md-5">
-            <div class="text-center mb-4">
-                <div class="doc-icon text-primary mx-auto mb-3" style="width: 56px; height: 56px; font-size: 1.8rem; background: var(--primary-light); border-radius: 50%;">
-                    <i class="fas fa-user-graduate"></i>
-                </div>
-                <h3 class="fw-bold text-dark mb-1">Student Login</h3>
-                <p class="text-muted small">Enter your college-assigned Rule Number and Date of Birth to access library documents.</p>
+        <!-- Authentication Card -->
+        <div class="card shadow-sm animate__animated animate__fadeInUp">
+            <div class="card-header text-center">
+                <i class="fas fa-lock me-2"></i>Institutional Verification
             </div>
-
-            <!-- Campus Location Verified Badge -->
-            {% if location_verified %}
-            <div class="alert alert-success border-0 py-2 px-3 small d-flex align-items-center justify-content-between mb-4 rounded-pill" style="background: rgba(40, 167, 69, 0.12);">
-                <div class="d-flex align-items-center gap-2">
-                    <i class="fas fa-circle-check text-success"></i>
-                    <span class="text-success fw-semibold">Campus Verified: {{ verified_location|safe_text('Sphoorthy Engineering College Campus') }}</span>
+            <div class="card-body p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <div class="doc-icon text-primary mx-auto mb-3" style="width: 54px; height: 54px; font-size: 1.6rem; border-radius: 50%;">
+                        <i class="fas fa-id-card"></i>
+                    </div>
+                    <h4 class="fw-bold text-dark mb-1">Verify Your Credentials</h4>
+                    <p class="text-secondary small">Enter your institutional credentials or continue with Google.</p>
                 </div>
-                <a href="{{ url_for('location_check') }}" class="text-success text-decoration-underline small" style="font-size: 0.8rem;">Re-verify</a>
-            </div>
-            {% endif %}
 
-            <!-- Student Login Form -->
-            <form method="POST" action="{{ url_for('login') }}" id="studentLoginForm" novalidate>
-                <!-- Rule Number Input -->
-                <div class="mb-3">
-                    <label for="rule_number" class="form-label fw-semibold text-dark small mb-1">
-                        <i class="fas fa-id-card text-primary me-1"></i> Rule Number *
-                    </label>
-                    <div class="input-group">
-                        <span class="input-group-text bg-white border-end-0 text-muted">
-                            <i class="fas fa-hashtag"></i>
+                <!-- Campus Location Verified Badge -->
+                {% if location_verified %}
+                <div class="alert alert-success border-0 py-2 px-3 small d-flex align-items-center justify-content-between mb-4 rounded-pill" style="background: rgba(22, 163, 74, 0.12);">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="fas fa-circle-check text-success"></i>
+                        <span class="text-success fw-semibold">Campus Verified: {{ verified_location|safe_text('Sphoorthy Engineering College Campus') }}</span>
+                    </div>
+                    <a href="{{ url_for('location_check') }}" class="text-success text-decoration-underline small" style="font-size: 0.8rem;">Re-verify</a>
+                </div>
+                {% endif %}
+
+                <!-- Regular User Login Form -->
+                <form method="POST" action="{{ url_for('login') }}" id="studentLoginForm" novalidate>
+                    <!-- Username / Rule Number Input -->
+                    <div class="mb-3">
+                        <label for="rule_number" class="form-label">
+                            <i class="fas fa-user text-primary me-1"></i> Username / Roll Number *
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-id-badge"></i>
+                            </span>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="rule_number" 
+                                   name="rule_number" 
+                                   placeholder="Enter Roll Number (e.g. 23N81A0501)" 
+                                   required 
+                                   autofocus
+                                   autocomplete="username" 
+                                   style="text-transform: uppercase;">
+                        </div>
+                        <div class="invalid-feedback small">Please enter your Username or Roll Number.</div>
+                    </div>
+
+                    <!-- Password / Date of Birth Input -->
+                    <div class="mb-4">
+                        <label for="dob" class="form-label">
+                            <i class="fas fa-key text-primary me-1"></i> Password / Date of Birth *
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-lock"></i>
+                            </span>
+                            <input type="password" 
+                                   class="form-control" 
+                                   id="dob" 
+                                   name="dob" 
+                                   placeholder="Password or DDMMYYYY (e.g. 10072005)" 
+                                   required 
+                                   autocomplete="current-password">
+                            <button class="btn btn-outline-secondary border bg-light text-muted px-3" 
+                                    type="button" 
+                                    id="toggleDobBtn" 
+                                    title="Toggle visibility"
+                                    style="border-radius: 0 10px 10px 0;">
+                                <i class="fas fa-eye" id="toggleDobIcon"></i>
+                            </button>
+                        </div>
+                        <div class="form-text small text-muted mt-1">
+                            <i class="fas fa-circle-info me-1"></i> For students, enter registered date of birth in <strong>DDMMYYYY</strong> format.
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-primary w-100 py-2" id="loginSubmitBtn">
+                        <i class="fas fa-book-open me-2"></i> Access Library
+                    </button>
+                </form>
+
+                <!-- Seamless Google OAuth Authentication -->
+                <div class="d-flex align-items-center my-4">
+                    <hr class="flex-grow-1 my-0" style="opacity: 0.15;">
+                    <span class="px-3 text-muted small" style="font-size: 0.8rem;">or continue with</span>
+                    <hr class="flex-grow-1 my-0" style="opacity: 0.15;">
+                </div>
+
+                <!-- Google Identity Services (GIS) Automatic Integration -->
+                <div class="d-flex flex-column align-items-center justify-content-center w-100">
+                    <div id="g_id_onload"
+                         data-client_id="{{ google_client_id }}"
+                         data-context="signin"
+                         data-ux_mode="popup"
+                         data-callback="handleGoogleCredential"
+                         data-auto_prompt="false">
+                    </div>
+
+                    <div class="g_id_signin w-100 d-flex justify-content-center"
+                         data-type="standard"
+                         data-shape="pill"
+                         data-theme="outline"
+                         data-text="continue_with"
+                         data-size="large"
+                         data-width="320">
+                    </div>
+
+                    <div class="text-center mt-2">
+                        <span class="text-muted" style="font-size: 0.8rem;">
+                            <i class="fas fa-circle-info text-primary me-1"></i> Privileged accounts can sign in with their email and password above, or continue with Google.
                         </span>
-                        <input type="text" 
-                               class="form-control border-start-0 ps-0" 
-                               id="rule_number" 
-                               name="rule_number" 
-                               placeholder="Enter your Rule Number (e.g. 23N81A0501)" 
-                               required 
-                               autofocus
-                               autocomplete="username" 
-                               style="text-transform: uppercase;">
-                    </div>
-                    <div class="invalid-feedback small">Please provide your college Rule Number.</div>
-                </div>
-
-                <!-- Date of Birth Input -->
-                <div class="mb-4">
-                    <label for="dob" class="form-label fw-semibold text-dark small mb-1">
-                        <i class="fas fa-calendar-alt text-primary me-1"></i> Date of Birth *
-                    </label>
-                    <div class="input-group">
-                        <span class="input-group-text bg-white border-end-0 text-muted">
-                            <i class="fas fa-key"></i>
-                        </span>
-                        <input type="password" 
-                               class="form-control border-start-0 border-end-0 ps-0" 
-                               id="dob" 
-                               name="dob" 
-                               placeholder="DDMMYYYY (e.g. 10072005)" 
-                               required 
-                               autocomplete="current-password">
-                        <button class="btn btn-outline-secondary border-start-0 bg-white text-muted px-3" 
-                                type="button" 
-                                id="toggleDobBtn" 
-                                title="Toggle visibility"
-                                style="border: 2px solid #e5e7eb; border-left: none; margin: 0; padding: 0 14px; border-radius: 0 12px 12px 0;">
-                            <i class="fas fa-eye" id="toggleDobIcon"></i>
-                        </button>
-                    </div>
-                    <div class="form-text small text-muted mt-1">
-                        <i class="fas fa-circle-info me-1"></i> Enter your registered date of birth in <strong>DDMMYYYY</strong> format.
                     </div>
                 </div>
 
-                <!-- Submit Button -->
-                <button type="submit" class="btn btn-submit w-100" id="loginSubmitBtn">
-                    <i class="fas fa-book-open me-2"></i> Access Library
-                </button>
-            </form>
+                <!-- Status Indicator -->
+                <div id="authStatusIndicator" class="text-center small mt-3 d-none">
+                    <span class="spinner-border spinner-border-sm text-primary me-2" role="status"></span>
+                    <span class="text-muted" id="authStatusText">Verifying credentials...</span>
+                </div>
 
-            <hr class="my-4" style="opacity: 0.15;">
+                <hr class="my-4" style="opacity: 0.15;">
 
-            <!-- Subtle Portals and Support Links -->
-            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2 text-center text-sm-start">
-                <a href="{{ url_for('admin_login') }}" class="small text-muted text-decoration-none">
-                    <i class="fab fa-google text-primary me-1"></i> Administrator Sign-In
-                </a>
-                <a href="{{ url_for('contact') }}" class="small text-muted text-decoration-none">
-                    <i class="fas fa-headset text-primary me-1"></i> Help &amp; Support
-                </a>
+                <!-- Secondary Links -->
+                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2 text-center text-sm-start">
+                    <a href="{{ url_for('contact') }}" class="text-secondary small">
+                        <i class="fas fa-circle-question me-1 text-primary"></i> Need Help with Login?
+                    </a>
+                    <a href="{{ url_for('welcome') }}" class="text-secondary small">
+                        <i class="fas fa-arrow-left me-1"></i> Return to Homepage
+                    </a>
+                </div>
             </div>
         </div>
+
     </div>
 </div>
 {% endblock %}
@@ -120,49 +165,77 @@ document.addEventListener('DOMContentLoaded', function() {
     const dobInput = document.getElementById('dob');
     const toggleIcon = document.getElementById('toggleDobIcon');
     const form = document.getElementById('studentLoginForm');
-    const ruleInput = document.getElementById('rule_number');
+    const submitBtn = document.getElementById('loginSubmitBtn');
 
-    if (toggleBtn && dobInput) {
+    if (toggleBtn && dobInput && toggleIcon) {
         toggleBtn.addEventListener('click', function() {
-            if (dobInput.type === 'password') {
-                dobInput.type = 'text';
-                toggleIcon.classList.replace('fa-eye', 'fa-eye-slash');
-            } else {
-                dobInput.type = 'password';
-                toggleIcon.classList.replace('fa-eye-slash', 'fa-eye');
-            }
+            const isPassword = dobInput.type === 'password';
+            dobInput.type = isPassword ? 'text' : 'password';
+            toggleIcon.className = isPassword ? 'fas fa-eye-slash' : 'fas fa-eye';
         });
     }
 
-    if (form) {
+    if (form && submitBtn) {
         form.addEventListener('submit', function(e) {
-            let valid = true;
-            if (!ruleInput.value.trim()) {
-                ruleInput.classList.add('is-invalid');
-                valid = false;
-            } else {
-                ruleInput.classList.remove('is-invalid');
-            }
-
-            if (!dobInput.value.trim()) {
-                dobInput.classList.add('is-invalid');
-                valid = false;
-            } else {
-                dobInput.classList.remove('is-invalid');
-            }
-
-            if (!valid) {
+            if (!form.checkValidity()) {
                 e.preventDefault();
-                return false;
+                e.stopPropagation();
+                form.classList.add('was-validated');
+                return;
             }
-
-            const submitBtn = document.getElementById('loginSubmitBtn');
-            if (submitBtn) {
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Verifying Credentials...';
-            }
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Verifying Credentials...';
         });
     }
 });
+
+function handleGoogleCredential(response) {
+    if (!response || !response.credential) {
+        showToast('Failed to receive Google credential.', 'error');
+        return;
+    }
+
+    const statusEl = document.getElementById('authStatusIndicator');
+    const statusText = document.getElementById('authStatusText');
+    if (statusEl) {
+        statusEl.classList.remove('d-none');
+        if (statusText) statusText.textContent = 'Verifying account credentials...';
+    }
+
+    showToast('Verifying account credentials...', 'info');
+
+    fetch('/api/auth/google', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({ credential: response.credential })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            if (statusEl) {
+                statusEl.innerHTML = '<span class="text-success fw-semibold"><i class="fas fa-check-circle me-1"></i> Verified! Redirecting...</span>';
+            }
+            showToast(data.message || 'Verification successful.', 'success');
+            setTimeout(() => {
+                window.location.href = data.redirect_url || '/dashboard';
+            }, 800);
+        } else {
+            if (statusEl) {
+                statusEl.innerHTML = `<span class="text-danger fw-semibold"><i class="fas fa-circle-exclamation me-1"></i> ${safeText(data.message, 'Access denied.')}</span>`;
+            }
+            showToast(data.message || 'Access denied.', 'error');
+        }
+    })
+    .catch(err => {
+        console.error('Google auth error:', err);
+        if (statusEl) {
+            statusEl.innerHTML = '<span class="text-danger"><i class="fas fa-triangle-exclamation me-1"></i> Server error. Please try again.</span>';
+        }
+        showToast('Server error verifying account.', 'error');
+    });
+}
 </script>
 {% endblock %}

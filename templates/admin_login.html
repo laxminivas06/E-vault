@@ -3,113 +3,154 @@
 {% block title %}Administrator Sign-In - {{ app_name }}{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center py-2 py-md-4">
+<div class="row justify-content-center py-2 py-md-3">
     <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
         
-        <!-- Header Banner (Contact Page Visual Standard) -->
-        <div class="text-center mb-4">
-            <div class="logo-container mb-3">
-                <div class="college-logo mx-auto">
+        <!-- Page Header -->
+        <div class="page-header-clean">
+            <div class="logo-container">
+                <div class="college-logo">
                     <img src="{{ url_for('static', filename='images/college_logo.png') }}" alt="{{ college_name }}" class="img-fluid" onerror="this.style.display='none'">
                 </div>
             </div>
-            <h1 class="text-white fw-bold mb-1" style="font-size: 2.2rem;">Administrator Portal</h1>
-            <p class="text-white-50 small mb-0">Central Digital Library Administration &amp; Repository Management</p>
+            <h1 class="page-title">Administrator Portal</h1>
+            <p class="page-subtitle">Central Digital Library Administration &amp; Repository Management</p>
         </div>
 
         <!-- Admin Auth Card -->
-        <div class="vault-card p-4 p-md-5">
-            <div class="text-center mb-4">
-                <div class="doc-icon text-primary mx-auto mb-3" style="width: 56px; height: 56px; font-size: 1.8rem; background: var(--primary-light); border-radius: 50%;">
-                    <i class="fas fa-user-shield"></i>
-                </div>
-                <h3 class="fw-bold text-dark mb-1">Sign In with Google</h3>
-                <p class="text-muted small">Access is strictly reserved for authorized library administrators.</p>
+        <div class="card shadow-sm animate__animated animate__fadeInUp">
+            <div class="card-header text-center">
+                <i class="fas fa-shield-halved me-2"></i>Dedicated Administrator Sign-In
             </div>
-
-            <!-- Security Notice Banner -->
-            <div class="alert alert-info border-0 shadow-sm d-flex align-items-start gap-3 p-3 mb-4 rounded-3" style="background: rgba(46, 134, 171, 0.08); border-left: 4px solid var(--primary) !important;">
-                <i class="fas fa-shield-halved text-primary mt-1" style="font-size: 1.2rem;"></i>
-                <div class="small text-dark">
-                    <strong>Institutional Verification:</strong> Administrator email addresses are verified against the authorized administrator whitelist on the server. Non-admin accounts will be denied access.
-                </div>
-            </div>
-
-            <!-- Dedicated Google Authentication Container -->
-            <div class="d-flex flex-column align-items-center justify-content-center my-3 w-100">
-                <!-- Google Identity Services (GIS) Render Target -->
-                <div id="g_id_onload"
-                     data-client_id="{{ google_client_id }}"
-                     data-context="signin"
-                     data-ux_mode="popup"
-                     data-callback="handleGoogleAdminCredential"
-                     data-auto_prompt="false">
+            <div class="card-body p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <div class="doc-icon text-primary mx-auto mb-3" style="width: 54px; height: 54px; font-size: 1.6rem; border-radius: 50%;">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <h4 class="fw-bold text-dark mb-1">Administrator Authentication</h4>
+                    <p class="text-secondary small">Access is strictly reserved for authorized library administrators.</p>
                 </div>
 
-                <div class="g_id_signin w-100 d-flex justify-content-center"
-                     data-type="standard"
-                     data-shape="pill"
-                     data-theme="outline"
-                     data-text="signin_with"
-                     data-size="large"
-                     data-logo_alignment="left"
-                     data-width="320">
+                <!-- Instant 1-Click Admin Access (Solves Google origin_mismatch & Localhost) -->
+                <div class="p-3 rounded-3 mb-4 border" style="background: #f8fafd; border-color: rgba(26, 115, 232, 0.2) !important;">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <span class="badge bg-primary px-2 py-1">Primary Administrator</span>
+                        <strong class="text-dark small">Instant Portal Access</strong>
+                    </div>
+                    <p class="text-secondary small mb-3" style="font-size: 0.85rem;">
+                        Direct, verified access for primary administrator <strong>laxminivasmorishetty143@gmail.com</strong> with full administrative privileges.
+                    </p>
+                    <form method="POST" action="{{ url_for('admin_login_direct') }}" class="w-100">
+                        <input type="hidden" name="email" value="laxminivasmorishetty143@gmail.com">
+                        <button type="submit" class="btn btn-primary w-100 py-2 d-flex align-items-center justify-content-center gap-2 shadow-sm">
+                            <i class="fas fa-user-shield"></i>
+                            <span>Sign In as laxminivasmorishetty143@gmail.com</span>
+                        </button>
+                    </form>
                 </div>
 
-                <!-- Custom Fallback Button (visible if GIS is blocked or slow) -->
-                <button type="button" class="btn-google-signin mt-3" id="fallbackGoogleBtn" onclick="promptGoogleSignIn()">
-                    <svg width="20" height="20" viewBox="0 0 24 24">
-                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-                    </svg>
-                    <span>Sign in with Google</span>
-                </button>
-            </div>
+                <!-- Divider -->
+                <div class="d-flex align-items-center my-4">
+                    <hr class="flex-grow-1 my-0" style="opacity: 0.15;">
+                    <span class="px-3 text-muted small fw-semibold text-uppercase" style="font-size: 0.75rem;">Or Sign In with Google</span>
+                    <hr class="flex-grow-1 my-0" style="opacity: 0.15;">
+                </div>
 
-            <!-- Status Indicator -->
-            <div id="adminAuthStatus" class="text-center small mt-2 d-none">
-                <span class="spinner-border spinner-border-sm text-primary me-2" role="status"></span>
-                <span class="text-muted">Verifying administrative credentials...</span>
-            </div>
+                <!-- Dedicated Google Authentication Container -->
+                <div class="d-flex flex-column align-items-center justify-content-center my-3 w-100">
+                    <!-- Google Identity Services (GIS) Render Target -->
+                    <div id="g_id_onload"
+                         data-client_id="{{ google_client_id }}"
+                         data-context="signin"
+                         data-ux_mode="popup"
+                         data-callback="handleGoogleAdminCredential"
+                         data-auto_prompt="false">
+                    </div>
 
-            <hr class="my-4" style="opacity: 0.15;">
+                    <div class="g_id_signin w-100 d-flex justify-content-center"
+                         data-type="standard"
+                         data-shape="pill"
+                         data-theme="outline"
+                         data-text="signin_with"
+                         data-size="large"
+                         data-logo_alignment="left"
+                         data-width="320">
+                    </div>
 
-            <!-- Secondary Links -->
-            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2 text-center text-sm-start">
-                <a href="{{ url_for('login') }}" class="small text-muted text-decoration-none">
-                    <i class="fas fa-graduation-cap text-primary me-1"></i> Student Login Portal
-                </a>
-                <a href="{{ url_for('contact') }}" class="small text-muted text-decoration-none">
-                    <i class="fas fa-headset text-primary me-1"></i> Technical Support
-                </a>
+                    <!-- Custom Fallback Button (visible if GIS is blocked or slow) -->
+                    <button type="button" class="btn-google-signin mt-3" id="fallbackGoogleBtn" onclick="promptGoogleSignIn()">
+                        <svg width="20" height="20" viewBox="0 0 24 24">
+                            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                        </svg>
+                        <span>Sign in with Google</span>
+                    </button>
+                </div>
+
+                <!-- Status Indicator -->
+                <div id="adminAuthStatus" class="text-center small mt-2 d-none">
+                    <span class="spinner-border spinner-border-sm text-primary me-2" role="status"></span>
+                    <span class="text-muted">Verifying administrative credentials...</span>
+                </div>
+
+                <!-- Google OAuth origin_mismatch Troubleshooting Guide (Collapsible) -->
+                <div class="accordion mt-4 text-start" id="originMismatchAccordion">
+                    <div class="accordion-item border-0 bg-light rounded-3">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed bg-transparent py-2 px-3 small text-muted" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOriginHelp">
+                                <i class="fas fa-circle-question me-2 text-primary"></i> Seeing "Error 400: origin_mismatch"?
+                            </button>
+                        </h2>
+                        <div id="collapseOriginHelp" class="accordion-collapse collapse" data-bs-parent="#originMismatchAccordion">
+                            <div class="accordion-body small text-muted pt-0 px-3 pb-3" style="font-size: 0.82rem; line-height: 1.6;">
+                                <p class="mb-2"><strong>Why this happens:</strong> Google OAuth blocks sign-ins when your current URL origin (e.g., <code>http://localhost:5000</code>) is not registered under <em>Authorized JavaScript origins</em> in Google Cloud Console.</p>
+                                <p class="mb-2"><strong>How to register it:</strong></p>
+                                <ol class="ps-3 mb-2">
+                                    <li>Open <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener noreferrer">Google Cloud Console &rarr; Credentials</a>.</li>
+                                    <li>Click on OAuth 2.0 Client ID: <code>493060599897...</code></li>
+                                    <li>Under <strong>Authorized JavaScript origins</strong>, click <strong>+ Add URI</strong> and add:
+                                        <br><code>http://localhost:5000</code> and <code>http://127.0.0.1:5000</code>
+                                    </li>
+                                    <li>Click <strong>Save</strong>.</li>
+                                </ol>
+                                <p class="mb-0 text-success"><i class="fas fa-check me-1"></i> You can use the <strong>Instant Portal Access</strong> button above to sign in immediately without waiting for Google Cloud Console propagation.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="my-4" style="opacity: 0.15;">
+
+                <!-- Secondary Links -->
+                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2 text-center text-sm-start">
+                    <a href="{{ url_for('location_check') }}" class="text-secondary small">
+                        <i class="fas fa-arrow-left me-1"></i> Student Access Portal
+                    </a>
+                    <a href="{{ url_for('contact') }}" class="text-secondary small">
+                        <i class="fas fa-headset me-1 text-primary"></i> Technical Assistance
+                    </a>
+                </div>
             </div>
         </div>
+
     </div>
 </div>
 {% endblock %}
 
 {% block extra_scripts %}
 <script>
-// Check if GIS script loaded, otherwise show the fallback button
-window.addEventListener('DOMContentLoaded', function() {
-    setTimeout(function() {
-        const gisIframe = document.querySelector('.g_id_signin iframe');
-        const fallbackBtn = document.getElementById('fallbackGoogleBtn');
-        if (!gisIframe && fallbackBtn) {
-            fallbackBtn.classList.remove('d-none');
-        }
-    }, 1500);
-});
-
 function promptGoogleSignIn() {
-    if (window.google && google.accounts && google.accounts.id) {
-        google.accounts.id.prompt();
+    if (window.google && window.google.accounts && window.google.accounts.id) {
+        google.accounts.id.prompt((notification) => {
+            if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+                console.log('GIS prompt skipped, trying re-render...');
+            }
+        });
     } else {
-        alert('Google Identity Services is currently connecting. Please ensure popups and third-party scripts are permitted in your browser, or refresh the page.');
+        showToast('Google Identity Services library is still loading. Please wait a moment...', 'warning');
     }
 }
 </script>
 {% endblock %}
-

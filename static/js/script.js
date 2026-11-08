@@ -1,6 +1,6 @@
 /**
  * VAULT E-LIBRARY - CORE JAVASCRIPT SYSTEM
- * Developed by Aivontraa (https://aivontraa.com)
+ * Developed by Aivontraa Automation Private Limited (https://aivontraa.com)
  */
 
 // ==================== UTILITY & NULL-SAFE HELPERS ====================
@@ -164,22 +164,18 @@ const tracker = new LocationTracker();
 let activeTooltip = null;
 
 function initSafeTooltips() {
-    // Clean up any existing listeners by delegation
     document.addEventListener('mouseover', function (e) {
         const target = e.target.closest('[data-tooltip], [title]');
         if (!target) return;
 
-        // If target has a title attribute, capture it and clear native title to prevent default browser tooltip
         let tipText = target.getAttribute('data-tooltip') || target.getAttribute('title');
         tipText = safeText(tipText);
 
-        // Strict null check: never show tooltip if empty, null, or undefined!
         if (!tipText) {
             target.removeAttribute('title');
             return;
         }
 
-        // Store in data-tooltip and clear native title
         target.setAttribute('data-tooltip', tipText);
         target.removeAttribute('title');
 
@@ -227,7 +223,6 @@ function hideSafeTooltip() {
         activeTooltip.remove();
         activeTooltip = null;
     }
-    // Remove any orphaned tooltips
     document.querySelectorAll('.vault-tooltip').forEach(el => el.remove());
 }
 
@@ -276,7 +271,6 @@ function openSecurePdfViewer(pdfId, title) {
     const safeTitle = safeText(title, 'Protected Document');
     showToast(`Preparing secure document view for "${safeTitle}"...`, 'info');
 
-    // Request short-lived viewing token from backend
     fetch(`/api/document/token/${pdf_id_or_number(pdfId)}`, {
         method: 'POST',
         headers: {
@@ -297,7 +291,6 @@ function openSecurePdfViewer(pdfId, title) {
                     const bsModal = new bootstrap.Modal(modalElem);
                     bsModal.show();
                 } else {
-                    // If not using modal, navigate safely
                     window.location.href = data.view_url;
                 }
             } else {
@@ -315,43 +308,22 @@ function pdf_id_or_number(id) {
     return isNaN(parsed) ? 1 : parsed;
 }
 
-// Enforce Content Protection: Block print shortcuts, right click, inspection on viewer
-function applyContentProtection() {
-    document.addEventListener('contextmenu', function (e) {
-        if (e.target.closest('#documentViewerModal') || e.target.closest('.viewer-container')) {
-            e.preventDefault();
-            return false;
-        }
-    });
-
-    document.addEventListener('keydown', function (e) {
-        // Block Ctrl+P, Ctrl+S, Ctrl+U
-        if ((e.ctrlKey || e.metaKey) && ['p', 's', 'u'].includes(e.key.toLowerCase())) {
-            if (document.querySelector('.modal.show') || window.location.pathname.includes('/viewer/')) {
-                e.preventDefault();
-                showToast('Printing and saving this protected document is restricted.', 'warning');
-                return false;
-            }
-        }
-    });
-}
-
 // ==================== GOOGLE SIGN-IN HANDLER ====================
 
-function handleGoogleAdminCredential(response) {
+function handleGoogleCredential(response) {
     if (!response || !response.credential) {
-        showToast('Failed to receive Google credential.', 'error');
+        showToast('Failed to receive authentication credential.', 'error');
         return;
     }
 
-    const statusEl = document.getElementById('adminAuthStatus');
+    const statusEl = document.getElementById('authStatusIndicator') || document.getElementById('adminAuthStatus');
+    const statusText = document.getElementById('authStatusText');
     if (statusEl) {
         statusEl.classList.remove('d-none');
-        const textSpan = statusEl.querySelector('span:last-child');
-        if (textSpan) textSpan.textContent = 'Verifying administrator Google credentials...';
+        if (statusText) statusText.textContent = 'Verifying account credentials...';
     }
 
-    showToast('Verifying administrator Google credentials...', 'info');
+    showToast('Verifying account credentials...', 'info');
 
     fetch('/api/auth/google', {
         method: 'POST',
@@ -365,40 +337,103 @@ function handleGoogleAdminCredential(response) {
         .then(data => {
             if (data.success) {
                 if (statusEl) {
-                    statusEl.innerHTML = '<span class="text-success fw-semibold"><i class="fas fa-check-circle me-1"></i> Authorized! Redirecting to Console...</span>';
+                    statusEl.innerHTML = '<span class="text-success fw-semibold"><i class="fas fa-check-circle me-1"></i> Authorized! Redirecting to dashboard...</span>';
                 }
-                showToast(safeText(data.message, 'Admin authorized!'), 'success');
+                showToast(safeText(data.message, 'Account authorized!'), 'success');
                 setTimeout(() => {
-                    window.location.href = data.redirect_url || '/admin';
+                    window.location.href = data.redirect_url || '/dashboard';
                 }, 800);
             } else {
                 if (statusEl) {
                     statusEl.innerHTML = `<span class="text-danger fw-semibold"><i class="fas fa-circle-exclamation me-1"></i> ${safeText(data.message, 'Access denied.')}</span>`;
                 }
-                showToast(safeText(data.message, 'Administrator access denied.'), 'error');
+                showToast(safeText(data.message, 'Access denied: Account not authorized.'), 'error');
             }
         })
         .catch(err => {
-            console.error('Admin Google auth error:', err);
+            console.error('Google auth error:', err);
             if (statusEl) {
                 statusEl.innerHTML = '<span class="text-danger"><i class="fas fa-triangle-exclamation me-1"></i> Server connection error. Please try again.</span>';
             }
-            showToast('Server error verifying administrator account.', 'error');
+            showToast('Server error verifying account.', 'error');
         });
+}
+
+const handleGoogleAdminCredential = handleGoogleCredential;
+
+// ==================== CONTENT PROTECTION (VIEWER MODAL ONLY) ====================
+
+function applyViewerProtection() {
+    // Only prevent right click context menu inside document viewer modal
+    document.addEventListener('contextmenu', function(e) {
+        if (e.target.closest('#documentViewerModal') || e.target.closest('.viewer-container')) {
+            e.preventDefault();
+            return false;
+        }
+    });
+}
+
+// ==================== INTERACTIVE UI ENHANCEMENTS ====================
+
+function initInteractiveUi() {
+    // Mobile navbar auto-close on link click
+    const navLinks = document.querySelectorAll('.nav-link');
+    const navbarToggler = document.querySelector('.navbar-toggler');
+    const navbarCollapse = document.querySelector('.navbar-collapse');
+
+    if (navbarCollapse && navbarToggler) {
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (navbarCollapse.classList.contains('show')) {
+                    navbarToggler.click();
+                }
+            });
+        });
+    }
+
+    // Interactive book click animation
+    const books = document.querySelectorAll('.book');
+    books.forEach(book => {
+        book.addEventListener('click', function () {
+            this.style.animation = 'none';
+            setTimeout(() => {
+                this.style.animation = 'book-appear 4s infinite';
+            }, 10);
+        });
+    });
+
+    // Dynamic stats loader
+    const statCards = document.querySelectorAll('.stat-number');
+    if (statCards.length >= 2) {
+        fetch('/api/stats')
+            .then(res => res.json())
+            .then(data => {
+                if (data.success && data.stats) {
+                    if (statCards[0]) statCards[0].textContent = (data.stats.total_users || 0) + '+';
+                    if (statCards[1]) statCards[1].textContent = (data.stats.total_pdfs || 0) + '+';
+                }
+            })
+            .catch(() => {});
+    }
+
+    // Set dynamic current year in footer
+    const yearEl = document.getElementById('year');
+    if (yearEl) {
+        yearEl.textContent = new Date().getFullYear();
+    }
 }
 
 // ==================== INITIALIZATION ====================
 
 document.addEventListener('DOMContentLoaded', function () {
-    // Initialize safe tooltips
     initSafeTooltips();
+    applyViewerProtection();
+    initInteractiveUi();
 
-    // Initialize content protection
-    applyContentProtection();
-
-    // Start 5-second location tracking if user is logged in
+    // Start 5-second location tracking only for students (admins have unrestricted access)
     const isLoggedIn = document.body.getAttribute('data-logged-in') === 'true';
-    if (isLoggedIn) {
+    const userRole = document.body.getAttribute('data-user-role');
+    if (isLoggedIn && userRole !== 'admin') {
         tracker.start();
     }
 });

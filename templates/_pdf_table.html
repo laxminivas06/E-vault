@@ -1,6 +1,6 @@
-<div class="table-responsive-vault">
-    <table class="vault-table">
-        <thead>
+<div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
             <tr>
                 <th style="width: 70px;">ID</th>
                 <th>Document Title</th>
@@ -17,14 +17,14 @@
                     <td>
                         <strong class="text-dark">{{ pdf.title|safe_text('Untitled') }}</strong>
                     </td>
-                    <td><span class="text-muted small">{{ pdf.upload_date|safe_text('Recent') }}</span></td>
-                    <td><span class="badge bg-light text-muted border">{{ pdf.file_size|safe_text('N/A') }}</span></td>
+                    <td><span class="text-secondary small">{{ pdf.upload_date|safe_text('Recent') }}</span></td>
+                    <td><span class="badge bg-light text-secondary border">{{ pdf.file_size|safe_text('N/A') }}</span></td>
                     <td style="text-align: right;">
                         <div class="d-inline-flex gap-1">
-                            <button type="button" class="btn-vault btn-vault-secondary btn-sm py-1 px-2" onclick="openSecurePdfViewer('{{ pdf.id }}', '{{ pdf.title|replace('\'', '\\\'') }}')" title="Preview Document">
-                                <i class="fas fa-eye text-primary"></i>
+                            <button type="button" class="btn btn-outline-primary btn-sm py-1 px-2" onclick="openSecurePdfViewer('{{ pdf.id }}', '{{ pdf.title|replace('\'', '\\\'') }}')" title="Preview Document">
+                                <i class="fas fa-eye"></i>
                             </button>
-                            <button type="button" class="btn-vault btn-vault-secondary btn-sm py-1 px-2 text-danger" onclick="confirmDeletePdf('{{ pdf.id }}', '{{ pdf.title|replace('\'', '\\\'') }}')" title="Delete Document">
+                            <button type="button" class="btn btn-outline-danger btn-sm py-1 px-2" onclick="confirmDeletePdf('{{ pdf.id }}', '{{ pdf.title|replace('\'', '\\\'') }}')" title="Delete Document">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
@@ -44,25 +44,25 @@
 
 {% if total_pages > 1 %}
 <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center mt-3 gap-2">
-    <div class="text-muted small">
+    <div class="text-secondary small">
         Showing Page <strong>{{ page }}</strong> of <strong>{{ total_pages }}</strong> ({{ total_pdfs }} Documents)
     </div>
-    <ul class="pagination-vault mb-0">
+    <ul class="pagination pagination-sm mb-0">
         <li class="page-item {% if page <= 1 %}disabled{% endif %}">
-            <a class="page-link" href="javascript:void(0)" onclick="loadAdminPdfPage({{ page - 1 }})">
-                <i class="fas fa-chevron-left"></i>
+            <a class="page-link rounded-pill px-3 me-1" href="javascript:void(0)" onclick="loadAdminPdfPage({{ page - 1 }})">
+                <i class="fas fa-chevron-left me-1"></i> Prev
             </a>
         </li>
         {% set start_page = [1, page - 2]|max %}
         {% set end_page = [start_page + 4, total_pages]|min %}
         {% for p in range(start_page, end_page + 1) %}
         <li class="page-item {% if p == page %}active{% endif %}">
-            <a class="page-link" href="javascript:void(0)" onclick="loadAdminPdfPage({{ p }})">{{ p }}</a>
+            <a class="page-link rounded-circle mx-1" href="javascript:void(0)" onclick="loadAdminPdfPage({{ p }})">{{ p }}</a>
         </li>
         {% endfor %}
         <li class="page-item {% if page >= total_pages %}disabled{% endif %}">
-            <a class="page-link" href="javascript:void(0)" onclick="loadAdminPdfPage({{ page + 1 }})">
-                <i class="fas fa-chevron-right"></i>
+            <a class="page-link rounded-pill px-3 ms-1" href="javascript:void(0)" onclick="loadAdminPdfPage({{ page + 1 }})">
+                Next <i class="fas fa-chevron-right ms-1"></i>
             </a>
         </li>
     </ul>

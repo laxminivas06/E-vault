@@ -5,21 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>{% block title %}{{ app_name }}{% endblock %} - {{ college_name }}</title>
     
-    <!-- Google Fonts - Poppins (Design System Standard) -->
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Google Fonts - Inter (Design System Standard) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Bootstrap 5.3 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- FontAwesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Animate.css for Smooth Cohesive Transitions -->
+    <!-- Animate.css for Smooth Transitions -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     
-    <!-- Application CSS (Contact Page Design Language) -->
+    <!-- Application CSS (Clean Modern Blue Theme) -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     
     <!-- Google Identity Services (GIS) for Admin Authentication -->
@@ -27,27 +27,28 @@
     
     {% block extra_head %}{% endblock %}
 </head>
-<body data-logged-in="{{ 'true' if session.get('user_id') else 'false' }}">
+<body data-logged-in="{{ 'true' if session.get('user_id') else 'false' }}" data-user-role="{{ session.get('user_role', '') }}">
 
     <!-- Navigation (Frosted Glass Header) -->
-    <nav class="navbar navbar-expand-lg app-navbar">
-        <div class="container-fluid px-3 px-md-4">
-            <a class="navbar-brand" href="{{ url_for('index') }}">
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container d-flex align-items-center justify-content-between">
+            <a class="navbar-brand" href="{{ url_for('welcome') }}">
                 <div class="brand-icon">
-                    <i class="fas fa-vault"></i>
+                    <i class="fas fa-book-bookmark"></i>
                 </div>
                 <span>{{ app_name }}</span>
             </a>
 
-            <!-- Mobile Toggler -->
+            {% if session.get('user_id') %}
+            <!-- Mobile Toggler for authenticated users -->
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
-                <i class="fas fa-bars-staggered text-dark"></i>
+                <span class="navbar-toggler-icon"></span>
             </button>
 
-            <!-- Navbar Menu -->
+            <!-- Navbar Menu for authenticated users -->
             <div class="collapse navbar-collapse" id="navbarContent">
-                <!-- Left/Center Items -->
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ps-lg-3">
+                <!-- Navigation Links -->
+                <ul class="navbar-nav ms-auto align-items-lg-center">
                     {% if session.get('user_role') == 'admin' %}
                     <li class="nav-item">
                         <a class="nav-link {% if request.endpoint == 'admin_dashboard' %}active{% endif %}" href="{{ url_for('admin_dashboard') }}">
@@ -56,7 +57,7 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {% if request.endpoint == 'admin_users' %}active{% endif %}" href="{{ url_for('admin_users') }}">
-                            <i class="fas fa-users"></i> Users
+                            <i class="fas fa-users"></i> Students
                         </a>
                     </li>
                     <li class="nav-item">
@@ -74,7 +75,7 @@
                             <i class="fas fa-headset"></i> Messages
                         </a>
                     </li>
-                    {% elif session.get('user_id') %}
+                    {% else %}
                     <li class="nav-item">
                         <a class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}" href="{{ url_for('dashboard') }}">
                             <i class="fas fa-book-open"></i> E-Library
@@ -82,73 +83,50 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {% if request.endpoint == 'contact' %}active{% endif %}" href="{{ url_for('contact') }}">
-                            <i class="fas fa-envelope"></i> Help & Support
-                        </a>
-                    </li>
-                    {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.endpoint == 'welcome' %}active{% endif %}" href="{{ url_for('welcome') }}">
-                            <i class="fas fa-home"></i> Home
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.endpoint == 'location_check' %}active{% endif %}" href="{{ url_for('location_check') }}">
-                            <i class="fas fa-lock-open"></i> Access Library
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.endpoint == 'contact' %}active{% endif %}" href="{{ url_for('contact') }}">
-                            <i class="fas fa-circle-question"></i> Help & Support
+                            <i class="fas fa-headset"></i> Support
                         </a>
                     </li>
                     {% endif %}
                 </ul>
 
-                <!-- Right Items (User, Location & Auth) -->
-                <div class="d-flex flex-column flex-lg-row align-items-start align-items-lg-center gap-2 gap-lg-3 mt-3 mt-lg-0">
-                    {% if session.get('user_id') %}
-                    <!-- Real-Time Location Pill (Continuous 5-Second Campus Geolocation) -->
-                    <div class="location-pill {% if not location_verified %}unverified{% endif %}" id="navbar-location-pill" data-tooltip="5-Second Campus Geolocation Verification">
+                <!-- Right Items (User, Location & Logout Action) -->
+                <div class="d-flex flex-column flex-lg-row align-items-start align-items-lg-center gap-2 ms-lg-3 mt-3 mt-lg-0">
+                    {% if session.get('user_role') != 'admin' %}
+                    <!-- Real-Time Location Pill (Continuous Campus Geolocation) -->
+                    <div class="location-pill {% if not location_verified %}unverified{% endif %}" id="navbar-location-pill" data-tooltip="Continuous Campus Geolocation">
                         <span class="status-dot"></span>
                         <span id="navbar-location-text">{{ verified_location|safe_text('Campus Area') }}</span>
                     </div>
+                    {% endif %}
 
-                    <!-- Role & Identity Badge -->
-                    <div class="d-flex align-items-center gap-2">
-                        <span class="badge-role {{ session.get('user_role') }}">
-                            {{ session.get('user_role')|safe_text('User') }}
-                        </span>
-                        <span class="fw-semibold text-dark text-truncate" style="max-width: 140px;" data-tooltip="{{ user_name }}">
-                            {{ user_name|safe_text(session.get('user_id')) }}
-                        </span>
-                    </div>
+                    <!-- User Name / Email -->
+                    <span class="fw-semibold text-dark text-truncate" style="max-width: 160px;" data-tooltip="{{ user_name }}">
+                        <i class="fas fa-user-circle text-primary me-1"></i>{{ user_name|safe_text(session.get('user_id')) }}
+                    </span>
 
-                    <!-- Logout Button -->
-                    <a href="{{ url_for('logout') }}" class="btn-vault btn-vault-secondary btn-sm py-1 px-3">
+                    <!-- Prominent Always-Visible Logout Button -->
+                    <a href="{{ url_for('logout') }}" class="btn btn-outline-danger btn-sm py-1 px-3 rounded-pill d-inline-flex align-items-center gap-1 shadow-sm" id="navLogoutBtn" title="Securely Sign Out">
                         <i class="fas fa-arrow-right-from-bracket"></i>
                         <span>Logout</span>
                     </a>
-                    {% else %}
-                    <!-- Unauthenticated Guest Links -->
-                    <div class="d-flex align-items-center gap-2">
-                        <a href="{{ url_for('login') }}" class="btn-vault btn-vault-primary btn-sm py-1 px-3">
-                            <i class="fas fa-user-graduate"></i>
-                            <span>Student Login</span>
-                        </a>
-                        <a href="{{ url_for('admin_login') }}" class="btn-vault btn-vault-secondary btn-sm py-1 px-3" title="Dedicated Administrator Sign-In">
-                            <i class="fab fa-google"></i>
-                            <span>Admin Portal</span>
-                        </a>
-                    </div>
-                    {% endif %}
                 </div>
             </div>
+            {% else %}
+            <!-- Unauthenticated Guest Header: Simple Contact Icon Only -->
+            <div class="d-flex align-items-center">
+                <a href="{{ url_for('contact') }}" class="btn btn-light rounded-circle p-2 text-primary shadow-sm border header-contact-icon" title="Contact &amp; Support" aria-label="Contact &amp; Support" style="width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; font-size: 1.1rem; transition: all 0.2s ease;">
+                    <i class="fas fa-headset"></i>
+                </a>
+            </div>
+            {% endif %}
         </div>
     </nav>
 
     <!-- Main Content Area -->
-    <main class="py-4">
-        <div class="container-fluid px-3 px-md-4">
+    <main>
+        {% block hero %}{% endblock %}
+
+        <div class="container py-4">
             <!-- Flash Alert Messages -->
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
@@ -170,7 +148,7 @@
         </div>
     </main>
 
-    <!-- Minimal Clean Company Branding Footer (Requirement 1) -->
+    <!-- Minimal Company Branding Footer -->
     <footer class="company-footer">
         <div class="container text-center">
             <a href="{{ company_url }}" target="_blank" rel="noopener noreferrer" class="footer-branding-container" title="Visit {{ company_name }} Official Website">

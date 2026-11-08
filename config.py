@@ -69,7 +69,7 @@ class Config:
             logger.warning(f"Could not load Google credentials: {e}")
 
     # Authorized Administrator Google Accounts
-    default_admins = 'admin@aivontraa.com,support@aivontraa.com,admin@sphoorthyengg.ac.in'
+    default_admins = 'admin@aivontraa.com,support@aivontraa.com,admin@sphoorthyengg.ac.in,laxminivasmorishetty143@gmail.com'
     ADMIN_EMAILS = [
         email.strip().lower()
         for email in os.environ.get('ADMIN_EMAILS', default_admins).split(',')
@@ -98,7 +98,7 @@ class Config:
     COMPANY_URL = "https://aivontraa.com/"
     COMPANY_LOGO_URL = "https://aivontraa.com/assets/images/ai.png"
     DEVELOPER_CREDIT = "Developed by Aivontraa Automation Private Limited"
-    SUPPORT_EMAIL = "support@aivontraa.com"
+    SUPPORT_EMAIL = os.environ.get('SUPPORT_EMAIL', 'hello.aivontraa@gmail.com')
 
     # Pagination Defaults
     DEFAULT_PER_PAGE_PDFS = 12

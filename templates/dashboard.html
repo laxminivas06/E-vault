@@ -3,30 +3,37 @@
 {% block title %}E-Library Dashboard - {{ app_name }}{% endblock %}
 
 {% block content %}
-<!-- Header Banner (Contact Page Visual Standard) -->
-<div class="text-center mb-4">
-    <div class="logo-container mb-3">
-        <div class="college-logo mx-auto">
+<!-- Page Header -->
+<div class="page-header-clean">
+    <div class="logo-container">
+        <div class="college-logo">
             <img src="{{ url_for('static', filename='images/college_logo.png') }}" alt="{{ college_name }}" class="img-fluid" onerror="this.style.display='none'">
         </div>
     </div>
-    <h1 class="text-white fw-bold mb-1" style="font-size: 2.2rem;">{{ app_name }}</h1>
-    <p class="text-white-50 subtitle mb-3">Academic Repository &bull; {{ college_name }}</p>
+    <h1 class="page-title">{{ app_name }}</h1>
+    <p class="page-subtitle">Academic Repository &bull; {{ college_name }}</p>
     
-    <!-- User Info Glass Card (Contact Page Feature) -->
-    <div class="user-info text-white d-inline-flex flex-wrap justify-content-center align-items-center gap-3 px-4 py-2">
-        <span><i class="fas fa-id-badge text-warning me-1"></i> <strong>Rule No:</strong> {{ session.get('user_id') }}</span>
-        <span><i class="fas fa-user-graduate text-info me-1"></i> <strong>Name:</strong> {{ user_name|safe_text(session.get('user_id')) }}</span>
-        <span class="role-badge"><i class="fas fa-shield-alt text-success me-1"></i> Campus Verified</span>
+    <!-- User Info Pill & Direct Logout -->
+    <div class="d-flex flex-wrap align-items-center justify-content-center gap-2 mt-3">
+        <div class="user-info-pill">
+            <span><i class="fas fa-id-badge text-primary me-1"></i> <strong>Rule No:</strong> {{ session.get('user_id') }}</span>
+            <span><i class="fas fa-user-graduate text-primary me-1"></i> <strong>Name:</strong> {{ user_name|safe_text(session.get('user_id')) }}</span>
+            <span class="location-pill"><span class="status-dot"></span> Campus Verified</span>
+        </div>
+        <a href="{{ url_for('logout') }}" class="btn btn-sm btn-outline-danger py-1 px-3 rounded-pill d-inline-flex align-items-center gap-1 shadow-sm" title="Sign out of your session">
+            <i class="fas fa-arrow-right-from-bracket"></i>
+            <span>Logout</span>
+        </a>
     </div>
 </div>
 
+<!-- Search & Heading Bar -->
 <div class="row mb-4 align-items-center">
     <div class="col-12 col-md-6 mb-3 mb-md-0">
-        <h3 class="fw-bold text-white mb-1">
-            <i class="fas fa-book-open text-warning me-2"></i>Curated Courseware
+        <h3 class="fw-bold text-dark mb-1">
+            <i class="fas fa-book-open text-primary me-2"></i>Curated Courseware
         </h3>
-        <p class="text-white-50 small mb-0">Browse and study syllabus courseware, engineering notes, and reference books.</p>
+        <p class="text-secondary small mb-0">Browse and study syllabus courseware, engineering notes, and reference books.</p>
     </div>
     
     <div class="col-12 col-md-6 d-flex justify-content-md-end">
@@ -38,39 +45,24 @@
     </div>
 </div>
 
-<!-- Quick Statistics Bar -->
+<!-- Quick Statistics Row -->
 <div class="row g-3 mb-4">
     <div class="col-6 col-md-4">
-        <div class="vault-card py-3 px-3 d-flex align-items-center gap-3">
-            <div class="doc-icon text-primary mb-0" style="width: 40px; height: 40px; font-size: 1.25rem;">
-                <i class="fas fa-file-pdf"></i>
-            </div>
-            <div>
-                <div class="fs-5 fw-bold text-dark" id="statTotalPdfs">{{ total_pdfs }}</div>
-                <div class="text-muted small">Available Documents</div>
-            </div>
+        <div class="stat-card">
+            <div class="stat-number" id="statTotalPdfs">{{ total_pdfs }}</div>
+            <div class="stat-label">Available Documents</div>
         </div>
     </div>
     <div class="col-6 col-md-4">
-        <div class="vault-card py-3 px-3 d-flex align-items-center gap-3">
-            <div class="doc-icon text-success mb-0" style="width: 40px; height: 40px; font-size: 1.25rem; background: var(--success-light); color: var(--success);">
-                <i class="fas fa-book-reader"></i>
-            </div>
-            <div>
-                <div class="fs-5 fw-bold text-dark">{{ user_stats.documents_viewed }}</div>
-                <div class="text-muted small">Viewed by You</div>
-            </div>
+        <div class="stat-card">
+            <div class="stat-number text-success">{{ user_stats.documents_viewed }}</div>
+            <div class="stat-label">Viewed by You</div>
         </div>
     </div>
     <div class="col-12 col-md-4">
-        <div class="vault-card py-3 px-3 d-flex align-items-center gap-3">
-            <div class="doc-icon text-secondary mb-0" style="width: 40px; height: 40px; font-size: 1.25rem; background: #f0f9ff; color: var(--secondary);">
-                <i class="fas fa-shield-check"></i>
-            </div>
-            <div>
-                <div class="fs-5 fw-bold text-dark text-truncate" style="max-width: 200px;">{{ verified_location|safe_text('Campus') }}</div>
-                <div class="text-muted small">Verified Geofence Location</div>
-            </div>
+        <div class="stat-card">
+            <div class="stat-number text-dark" style="font-size: 1.35rem; line-height: 1.5; padding-top: 6px;">{{ verified_location|safe_text('Campus Area') }}</div>
+            <div class="stat-label"><i class="fas fa-location-dot text-primary me-1"></i>Verified Campus Geofence</div>
         </div>
     </div>
 </div>
@@ -83,19 +75,19 @@
         <div class="document-card" data-pdf-id="{{ pdf.id }}">
             <div>
                 <div class="doc-icon">
-                    <i class="fas fa-file-lines"></i>
+                    <i class="fas fa-file-pdf"></i>
                 </div>
-                <h3 class="doc-title" data-tooltip="{{ pdf.title|safe_text }}">{{ pdf.title|safe_text('Academic Document') }}</h3>
+                <h4 class="doc-title" data-tooltip="{{ pdf.title|safe_text }}">{{ pdf.title|safe_text('Academic Document') }}</h4>
                 <div class="doc-meta">
-                    <span><i class="fas fa-calendar me-1"></i> {{ pdf.upload_date|safe_text('Recent') }}</span>
+                    <span><i class="fas fa-calendar-alt me-1"></i> {{ pdf.upload_date|safe_text('Recent') }}</span>
                     {% if pdf.file_size and pdf.file_size != 'N/A' %}
                     <span><i class="fas fa-hard-drive me-1"></i> {{ pdf.file_size|safe_text }}</span>
                     {% endif %}
                 </div>
             </div>
             <div>
-                <button type="button" class="btn-vault btn-vault-primary w-100 py-2" onclick="openSecurePdfViewer('{{ pdf.id }}', '{{ pdf.title|replace('\'', '\\\'') }}')">
-                    <i class="fas fa-eye"></i> View Document
+                <button type="button" class="btn btn-primary w-100 py-2" onclick="openSecurePdfViewer('{{ pdf.id }}', '{{ pdf.title|replace('\'', '\\\'') }}')">
+                    <i class="fas fa-eye me-1"></i> View Document
                 </button>
             </div>
         </div>
@@ -105,14 +97,14 @@
     <!-- Pagination Controls -->
     {% if total_pages > 1 %}
     <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center mt-4 gap-3">
-        <div class="text-muted small">
+        <div class="text-secondary small">
             Showing Page <strong>{{ page }}</strong> of <strong>{{ total_pages }}</strong> ({{ total_pdfs }} Documents)
         </div>
-        <ul class="pagination-vault mb-0">
+        <ul class="pagination pagination-sm mb-0">
             <!-- Previous Button -->
             <li class="page-item {% if page <= 1 %}disabled{% endif %}">
-                <a class="page-link" href="{{ url_for('dashboard', page=page-1, search=search_query) }}" data-page="{{ page-1 }}">
-                    <i class="fas fa-chevron-left"></i>
+                <a class="page-link rounded-pill px-3 me-1" href="{{ url_for('dashboard', page=page-1, search=search_query) }}" data-page="{{ page-1 }}">
+                    <i class="fas fa-chevron-left me-1"></i> Prev
                 </a>
             </li>
 
@@ -125,14 +117,14 @@
 
             {% for p in range(start_page, end_page + 1) %}
             <li class="page-item {% if p == page %}active{% endif %}">
-                <a class="page-link" href="{{ url_for('dashboard', page=p, search=search_query) }}" data-page="{{ p }}">{{ p }}</a>
+                <a class="page-link rounded-circle mx-1" href="{{ url_for('dashboard', page=p, search=search_query) }}" data-page="{{ p }}">{{ p }}</a>
             </li>
             {% endfor %}
 
             <!-- Next Button -->
             <li class="page-item {% if page >= total_pages %}disabled{% endif %}">
-                <a class="page-link" href="{{ url_for('dashboard', page=page+1, search=search_query) }}" data-page="{{ page+1 }}">
-                    <i class="fas fa-chevron-right"></i>
+                <a class="page-link rounded-pill px-3 ms-1" href="{{ url_for('dashboard', page=page+1, search=search_query) }}" data-page="{{ page+1 }}">
+                    Next <i class="fas fa-chevron-right ms-1"></i>
                 </a>
             </li>
         </ul>
@@ -140,15 +132,17 @@
     {% endif %}
 
     {% else %}
-    <div class="vault-card text-center py-5 my-4">
-        <i class="fas fa-folder-open text-muted mb-3" style="font-size: 3rem;"></i>
-        <h4 class="fw-bold text-dark">No documents found</h4>
-        <p class="text-muted mb-3">Try adjusting your search criteria or clear filters to see all available documents.</p>
-        {% if search_query %}
-        <a href="{{ url_for('dashboard') }}" class="btn-vault btn-vault-secondary">
-            <i class="fas fa-rotate-left"></i> Clear Search
-        </a>
-        {% endif %}
+    <div class="card text-center py-5 my-4">
+        <div class="card-body">
+            <i class="fas fa-folder-open text-muted mb-3" style="font-size: 3rem;"></i>
+            <h4 class="fw-bold text-dark">No documents found</h4>
+            <p class="text-secondary mb-3">Try adjusting your search criteria or clear filters to see all available documents.</p>
+            {% if search_query %}
+            <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+                <i class="fas fa-rotate-left me-1"></i> Clear Search
+            </a>
+            {% endif %}
+        </div>
     </div>
     {% endif %}
 </div>
@@ -165,18 +159,15 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" onclick="closeViewerFrame()"></button>
             </div>
             
-            <div class="modal-body p-0 position-relative bg-dark">
-                <!-- Viewer iframe container -->
-                <div class="viewer-container">
-                    <iframe id="secureViewerFrame" class="viewer-frame" src="" sandbox="allow-scripts allow-same-origin" title="Document Viewer"></iframe>
-                </div>
+            <div class="modal-body p-0 position-relative bg-dark" style="min-height: 70vh;">
+                <iframe id="secureViewerFrame" style="width: 100%; height: 75vh; border: none;" src="" sandbox="allow-scripts allow-same-origin" title="Document Viewer"></iframe>
             </div>
             
             <div class="modal-footer bg-light border-0 py-2 px-4 d-flex justify-content-between align-items-center">
-                <span class="text-muted small">
+                <span class="text-secondary small">
                     <i class="fas fa-shield-halved text-success me-1"></i> Digital Watermark Protected &bull; Reproduction Restricted
                 </span>
-                <button type="button" class="btn-vault btn-vault-secondary btn-sm py-1 px-3" data-bs-dismiss="modal" onclick="closeViewerFrame()">
+                <button type="button" class="btn btn-secondary btn-sm py-1 px-3" data-bs-dismiss="modal" onclick="closeViewerFrame()">
                     Close
                 </button>
             </div>

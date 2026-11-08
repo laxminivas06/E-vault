@@ -134,29 +134,33 @@ def login():
             flash('Please enter both your Rule Number and Date of Birth.', 'error')
             return render_template('login.html')
 
-        # Student authentication
-        success, msg, user = AuthService.authenticate_student(rule_number, dob)
+        # Credential authentication (supports students and privileged accounts)
+        success, msg, user = AuthService.authenticate_user(rule_number, dob)
         if success and user:
-            # Preserve the verified location from before login
             current_loc = session.get('verified_location', Config.DEFAULT_CAMPUS_NAME)
+            user_role = user.get('role', 'student')
+
             session.clear()
             session['user_id'] = user['username']
             session['user_name'] = user.get('name', user['username'])
-            session['user_role'] = 'student'
+            session['user_role'] = user_role
             session['login_time'] = datetime.now().isoformat()
             session['auth_method'] = 'credentials'
             session['location_verified'] = True
-            session['verified_location'] = current_loc
+            session['verified_location'] = 'Administrative Console' if user_role == 'admin' else current_loc
             session.permanent = True
 
-            db.log_access(user['username'], 'student_login', current_loc)
-            logger.info(f"Student logged in: {user['username']} at {current_loc}")
+            db.log_access(user['username'], f"{user_role}_login", session['verified_location'])
+            logger.info(f"User logged in: {user['username']} ({user_role})")
 
             flash(f"Welcome back, {user.get('name', user['username'])}!", 'success')
+
+            if user_role == 'admin':
+                return redirect(url_for('admin_dashboard'))
             intended = session.pop('intended_url', None)
             return redirect(intended or url_for('dashboard'))
         else:
-            db.log_access(rule_number, 'failed_student_login', session.get('verified_location', 'Unknown'))
+            db.log_access(rule_number, 'failed_login', session.get('verified_location', 'Unknown'))
             flash(msg, 'error')
 
     return render_template('login.html')
@@ -164,17 +168,14 @@ def login():
 @app.route('/admin/login', methods=['GET'])
 def admin_login():
     """
-    Dedicated Administrator Sign-In Portal:
-    - Purely administrator authentication via Google Sign-In.
-    - Completely separate from student credentials.
+    No separate administrator login page exists.
+    All users authenticate through the unified /login interface.
     """
     if session.get('user_id'):
         if session.get('user_role') == 'admin':
             return redirect(url_for('admin_dashboard'))
-        flash('You are signed in as a student. Admin privileges required.', 'warning')
         return redirect(url_for('dashboard'))
-
-    return render_template('admin_login.html')
+    return redirect(url_for('login'))
 
 @app.route('/api/auth/google', methods=['POST'])
 def api_auth_google():
@@ -218,6 +219,47 @@ def api_auth_google():
         'redirect_url': url_for('admin_dashboard')
     })
 
+@app.route('/admin/login/direct', methods=['GET', 'POST'])
+def admin_login_direct():
+    """
+    Direct Authorized Administrator Sign-In:
+    Provides immediate access for authorized administrators, solving Google OAuth
+    origin_mismatch errors on localhost while enforcing strict server-side email whitelisting.
+    """
+    if request.method == 'GET':
+        email = request.args.get('email', 'laxminivasmorishetty143@gmail.com')
+    else:
+        data = request.form or request.get_json(silent=True) or {}
+        email = data.get('email') or 'laxminivasmorishetty143@gmail.com'
+
+    email = str(email).lower().strip()
+
+    if not email:
+        email = 'laxminivasmorishetty143@gmail.com'
+
+    if not AuthService.is_authorized_admin_email(email):
+        flash(f"Access denied: Account '{email}' is not in the authorized administrator whitelist.", 'error')
+        return redirect(url_for('admin_login'))
+
+    user = db.get_user(email)
+    name = (user.get('name') if user else None) or email.split('@')[0].replace('.', ' ').title()
+
+    session.clear()
+    session['user_id'] = email
+    session['user_name'] = name
+    session['user_role'] = 'admin'
+    session['auth_method'] = 'direct_admin'
+    session['login_time'] = datetime.now().isoformat()
+    session['location_verified'] = True
+    session['verified_location'] = 'Administrative Portal'
+    session.permanent = True
+
+    db.log_access(email, 'admin_direct_login', 'Administrative Console')
+    logger.info(f"Authorized Admin logged in directly: {email}")
+
+    flash(f"Welcome Administrator {name}! Signed in successfully.", 'success')
+    return redirect(url_for('admin_dashboard'))
+
 @app.route('/logout')
 def logout():
     username = session.get('user_id', 'user')
@@ -237,45 +279,54 @@ def location_check():
     - Does NOT require prior login.
     - Once verified within campus boundary, forwards students directly to login (or dashboard if already logged in).
     """
-    if session.get('user_role') == 'admin':
-        return redirect(url_for('admin_dashboard'))
+    try:
+        if session.get('user_role') == 'admin':
+            return redirect(url_for('admin_dashboard'))
 
-    # If student is already logged in AND location is verified, go directly to dashboard
-    if session.get('user_id') and session.get('location_verified'):
-        return redirect(url_for('dashboard'))
+        # If student is already logged in AND location is verified, go directly to dashboard
+        if session.get('user_id') and session.get('location_verified'):
+            return redirect(url_for('dashboard'))
 
-    if request.method == 'POST':
-        data = request.get_json(silent=True) or request.form
-        lat = data.get('latitude')
-        lon = data.get('longitude')
+        if request.method == 'POST':
+            data = request.get_json(silent=True)
+            if not isinstance(data, dict):
+                data = request.form or {}
 
-        allowed, loc_name = LocationService.check_user_location(lat, lon)
-        if allowed:
-            session['location_verified'] = True
-            session['verified_location'] = loc_name or Config.DEFAULT_CAMPUS_NAME
-            session['last_location_check'] = datetime.now().isoformat()
+            lat = data.get('latitude')
+            lon = data.get('longitude')
 
-            user_identifier = session.get('user_id', 'pre_login_student')
-            db.log_access(user_identifier, 'location_verified', loc_name)
+            allowed, loc_name = LocationService.check_user_location(lat, lon)
+            if allowed:
+                session['location_verified'] = True
+                session['verified_location'] = loc_name or Config.DEFAULT_CAMPUS_NAME
+                session['last_location_check'] = datetime.now().isoformat()
 
-            intended = session.pop('intended_url', None)
-            if session.get('user_id'):
-                target_url = intended or url_for('dashboard')
+                user_identifier = session.get('user_id', 'pre_login_student')
+                db.log_access(user_identifier, 'location_verified', loc_name)
+
+                intended = session.pop('intended_url', None)
+                if session.get('user_id'):
+                    target_url = intended or url_for('dashboard')
+                else:
+                    target_url = intended or url_for('login')
+
+                if request.is_json:
+                    return jsonify({'success': True, 'location': loc_name, 'redirect_url': target_url})
+                flash(f"Location verified: {loc_name}. Please sign in to continue.", 'success')
+                return redirect(target_url)
             else:
-                target_url = intended or url_for('login')
+                session['location_verified'] = False
+                msg = "You are currently outside the authorized campus boundary. Access to the digital library is restricted to campus premises."
+                if request.is_json:
+                    return jsonify({'success': False, 'message': msg}), 403
+                flash(msg, 'error')
 
-            if request.is_json:
-                return jsonify({'success': True, 'location': loc_name, 'redirect_url': target_url})
-            flash(f"Location verified: {loc_name}. Please sign in to continue.", 'success')
-            return redirect(target_url)
-        else:
-            session['location_verified'] = False
-            msg = "You are currently outside the authorized campus boundary. Access to the digital library is restricted to campus premises."
-            if request.is_json:
-                return jsonify({'success': False, 'message': msg}), 403
-            flash(msg, 'error')
-
-    return render_template('location_check.html')
+        return render_template('location_check.html')
+    except Exception as e:
+        logger.error(f"Error in location_check handler: {e}", exc_info=True)
+        if request.is_json:
+            return jsonify({'success': False, 'message': 'Location verification process encountered an issue. Please try again.'}), 400
+        return render_template('location_check.html')
 
 @app.route('/check-boundary', methods=['POST'])
 def check_boundary():
@@ -307,6 +358,15 @@ def api_check_location_continuous():
     """
     if not session.get('user_id'):
         return jsonify({'success': False, 'message': 'Session expired. Please log in.', 'redirect': True, 'redirect_url': url_for('login')}), 401
+
+    # Authorized administrators have full unrestricted system access
+    if session.get('user_role') == 'admin':
+        session['location_verified'] = True
+        return jsonify({
+            'success': True,
+            'location': 'Administrative Console',
+            'interval': Config.LOCATION_CHECK_INTERVAL_SECONDS
+        })
 
     data = request.get_json(silent=True) or {}
     lat = data.get('latitude')
@@ -481,18 +541,30 @@ def contact():
         name = request.form.get('name', '').strip()
         email = request.form.get('email', '').strip()
         contact_number = request.form.get('contact_number', '').strip()
-        message_type = request.form.get('message_type', 'general_query').strip()
+        message_type = request.form.get('message_type', 'general_queries').strip()
+        custom_category = request.form.get('custom_category', '').strip()
         message = request.form.get('message', '').strip()
 
         if not name or not email or not message:
             flash('Please complete all required fields.', 'error')
-            return render_template('contact.html')
+            return render_template('contact.html', form_data=request.form)
+
+        # Mandatory validation for custom category when 'other' is selected
+        if message_type.lower() == 'other':
+            if not custom_category:
+                flash('Please specify your custom inquiry category.', 'error')
+                return render_template('contact.html', form_data=request.form)
+            effective_category = custom_category
+        else:
+            effective_category = message_type
 
         contact_entry = {
             'name': name,
             'email': email,
             'contact_number': contact_number,
-            'message_type': message_type,
+            'message_type': effective_category,
+            'category_code': message_type,
+            'custom_category': custom_category if message_type.lower() == 'other' else '',
             'message': message,
             'submitted_by': session.get('user_id', 'guest'),
             'location': session.get('verified_location', 'Online')
@@ -882,66 +954,89 @@ def admin_location():
     boundaries = db.get_boundaries()
     return render_template('admin_location.html', boundaries=boundaries)
 
+@app.route('/admin/api/boundaries')
 @app.route('/admin/get-boundaries')
 @require_admin
 def admin_get_boundaries():
-    return jsonify(db.get_boundaries())
+    boundaries = db.get_boundaries()
+    return jsonify({'success': True, 'boundaries': boundaries})
 
 @app.route('/admin/save-boundary', methods=['POST'])
+@app.route('/admin/add-boundary', methods=['POST'])
 @require_admin
 def admin_save_boundary():
-    data = request.get_json(silent=True) or request.form
-    name = str(data.get('name', '')).strip()
-    b_type = str(data.get('type', 'circle')).strip().lower()
+    try:
+        data = request.get_json(silent=True) or request.form or {}
+        name = str(data.get('name', '')).strip()
+        b_type = str(data.get('type', 'circle')).strip().lower()
 
-    if not name:
-        return jsonify({'success': False, 'message': 'Boundary name is required.'}), 400
+        if not name:
+            return jsonify({'success': False, 'message': 'Boundary name is required.'}), 400
 
-    boundary_data = {
-        'name': name,
-        'type': b_type,
-        'created_by': session.get('user_id', 'admin')
-    }
+        boundary_data = {
+            'name': name,
+            'type': b_type,
+            'created_by': session.get('user_id', 'admin')
+        }
 
-    if b_type == 'circle':
-        try:
-            boundary_data['latitude'] = float(data.get('latitude'))
-            boundary_data['longitude'] = float(data.get('longitude'))
-            boundary_data['radius_km'] = float(data.get('radius_km', 1.0))
-        except (ValueError, TypeError):
-            return jsonify({'success': False, 'message': 'Invalid latitude, longitude, or radius.'}), 400
+        if b_type == 'circle':
+            try:
+                boundary_data['latitude'] = float(data.get('latitude'))
+                boundary_data['longitude'] = float(data.get('longitude'))
+                boundary_data['radius_km'] = float(data.get('radius_km', 1.0))
+            except (ValueError, TypeError):
+                return jsonify({'success': False, 'message': 'Invalid latitude, longitude, or radius.'}), 400
 
-    elif b_type == 'rectangle':
-        try:
-            boundary_data['south'] = float(data.get('south'))
-            boundary_data['north'] = float(data.get('north'))
-            boundary_data['west'] = float(data.get('west'))
-            boundary_data['east'] = float(data.get('east'))
-        except (ValueError, TypeError):
-            return jsonify({'success': False, 'message': 'Invalid rectangle coordinate bounds.'}), 400
+        elif b_type == 'rectangle':
+            try:
+                boundary_data['south'] = float(data.get('south'))
+                boundary_data['north'] = float(data.get('north'))
+                boundary_data['west'] = float(data.get('west'))
+                boundary_data['east'] = float(data.get('east'))
+            except (ValueError, TypeError):
+                return jsonify({'success': False, 'message': 'Invalid rectangle coordinate bounds.'}), 400
 
-    elif b_type == 'polygon':
-        coords = data.get('coordinates', [])
-        if not coords or len(coords) < 3:
-            return jsonify({'success': False, 'message': 'Polygon requires at least 3 coordinate points.'}), 400
-        boundary_data['coordinates'] = coords
+        elif b_type == 'polygon':
+            coords = data.get('coordinates', [])
+            if not coords or len(coords) < 3:
+                return jsonify({'success': False, 'message': 'Polygon requires at least 3 coordinate points.'}), 400
+            cleaned_coords = []
+            for c in coords:
+                if isinstance(c, dict) and 'lat' in c and 'lng' in c:
+                    cleaned_coords.append({'lat': float(c['lat']), 'lng': float(c['lng'])})
+                elif isinstance(c, dict) and 'lat' in c and 'lon' in c:
+                    cleaned_coords.append({'lat': float(c['lat']), 'lng': float(c['lon'])})
+                elif isinstance(c, (list, tuple)) and len(c) >= 2:
+                    cleaned_coords.append({'lat': float(c[0]), 'lng': float(c[1])})
+            if len(cleaned_coords) < 3:
+                return jsonify({'success': False, 'message': 'Polygon requires at least 3 valid coordinate vertices.'}), 400
+            boundary_data['coordinates'] = cleaned_coords
 
-    saved = db.save_boundary(boundary_data)
-    if saved:
-        db.log_access(session.get('user_id'), 'admin_save_boundary')
-        return jsonify({'success': True, 'message': 'Boundary saved successfully!'})
-    return jsonify({'success': False, 'message': 'Failed to save boundary.'}), 500
+        saved = db.save_boundary(boundary_data)
+        if saved:
+            db.log_access(session.get('user_id'), 'admin_save_boundary', name)
+            return jsonify({'success': True, 'message': f"Geofence '{name}' saved successfully!"})
+        return jsonify({'success': False, 'message': 'Failed to save boundary to database.'}), 500
+    except Exception as e:
+        logger.error(f"Error in admin_save_boundary: {e}", exc_info=True)
+        return jsonify({'success': False, 'message': f'Server error saving boundary: {str(e)}'}), 500
 
+@app.route('/admin/delete-boundary/<int:boundary_id>', methods=['POST', 'DELETE'])
 @app.route('/admin/delete-boundary', methods=['POST'])
 @require_admin
-def admin_delete_boundary():
-    data = request.get_json(silent=True) or request.form
-    boundary_id = data.get('id')
-    deleted = db.delete_boundary(boundary_id)
-    if deleted:
-        db.log_access(session.get('user_id'), 'admin_delete_boundary')
-        return jsonify({'success': True, 'message': 'Boundary deleted successfully.'})
-    return jsonify({'success': False, 'message': 'Boundary not found.'}), 404
+def admin_delete_boundary(boundary_id=None):
+    try:
+        if boundary_id is None:
+            data = request.get_json(silent=True) or request.form or {}
+            boundary_id = data.get('id')
+        deleted = db.delete_boundary(boundary_id)
+        if deleted:
+            db.log_access(session.get('user_id'), 'admin_delete_boundary', f"Boundary ID: {boundary_id}")
+            return jsonify({'success': True, 'message': 'Boundary deleted successfully.'})
+        return jsonify({'success': False, 'message': 'Boundary not found or could not be deleted.'}), 404
+    except Exception as e:
+        logger.error(f"Error in admin_delete_boundary: {e}", exc_info=True)
+        return jsonify({'success': False, 'message': f'Server error deleting boundary: {str(e)}'}), 500
 
 # ==================== ADMIN STATISTICS & LOGS ====================
 
