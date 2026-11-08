@@ -633,5 +633,35 @@
     "submitted_at": "2026-11-09T01:48:01.893719",
     "submitted_date": "2026-11-09",
     "status": "pending"
+  },
+  {
+    "name": "P. Sai Kumar",
+    "email": "saikumar@gmail.com",
+    "contact_number": "9876543210",
+    "message_type": "book_issues",
+    "category_code": "book_issues",
+    "custom_category": "",
+    "message": "Please upload semester 5 Data Structures textbook.",
+    "submitted_by": "guest",
+    "location": "Online",
+    "id": 48,
+    "submitted_at": "2026-11-09T02:12:17.865457",
+    "submitted_date": "2026-11-09",
+    "status": "pending"
+  },
+  {
+    "name": "Sneha Rao",
+    "email": "sneha@gmail.com",
+    "contact_number": "9123456789",
+    "message_type": "Digital Archive Access Renewal",
+    "category_code": "other",
+    "custom_category": "Digital Archive Access Renewal",
+    "message": "Requesting renewal for digital archive access for the semester.",
+    "submitted_by": "guest",
+    "location": "Online",
+    "id": 49,
+    "submitted_at": "2026-11-09T02:12:17.888244",
+    "submitted_date": "2026-11-09",
+    "status": "pending"
   }
 ]
