@@ -295,3 +295,4 @@ class AcademicService:
         if 'graduat' in l:
             return 5
         return None
+
