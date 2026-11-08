@@ -25,7 +25,9 @@
     "role": "student",
     "name": "KARNATI MADHUMITHA",
     "created_at": "2025-11-16T21:35:42.719919",
-    "created_by": "admin"
+    "created_by": "admin",
+    "is_lateral_entry": false,
+    "manual_year_override": ""
   },
   {
     "id": 3,
@@ -12312,7 +12314,7 @@
     "created_at": "2025-11-16T21:47:50.366595",
     "created_by": "admin"
   },
-   {
+  {
     "id": 1368,
     "username": "CSE",
     "password": "Cse@Sphn2011",
@@ -12339,7 +12341,7 @@
     "created_at": "2025-11-16T21:47:50.366595",
     "created_by": "admin"
   },
-   {
+  {
     "id": 1371,
     "username": "DS",
     "password": "Ds@Sphn2011",

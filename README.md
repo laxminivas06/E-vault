@@ -110,6 +110,28 @@ AUTHORIZED DASHBOARD
 * Clears the user session completely and redirects to the welcome page.
 * Expired or terminated sessions are immediately blocked from protected routes.
 
+### 4. Automatic Student Academic-Year Detection System
+* **Prefix-Based Batch Identification**:
+  * Extracts the admission year directly from the **first two digits of each student's roll number** (e.g. `23N81A0501` -> 2023, `24N81A0501` -> 2024).
+  * Dynamic mathematical calculation (`2000 + prefix`) that automatically supports previous, current, and future admission batches without requiring hardcoded lists.
+* **Continuous Academic Progression**:
+  * Automatically calculates ongoing academic year and expected graduation year:
+    * `22` -> Admission: 2022 -> Graduation: 2026 (Graduated)
+    * `23` -> Admission: 2023 -> Graduation: 2027 (4th Year in 2026–27)
+    * `24` -> Admission: 2024 -> Graduation: 2028 (3rd Year in 2026–27)
+    * `25` -> Admission: 2025 -> Graduation: 2029 (2nd Year in 2026–27)
+    * `26` -> Admission: 2026 -> Graduation: 2030 (1st Year in 2026–27)
+    * `27` -> Admission: 2027 -> Graduation: 2031 (Pre-Admission)
+* **Lateral Entry (LE) Students**:
+  * Separate classification for students admitted through lateral entry.
+  * Direct entry into 2nd year (3-year curriculum); does not use standard 4-year calculation.
+  * Expected Graduation Year = Admission Year + 3.
+  * Dedicated manual toggle in Admin User Directory and enrollment modal to mark students as **Lateral Entry (LE)**.
+* **Administrative Override**:
+  * Administrators can manually correct academic years or set custom overrides whenever needed.
+* **System-Wide Integration**:
+  * Real-time presentation across student dashboard user-info pill, PDF dynamic watermarking, administrative user directory, and AJAX search endpoints.
+
 ---
 
 ## 🎨 Design System & Visuals

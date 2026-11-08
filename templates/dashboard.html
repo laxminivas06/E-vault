@@ -18,6 +18,15 @@
         <div class="user-info-pill">
             <span><i class="fas fa-id-badge text-primary me-1"></i> <strong>Rule No:</strong> {{ session.get('user_id') }}</span>
             <span><i class="fas fa-user-graduate text-primary me-1"></i> <strong>Name:</strong> {{ user_name|safe_text(session.get('user_id')) }}</span>
+            {% if academic_info and academic_info.year_label %}
+            <span><i class="fas fa-graduation-cap text-primary me-1"></i> <strong>Year:</strong> {{ academic_info.year_label }}</span>
+            {% if academic_info.batch_label %}
+            <span><i class="fas fa-calendar-days text-primary me-1"></i> <strong>Batch:</strong> {{ academic_info.batch_label }}</span>
+            {% endif %}
+            {% if academic_info.is_lateral_entry %}
+            <span class="badge bg-warning text-dark border px-2 py-1" title="Lateral Entry Candidate"><i class="fas fa-bolt me-1"></i>LE</span>
+            {% endif %}
+            {% endif %}
             <span class="location-pill"><span class="status-dot"></span> Campus Verified</span>
         </div>
         <a href="{{ url_for('logout') }}" class="btn btn-sm btn-outline-danger py-1 px-3 rounded-pill d-inline-flex align-items-center gap-1 shadow-sm" title="Sign out of your session">

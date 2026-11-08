@@ -31,7 +31,7 @@
         <h3 class="fw-bold text-dark mb-1">
             <i class="fas fa-users-gear text-primary me-2"></i>User Records
         </h3>
-        <p class="text-secondary small mb-0">Manage student accounts, role permissions, and academic enrollment.</p>
+        <p class="text-secondary small mb-0">Manage student accounts, academic year progression, and lateral entry classifications.</p>
     </div>
     
     <div class="col-12 col-md-6 d-flex flex-wrap justify-content-md-end gap-2">
@@ -56,7 +56,7 @@
         </div>
         <div class="search-wrapper" style="max-width: 320px;">
             <i class="fas fa-magnifying-glass search-icon"></i>
-            <input type="text" id="adminUserSearchInput" placeholder="Filter by roll or name..." value="{{ search_query|safe_text }}">
+            <input type="text" id="adminUserSearchInput" placeholder="Filter by roll, name, year..." value="{{ search_query|safe_text }}">
         </div>
     </div>
     <div class="card-body p-3 p-md-4">
@@ -66,13 +66,14 @@
                 <table class="table table-hover align-middle">
                     <thead class="table-light">
                         <tr>
-                            <th style="width: 70px;">ID</th>
-                            <th>Username / Roll No</th>
+                            <th style="width: 60px;">ID</th>
+                            <th>Roll No / Username</th>
                             <th>Full Name</th>
-                            <th style="width: 120px;">Role</th>
-                            <th style="width: 130px;">Credentials</th>
-                            <th style="width: 140px;">Registered</th>
-                            <th style="width: 100px; text-align: right;">Action</th>
+                            <th style="width: 150px;">Academic Year</th>
+                            <th style="width: 120px;">Entry Type</th>
+                            <th style="width: 100px;">Role</th>
+                            <th style="width: 110px;">Registered</th>
+                            <th style="width: 110px; text-align: right;">Action</th>
                         </tr>
                     </thead>
                     <tbody id="userTableBody">
@@ -83,26 +84,55 @@
                                 <td><strong class="text-dark">{{ user.username }}</strong></td>
                                 <td>{{ user.name|safe_text('Student') }}</td>
                                 <td>
-                                    <span class="badge-role {{ user.role }}">{{ user.role|safe_text('Student') }}</span>
+                                    {% if user.role == 'student' and user.year_label %}
+                                        <span class="badge {% if user.is_graduated %}bg-secondary{% elif user.year_label == 'Pre-Admission' %}bg-info text-dark{% else %}bg-primary{% endif %} px-2 py-1">
+                                            {{ user.year_label }}
+                                        </span>
+                                        {% if user.batch_label %}
+                                        <span class="small text-muted d-block mt-1" style="font-size: 0.75rem;">Batch {{ user.batch_label }}</span>
+                                        {% endif %}
+                                    {% else %}
+                                        <span class="text-muted small">&mdash;</span>
+                                    {% endif %}
                                 </td>
                                 <td>
-                                    <span class="text-muted small">Protected</span>
+                                    {% if user.role == 'student' %}
+                                        {% if user.is_lateral_entry %}
+                                        <span class="badge bg-warning text-dark border px-2 py-1" title="Lateral Entry Student">
+                                            <i class="fas fa-bolt me-1"></i>LE
+                                        </span>
+                                        {% else %}
+                                        <span class="badge bg-light text-secondary border px-2 py-1">Regular</span>
+                                        {% endif %}
+                                    {% else %}
+                                        <span class="text-muted small">&mdash;</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="badge-role {{ user.role }}">{{ user.role|safe_text('Student')|capitalize }}</span>
                                 </td>
                                 <td><span class="text-muted small">{{ user.created_at[:10] if user.created_at else 'Recent' }}</span></td>
                                 <td style="text-align: right;">
-                                    {% if user.username != session.get('user_id') %}
-                                    <button type="button" class="btn btn-outline-danger btn-sm py-1 px-2" onclick="confirmDeleteUser('{{ user.username }}')" title="Delete User">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                    {% else %}
-                                    <span class="badge bg-light text-muted border small">Current</span>
-                                    {% endif %}
+                                    <div class="d-inline-flex gap-1 justify-content-end">
+                                        {% if user.role == 'student' %}
+                                        <button type="button" class="btn btn-outline-primary btn-sm py-1 px-2" onclick="openEditUserModal('{{ user.username }}')" title="Edit Academic Status / Lateral Entry">
+                                            <i class="fas fa-user-pen"></i>
+                                        </button>
+                                        {% endif %}
+                                        {% if user.username != session.get('user_id') %}
+                                        <button type="button" class="btn btn-outline-danger btn-sm py-1 px-2" onclick="confirmDeleteUser('{{ user.username }}')" title="Delete User">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                        {% else %}
+                                        <span class="badge bg-light text-muted border small align-self-center">Current</span>
+                                        {% endif %}
+                                    </div>
                                 </td>
                             </tr>
                             {% endfor %}
                         {% else %}
                             <tr>
-                                <td colspan="7" class="text-center py-4 text-muted">
+                                <td colspan="8" class="text-center py-4 text-muted">
                                     <i class="fas fa-user-slash me-2"></i> No users found.
                                 </td>
                             </tr>
@@ -147,13 +177,14 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg" style="border-radius: var(--radius-lg); overflow: hidden;">
             <div class="card-header">
-                <i class="fas fa-user-plus me-2"></i>Enroll User
+                <i class="fas fa-user-plus me-2"></i>Enroll Student / User
             </div>
             <div class="modal-body p-4">
                 <form id="addUserForm">
                     <div class="mb-3">
                         <label for="newUsername" class="form-label">Username / Roll No *</label>
                         <input type="text" class="form-control" id="newUsername" name="username" required placeholder="e.g. 23N81A0599" style="text-transform: uppercase;">
+                        <div class="form-text small text-muted">First two digits (e.g. <code>23</code>, <code>24</code>) automatically determine admission batch.</div>
                     </div>
                     <div class="mb-3">
                         <label for="newName" class="form-label">Full Name *</label>
@@ -171,9 +202,122 @@
                         <input type="text" class="form-control" id="newPassword" name="password" required placeholder="DDMMYYYY (e.g. 15082003)">
                         <div class="form-text small text-muted">For students, use 8-digit DOB in DDMMYYYY format.</div>
                     </div>
+
+                    <!-- Lateral Entry Option -->
+                    <div class="p-3 bg-light rounded-3 border mb-3" id="studentAcademicOptions">
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" role="switch" id="newIsLateralEntry" name="is_lateral_entry">
+                            <label class="form-check-label fw-semibold text-dark" for="newIsLateralEntry">
+                                <i class="fas fa-bolt text-warning me-1"></i> Lateral Entry (LE) Student
+                            </label>
+                        </div>
+                        <div class="small text-secondary mb-2" style="font-size: 0.8rem;">
+                            Enters directly into 2nd Year (3-year curriculum). Progression and graduation year will automatically adjust.
+                        </div>
+
+                        <!-- Manual Year Override (Optional) -->
+                        <div>
+                            <label for="newManualYear" class="form-label small fw-semibold text-dark mb-1">Academic Year Override</label>
+                            <select class="form-select form-select-sm" id="newManualYear" name="manual_year_override">
+                                <option value="auto" selected>Auto-Detect from Roll Number</option>
+                                <option value="1st Year">1st Year</option>
+                                <option value="2nd Year">2nd Year</option>
+                                <option value="3rd Year">3rd Year</option>
+                                <option value="4th Year">4th Year</option>
+                                <option value="Graduated">Graduated / Alumni</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <div class="d-flex justify-content-end gap-2 mt-4">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                         <button type="submit" class="btn btn-primary" id="btnSaveUser">Enroll User</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Edit Student / Academic Status -->
+<div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: var(--radius-lg); overflow: hidden;">
+            <div class="card-header bg-primary text-white">
+                <i class="fas fa-user-pen me-2"></i>Edit Student Academic Status
+            </div>
+            <div class="modal-body p-4">
+                <form id="editUserForm">
+                    <input type="hidden" id="editUsername">
+
+                    <div class="mb-3">
+                        <label class="form-label text-muted small mb-1">Roll Number / Username</label>
+                        <div class="fw-bold fs-5 text-dark" id="editDisplayUsername"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="editFullName" class="form-label small fw-semibold">Full Name *</label>
+                        <input type="text" class="form-control" id="editFullName" required>
+                    </div>
+
+                    <!-- Academic Progression Preview Card -->
+                    <div class="p-3 bg-light rounded-3 border mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="small text-muted fw-semibold">Auto-Detected Admission Year:</span>
+                            <span class="badge bg-light text-dark border" id="editAdmissionYearBadge">&mdash;</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="small text-muted fw-semibold">Expected Graduation:</span>
+                            <span class="badge bg-light text-dark border" id="editGraduationYearBadge">&mdash;</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="small text-muted fw-semibold">Current Progression:</span>
+                            <span class="badge bg-primary" id="editProgressionBadge">&mdash;</span>
+                        </div>
+                    </div>
+
+                    <!-- Lateral Entry Switch -->
+                    <div class="p-3 rounded-3 border mb-3 bg-white">
+                        <div class="form-check form-switch mb-1">
+                            <input class="form-check-input" type="checkbox" role="switch" id="editIsLateralEntry">
+                            <label class="form-check-label fw-semibold text-dark" for="editIsLateralEntry">
+                                <i class="fas fa-bolt text-warning me-1"></i> Mark as Lateral Entry (LE)
+                            </label>
+                        </div>
+                        <div class="small text-secondary" style="font-size: 0.8rem;">
+                            When enabled, this student is evaluated as a Lateral Entry candidate entering directly into 2nd year.
+                        </div>
+                    </div>
+
+                    <!-- Manual Year Override Selection -->
+                    <div class="mb-3">
+                        <label for="editManualYear" class="form-label small fw-semibold text-dark">
+                            Manual Academic Year Override
+                        </label>
+                        <select class="form-select" id="editManualYear">
+                            <option value="auto">Auto-Calculate (Dynamic Roll No Detection)</option>
+                            <option value="1st Year">1st Year</option>
+                            <option value="2nd Year">2nd Year</option>
+                            <option value="3rd Year">3rd Year</option>
+                            <option value="4th Year">4th Year</option>
+                            <option value="Graduated">Graduated / Alumni</option>
+                        </select>
+                        <div class="form-text small text-muted">
+                            Leave as "Auto-Calculate" for automatic progression each academic session.
+                        </div>
+                    </div>
+
+                    <!-- Optional Password / DOB Update -->
+                    <div class="mb-3">
+                        <label for="editPassword" class="form-label small fw-semibold text-dark">
+                            Reset Password / Date of Birth <span class="text-muted fw-normal">(Optional)</span>
+                        </label>
+                        <input type="text" class="form-control" id="editPassword" placeholder="Leave empty to keep existing password">
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="btnUpdateUser">Save Changes</button>
                     </div>
                 </form>
             </div>
@@ -193,7 +337,9 @@
                     <div class="mb-3">
                         <label for="usersSpreadsheetFile" class="form-label">Select CSV or Excel Spreadsheet *</label>
                         <input type="file" class="form-control" id="usersSpreadsheetFile" name="file" accept=".csv, .xlsx, .xls" required>
-                        <div class="form-text small text-muted">Required columns: <code>username</code>, <code>name</code>, <code>password</code>, <code>role</code></div>
+                        <div class="form-text small text-muted">
+                            Columns: <code>username</code>, <code>name</code>, <code>password</code>, <code>role</code>, <code>is_lateral_entry</code> (optional), <code>manual_year_override</code> (optional)
+                        </div>
                     </div>
                     <div class="d-flex justify-content-between align-items-center mt-4">
                         <a href="{{ url_for('admin_download_users_template') }}" class="small text-primary">
@@ -225,10 +371,24 @@ document.addEventListener('DOMContentLoaded', function() {
             userSearchTimeout = setTimeout(() => {
                 currentSearch = this.value.trim();
                 loadAdminUserPage(1);
-            }, 400);
+            }, 350);
         });
     }
 
+    // Role toggle in Add User form to show/hide academic options
+    const newRoleSelect = document.getElementById('newRole');
+    const academicOptions = document.getElementById('studentAcademicOptions');
+    if (newRoleSelect && academicOptions) {
+        newRoleSelect.addEventListener('change', function() {
+            if (this.value === 'student') {
+                academicOptions.classList.remove('d-none');
+            } else {
+                academicOptions.classList.add('d-none');
+            }
+        });
+    }
+
+    // Add User Form Submission
     const userForm = document.getElementById('addUserForm');
     if (userForm) {
         userForm.addEventListener('submit', function(e) {
@@ -241,7 +401,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 username: document.getElementById('newUsername').value.trim(),
                 name: document.getElementById('newName').value.trim(),
                 role: document.getElementById('newRole').value,
-                password: document.getElementById('newPassword').value.trim()
+                password: document.getElementById('newPassword').value.trim(),
+                is_lateral_entry: document.getElementById('newIsLateralEntry').checked,
+                manual_year_override: document.getElementById('newManualYear').value
             };
 
             fetch('/admin/add-user', {
@@ -270,6 +432,52 @@ document.addEventListener('DOMContentLoaded', function() {
                 btn.disabled = false;
                 btn.textContent = 'Enroll User';
                 showToast('Failed to connect to server.', 'error');
+            });
+        });
+    }
+
+    // Edit User Form Submission
+    const editForm = document.getElementById('editUserForm');
+    if (editForm) {
+        editForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('editUsername').value;
+            const btn = document.getElementById('btnUpdateUser');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Saving...';
+
+            const payload = {
+                name: document.getElementById('editFullName').value.trim(),
+                is_lateral_entry: document.getElementById('editIsLateralEntry').checked,
+                manual_year_override: document.getElementById('editManualYear').value,
+                password: document.getElementById('editPassword').value.trim()
+            };
+
+            fetch(`/admin/update-user/${encodeURIComponent(username)}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(data => {
+                btn.disabled = false;
+                btn.textContent = 'Save Changes';
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
+                    if (modal) modal.hide();
+                    loadAdminUserPage(currentPage);
+                } else {
+                    showToast(data.message || 'Error updating student record.', 'error');
+                }
+            })
+            .catch(err => {
+                btn.disabled = false;
+                btn.textContent = 'Save Changes';
+                showToast('Server connection failed.', 'error');
             });
         });
     }
@@ -310,7 +518,7 @@ function renderUserRows(users) {
     if (!users || users.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="7" class="text-center py-4 text-muted">
+                <td colspan="8" class="text-center py-4 text-muted">
                     <i class="fas fa-user-slash me-2"></i> No users matching search criteria.
                 </td>
             </tr>
@@ -319,23 +527,79 @@ function renderUserRows(users) {
     }
 
     const currentUserId = "{{ session.get('user_id') }}";
-    tbody.innerHTML = users.map(u => `
-        <tr>
-            <td><span class="badge bg-light text-dark border">#${u.id}</span></td>
-            <td><strong class="text-dark">${escapeHtml(u.username)}</strong></td>
-            <td>${escapeHtml(u.name || 'Student')}</td>
-            <td><span class="badge-role ${escapeHtml(u.role)}">${escapeHtml(u.role)}</span></td>
-            <td><span class="text-muted small">Protected</span></td>
-            <td><span class="text-muted small">${(u.created_at || 'Recent').slice(0, 10)}</span></td>
-            <td style="text-align: right;">
-                ${u.username !== currentUserId ? `
-                    <button type="button" class="btn btn-outline-danger btn-sm py-1 px-2" onclick="confirmDeleteUser('${escapeHtml(u.username)}')" title="Delete User">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                ` : `<span class="badge bg-light text-muted border small">Current</span>`}
-            </td>
-        </tr>
-    `).join('');
+    tbody.innerHTML = users.map(u => {
+        const isStudent = u.role === 'student';
+        const yearBadgeClass = u.is_graduated ? 'bg-secondary' : (u.year_label === 'Pre-Admission' ? 'bg-info text-dark' : 'bg-primary');
+        const yearDisplay = isStudent && u.year_label ? `
+            <span class="badge ${yearBadgeClass} px-2 py-1">${escapeHtml(u.year_label)}</span>
+            ${u.batch_label ? `<span class="small text-muted d-block mt-1" style="font-size: 0.75rem;">Batch ${escapeHtml(u.batch_label)}</span>` : ''}
+        ` : `<span class="text-muted small">&mdash;</span>`;
+
+        const entryDisplay = isStudent ? (
+            u.is_lateral_entry ? 
+            `<span class="badge bg-warning text-dark border px-2 py-1" title="Lateral Entry Student"><i class="fas fa-bolt me-1"></i>LE</span>` : 
+            `<span class="badge bg-light text-secondary border px-2 py-1">Regular</span>`
+        ) : `<span class="text-muted small">&mdash;</span>`;
+
+        return `
+            <tr>
+                <td><span class="badge bg-light text-dark border">#${u.id}</span></td>
+                <td><strong class="text-dark">${escapeHtml(u.username)}</strong></td>
+                <td>${escapeHtml(u.name || 'Student')}</td>
+                <td>${yearDisplay}</td>
+                <td>${entryDisplay}</td>
+                <td><span class="badge-role ${escapeHtml(u.role)}">${escapeHtml(u.role)}</span></td>
+                <td><span class="text-muted small">${(u.created_at || 'Recent').slice(0, 10)}</span></td>
+                <td style="text-align: right;">
+                    <div class="d-inline-flex gap-1 justify-content-end">
+                        ${isStudent ? `
+                            <button type="button" class="btn btn-outline-primary btn-sm py-1 px-2" onclick="openEditUserModal('${escapeHtml(u.username)}')" title="Edit Academic Status / Lateral Entry">
+                                <i class="fas fa-user-pen"></i>
+                            </button>
+                        ` : ''}
+                        ${u.username !== currentUserId ? `
+                            <button type="button" class="btn btn-outline-danger btn-sm py-1 px-2" onclick="confirmDeleteUser('${escapeHtml(u.username)}')" title="Delete User">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        ` : `<span class="badge bg-light text-muted border small align-self-center">Current</span>`}
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function openEditUserModal(username) {
+    fetch(`/admin/api/user/${encodeURIComponent(username)}`)
+    .then(res => res.json())
+    .then(data => {
+        if (!data.success) {
+            showToast(data.message || 'Error fetching student data.', 'error');
+            return;
+        }
+        const u = data.user;
+        document.getElementById('editUsername').value = u.username;
+        document.getElementById('editDisplayUsername').textContent = u.username;
+        document.getElementById('editFullName').value = u.name || '';
+        document.getElementById('editPassword').value = '';
+
+        document.getElementById('editAdmissionYearBadge').textContent = u.admission_year || 'N/A';
+        document.getElementById('editGraduationYearBadge').textContent = u.graduation_year || 'N/A';
+        document.getElementById('editProgressionBadge').textContent = u.display_badge || u.year_label || 'Student';
+
+        document.getElementById('editIsLateralEntry').checked = !!u.is_lateral_entry;
+
+        const manualSelect = document.getElementById('editManualYear');
+        if (manualSelect) {
+            manualSelect.value = u.manual_year_override || 'auto';
+        }
+
+        const modal = new bootstrap.Modal(document.getElementById('editUserModal'));
+        modal.show();
+    })
+    .catch(err => {
+        showToast('Failed to load user details.', 'error');
+    });
 }
 
 function updateUserPagination(page, totalPages, totalUsers) {

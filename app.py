@@ -18,6 +18,7 @@ from services.auth_service import (
 )
 from services.location_service import LocationService
 from services.document_service import DocumentService
+from services.academic_service import AcademicService
 
 # Configure logging
 logging.basicConfig(
@@ -58,6 +59,10 @@ def inject_common_variables():
         'user_id': session.get('user_id'),
         'user_name': session.get('user_name', session.get('user_id', '')),
         'user_role': session.get('user_role'),
+        'academic_year_label': session.get('academic_year_label'),
+        'display_badge': session.get('display_badge'),
+        'batch_label': session.get('batch_label'),
+        'is_lateral_entry': session.get('is_lateral_entry', False),
         'location_verified': session.get('location_verified', False),
         'verified_location': session.get('verified_location', 'Campus')
     }
@@ -149,6 +154,16 @@ def login():
             session['location_verified'] = True
             session['verified_location'] = 'Administrative Console' if user_role == 'admin' else current_loc
             session.permanent = True
+
+            # Automatic student academic-year detection & profile population
+            if user_role == 'student':
+                acad = AcademicService.calculate_student_academic_info(user)
+                session['academic_year'] = acad.get('academic_year')
+                session['academic_year_label'] = acad.get('year_label')
+                session['academic_session'] = acad.get('academic_session')
+                session['batch_label'] = acad.get('batch_label')
+                session['is_lateral_entry'] = acad.get('is_lateral_entry', False)
+                session['display_badge'] = acad.get('display_badge')
 
             db.log_access(user['username'], f"{user_role}_login", session['verified_location'])
             logger.info(f"User logged in: {user['username']} ({user_role})")
@@ -452,6 +467,9 @@ def dashboard():
             'per_page': per_page
         })
 
+    user_record = db.get_user(session.get('user_id')) or {'username': session.get('user_id'), 'role': session.get('user_role', 'student')}
+    academic_info = AcademicService.calculate_student_academic_info(user_record)
+
     return render_template(
         'dashboard.html',
         pdfs=page_pdfs,
@@ -460,7 +478,8 @@ def dashboard():
         total_pdfs=total_pdfs,
         per_page=per_page,
         search_query=search_query,
-        user_stats=user_stats
+        user_stats=user_stats,
+        academic_info=academic_info
     )
 
 @app.route('/api/document/token/<int:pdf_id>', methods=['POST'])
@@ -507,7 +526,10 @@ def view_document(pdf_id):
         return redirect(url_for('dashboard'))
 
     embed_url = DocumentService.get_secure_embed_url(pdf.get('drive_link', ''))
-    watermark_text = f"VAULT E-LIBRARY • {user_id} • {datetime.now().strftime('%Y-%m-%d %H:%M')}"
+    user_record = db.get_user(user_id) or {'username': user_id, 'role': session.get('user_role', 'student')}
+    acad = AcademicService.calculate_student_academic_info(user_record)
+    acad_tag = f" • {acad['display_badge']}" if acad.get('display_badge') else ""
+    watermark_text = f"VAULT E-LIBRARY • {user_id}{acad_tag} • {datetime.now().strftime('%Y-%m-%d %H:%M')}"
 
     response = make_response(render_template(
         'viewer.html',
@@ -680,12 +702,12 @@ def admin_users():
 
     if search_query:
         q = search_query.lower()
-        filtered = [
-            u for u in all_users
-            if q in str(u.get('username', '')).lower()
-            or q in str(u.get('name', '')).lower()
-            or q in str(u.get('role', '')).lower()
-        ]
+        filtered = []
+        for u in all_users:
+            enr = AcademicService.enrich_user_academic_info(u)
+            searchable = f"{u.get('username', '')} {u.get('name', '')} {u.get('role', '')} {enr.get('year_label', '')} {enr.get('batch_label', '')} {enr.get('entry_label', '')} {enr.get('admission_year', '')}".lower()
+            if q in searchable:
+                filtered.append(u)
     else:
         filtered = all_users
 
@@ -699,10 +721,10 @@ def admin_users():
 
     safe_users = []
     for u in page_users:
-        u_copy = dict(u)
-        u_copy['has_password'] = bool(u.get('password'))
-        u_copy['password'] = '••••••••'
-        safe_users.append(u_copy)
+        u_enriched = AcademicService.enrich_user_academic_info(u)
+        u_enriched['has_password'] = bool(u.get('password'))
+        u_enriched['password'] = '••••••••'
+        safe_users.append(u_enriched)
 
     return render_template(
         'admin_users.html',
@@ -715,9 +737,10 @@ def admin_users():
     )
 
 @app.route('/admin/search-users')
+@app.route('/admin/api/users')
 @require_admin
 def admin_search_users():
-    """AJAX user search endpoint with sanitized responses."""
+    """AJAX user search and pagination endpoint with enriched academic progression."""
     page = request.args.get('page', 1, type=int)
     search_query = request.args.get('search', '').strip()
     per_page = request.args.get('per_page', Config.DEFAULT_PER_PAGE_USERS, type=int)
@@ -726,12 +749,12 @@ def admin_search_users():
 
     if search_query:
         q = search_query.lower()
-        filtered = [
-            u for u in all_users
-            if q in str(u.get('username', '')).lower()
-            or q in str(u.get('name', '')).lower()
-            or q in str(u.get('role', '')).lower()
-        ]
+        filtered = []
+        for u in all_users:
+            enr = AcademicService.enrich_user_academic_info(u)
+            searchable = f"{u.get('username', '')} {u.get('name', '')} {u.get('role', '')} {enr.get('year_label', '')} {enr.get('batch_label', '')} {enr.get('entry_label', '')} {enr.get('admission_year', '')}".lower()
+            if q in searchable:
+                filtered.append(u)
     else:
         filtered = all_users
 
@@ -745,13 +768,25 @@ def admin_search_users():
 
     safe_users = []
     for u in page_users:
+        enr = AcademicService.enrich_user_academic_info(u)
         safe_users.append({
             'id': u.get('id'),
             'username': u.get('username'),
             'name': u.get('name'),
             'role': u.get('role'),
             'created_at': u.get('created_at', ''),
-            'password': '••••••••'
+            'password': '••••••••',
+            'admission_year': enr.get('admission_year'),
+            'graduation_year': enr.get('graduation_year'),
+            'academic_year': enr.get('academic_year'),
+            'year_label': enr.get('year_label'),
+            'batch_label': enr.get('batch_label'),
+            'academic_session': enr.get('academic_session'),
+            'is_lateral_entry': enr.get('is_lateral_entry', False),
+            'entry_label': enr.get('entry_label', 'Regular'),
+            'display_badge': enr.get('display_badge'),
+            'manual_year_override': enr.get('manual_year_override', ''),
+            'is_graduated': enr.get('is_graduated', False)
         })
 
     return jsonify({
@@ -761,6 +796,35 @@ def admin_search_users():
         'total_pages': total_pages,
         'total_users': total_users,
         'per_page': per_page
+    })
+
+@app.route('/admin/api/user/<username>')
+@require_admin
+def admin_get_user(username):
+    """Retrieve full user profile with academic details for admin modal."""
+    target_username = str(username).strip().upper()
+    user = db.get_user(target_username)
+    if not user:
+        return jsonify({'success': False, 'message': 'User not found.'}), 404
+
+    enr = AcademicService.enrich_user_academic_info(user)
+    return jsonify({
+        'success': True,
+        'user': {
+            'id': user.get('id'),
+            'username': user.get('username'),
+            'name': user.get('name'),
+            'role': user.get('role'),
+            'is_lateral_entry': enr.get('is_lateral_entry', False),
+            'manual_year_override': user.get('manual_year_override', ''),
+            'admission_year': enr.get('admission_year'),
+            'graduation_year': enr.get('graduation_year'),
+            'academic_year': enr.get('academic_year'),
+            'year_label': enr.get('year_label'),
+            'batch_label': enr.get('batch_label'),
+            'display_badge': enr.get('display_badge'),
+            'entry_label': enr.get('entry_label')
+        }
     })
 
 @app.route('/admin/add-user', methods=['POST'])
@@ -784,11 +848,25 @@ def admin_add_user():
         if iso_dob:
             password_to_store = iso_dob
 
+    # Lateral entry setting
+    is_le = data.get('is_lateral_entry')
+    if isinstance(is_le, str):
+        is_le = is_le.strip().lower() in ('true', 'yes', '1', 'le', 'lateral')
+    else:
+        is_le = bool(is_le) if is_le is not None else False
+
+    # Manual year override setting
+    manual_year = str(data.get('manual_year_override', '')).strip()
+    if manual_year.lower() == 'auto':
+        manual_year = ''
+
     user_entry = {
         'username': username,
         'name': name or username,
         'role': role,
         'password': password_to_store,
+        'is_lateral_entry': is_le,
+        'manual_year_override': manual_year,
         'created_by': session.get('user_id', 'admin'),
         'created_at': datetime.now().isoformat()
     }
@@ -798,6 +876,62 @@ def admin_add_user():
         db.log_access(session.get('user_id'), 'admin_add_user')
         return jsonify({'success': True, 'message': f"User '{username}' created successfully."})
     return jsonify({'success': False, 'message': 'Failed to save user.'}), 500
+
+@app.route('/admin/update-user/<username>', methods=['POST'])
+@app.route('/admin/api/user/<username>/update', methods=['POST'])
+@require_admin
+def admin_update_user(username):
+    """
+    Update student or user academic status, including Lateral Entry flag and Manual Year Override.
+    """
+    target_username = str(username).strip().upper()
+    existing = db.get_user(target_username)
+    if not existing:
+        return jsonify({'success': False, 'message': f"User '{username}' not found."}), 404
+
+    data = request.get_json(silent=True) or request.form
+    name = str(data.get('name', existing.get('name', ''))).strip()
+    role = str(data.get('role', existing.get('role', 'student'))).strip().lower()
+
+    updates = {
+        'username': target_username,
+        'name': name or existing.get('name', target_username),
+        'role': role
+    }
+
+    # Password / DOB update if provided
+    raw_password = str(data.get('password', '')).strip()
+    if raw_password:
+        if role == 'student' and len(raw_password) == 8 and raw_password.isdigit():
+            iso_dob = AuthService.convert_dob_to_iso(raw_password)
+            updates['password'] = iso_dob if iso_dob else raw_password
+        else:
+            updates['password'] = raw_password
+
+    # Lateral Entry setting
+    if 'is_lateral_entry' in data:
+        val = data.get('is_lateral_entry')
+        if isinstance(val, str):
+            updates['is_lateral_entry'] = val.strip().lower() in ('true', 'yes', '1', 'le', 'lateral')
+        else:
+            updates['is_lateral_entry'] = bool(val)
+
+    # Manual Year Override
+    if 'manual_year_override' in data:
+        myo = str(data.get('manual_year_override', '')).strip()
+        updates['manual_year_override'] = '' if myo.lower() == 'auto' else myo
+
+    saved = db.save_user(updates)
+    if saved:
+        db.log_access(session.get('user_id'), f"admin_update_user_{target_username}")
+        updated_user = db.get_user(target_username)
+        enriched = AcademicService.enrich_user_academic_info(updated_user)
+        return jsonify({
+            'success': True,
+            'message': f"User '{target_username}' updated successfully.",
+            'user': enriched
+        })
+    return jsonify({'success': False, 'message': 'Failed to save updates.'}), 500
 
 @app.route('/admin/delete-user/<username>', methods=['POST'])
 @require_admin
@@ -818,9 +952,9 @@ def admin_delete_user(username):
 def admin_download_users_template():
     output = io.StringIO()
     writer = csv.writer(output)
-    writer.writerow(['username', 'name', 'password', 'role'])
-    writer.writerow(['23N81A0501', 'Sample Student 1', '15082003', 'student'])
-    writer.writerow(['23N81A0502', 'Sample Student 2', '2004-05-12', 'student'])
+    writer.writerow(['username', 'name', 'password', 'role', 'is_lateral_entry', 'manual_year_override'])
+    writer.writerow(['23N81A0501', 'Sample Regular Student', '15082003', 'student', 'False', 'Auto'])
+    writer.writerow(['24N85A0501', 'Sample Lateral Entry Student', '2004-05-12', 'student', 'True', 'Auto'])
 
     mem = io.BytesIO()
     mem.write(output.getvalue().encode('utf-8'))
@@ -884,11 +1018,30 @@ def admin_upload_users_excel():
                 iso = AuthService.convert_dob_to_iso(pwd)
                 if iso:
                     pwd = iso
+            # Lateral entry detection / override from spreadsheet
+            is_le = False
+            for col in ['is_lateral_entry', 'lateral_entry', 'entry_type', 'is_le']:
+                if col in row and pd.notna(row.get(col)):
+                    val = str(row.get(col)).strip().lower()
+                    if val in ('true', 'yes', '1', 'le', 'lateral', 'y'):
+                        is_le = True
+                    break
+
+            manual_yr = ''
+            for col in ['manual_year_override', 'academic_year', 'year']:
+                if col in row and pd.notna(row.get(col)):
+                    val = str(row.get(col)).strip()
+                    if val.lower() != 'auto':
+                        manual_yr = val
+                    break
+
             new_users.append({
                 'username': uname,
                 'name': str(row.get('name', uname)).strip(),
                 'role': str(row.get('role', 'student')).strip().lower(),
                 'password': pwd,
+                'is_lateral_entry': is_le,
+                'manual_year_override': manual_yr,
                 'created_by': session.get('user_id', 'admin')
             })
 
