@@ -68,6 +68,14 @@ class Config:
         except Exception as e:
             logger.warning(f"Could not load Google credentials: {e}")
 
+    # Primary Super Administrator Accounts
+    default_super_admins = 'laxminivasmorishetty143@gmail.com'
+    SUPER_ADMIN_EMAILS = [
+        email.strip().lower()
+        for email in os.environ.get('SUPER_ADMIN_EMAILS', default_super_admins).split(',')
+        if email.strip()
+    ]
+
     # Authorized Administrator Google Accounts
     default_admins = 'admin@aivontraa.com,support@aivontraa.com,admin@sphoorthyengg.ac.in,laxminivasmorishetty143@gmail.com'
     ADMIN_EMAILS = [

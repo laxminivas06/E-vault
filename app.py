@@ -13,12 +13,13 @@ import pandas as pd
 from config import Config
 from services.data_store import db
 from services.auth_service import (
-    AuthService, require_login, require_admin, require_student,
+    AuthService, require_login, require_admin, require_super_admin, require_student,
     require_location_verification
 )
 from services.location_service import LocationService
 from services.document_service import DocumentService
 from services.academic_service import AcademicService
+from services.backup_service import lifecycle_service
 
 # Configure logging
 logging.basicConfig(
@@ -59,6 +60,7 @@ def inject_common_variables():
         'user_id': session.get('user_id'),
         'user_name': session.get('user_name', session.get('user_id', '')),
         'user_role': session.get('user_role'),
+        'is_super_admin': AuthService.is_super_admin(session.get('user_id', '')) or (session.get('user_role') == 'super_admin'),
         'academic_year_label': session.get('academic_year_label'),
         'display_badge': session.get('display_badge'),
         'batch_label': session.get('batch_label'),
@@ -81,7 +83,7 @@ def add_security_headers(response):
 @app.route('/')
 def index():
     if session.get('user_id'):
-        if session.get('user_role') == 'admin':
+        if session.get('user_role') in ['admin', 'super_admin']:
             return redirect(url_for('admin_dashboard'))
         return redirect(url_for('dashboard'))
     return redirect(url_for('welcome'))
@@ -115,7 +117,7 @@ def login():
     - Clear validation messages.
     """
     if session.get('user_id'):
-        if session.get('user_role') == 'admin':
+        if session.get('user_role') in ['admin', 'super_admin']:
             return redirect(url_for('admin_dashboard'))
         return redirect(url_for('dashboard'))
 
@@ -144,15 +146,18 @@ def login():
         if success and user:
             current_loc = session.get('verified_location', Config.DEFAULT_CAMPUS_NAME)
             user_role = user.get('role', 'student')
+            if AuthService.is_super_admin(user.get('username')) or AuthService.is_super_admin(user.get('email')):
+                user_role = 'super_admin'
 
             session.clear()
             session['user_id'] = user['username']
             session['user_name'] = user.get('name', user['username'])
             session['user_role'] = user_role
+            session['is_super_admin'] = (user_role == 'super_admin')
             session['login_time'] = datetime.now().isoformat()
             session['auth_method'] = 'credentials'
             session['location_verified'] = True
-            session['verified_location'] = 'Administrative Console' if user_role == 'admin' else current_loc
+            session['verified_location'] = 'Administrative Console' if user_role in ['admin', 'super_admin'] else current_loc
             session.permanent = True
 
             # Automatic student academic-year detection & profile population
@@ -170,7 +175,7 @@ def login():
 
             flash(f"Welcome back, {user.get('name', user['username'])}!", 'success')
 
-            if user_role == 'admin':
+            if user_role in ['admin', 'super_admin']:
                 return redirect(url_for('admin_dashboard'))
             intended = session.pop('intended_url', None)
             return redirect(intended or url_for('dashboard'))
@@ -187,7 +192,7 @@ def admin_login():
     All users authenticate through the unified /login interface.
     """
     if session.get('user_id'):
-        if session.get('user_role') == 'admin':
+        if session.get('user_role') in ['admin', 'super_admin']:
             return redirect(url_for('admin_dashboard'))
         return redirect(url_for('dashboard'))
     return redirect(url_for('login'))
@@ -214,11 +219,14 @@ def api_auth_google():
     # Authenticated & Authorized Administrator
     email = admin_info['email']
     name = admin_info.get('name', 'Administrator')
+    is_super = AuthService.is_super_admin(email)
+    user_role = 'super_admin' if is_super else 'admin'
 
     session.clear()
     session['user_id'] = email
     session['user_name'] = name
-    session['user_role'] = 'admin'
+    session['user_role'] = user_role
+    session['is_super_admin'] = is_super
     session['auth_method'] = 'google'
     session['login_time'] = datetime.now().isoformat()
     session['location_verified'] = True
@@ -226,7 +234,7 @@ def api_auth_google():
     session.permanent = True
 
     db.log_access(email, 'admin_google_login', 'Administrative Console')
-    logger.info(f"Authorized Admin logged in via Google: {email}")
+    logger.info(f"Authorized Admin logged in via Google: {email} (role: {user_role})")
 
     return jsonify({
         'success': True,
@@ -258,11 +266,14 @@ def admin_login_direct():
 
     user = db.get_user(email)
     name = (user.get('name') if user else None) or email.split('@')[0].replace('.', ' ').title()
+    is_super = AuthService.is_super_admin(email)
+    user_role = 'super_admin' if is_super else 'admin'
 
     session.clear()
     session['user_id'] = email
     session['user_name'] = name
-    session['user_role'] = 'admin'
+    session['user_role'] = user_role
+    session['is_super_admin'] = is_super
     session['auth_method'] = 'direct_admin'
     session['login_time'] = datetime.now().isoformat()
     session['location_verified'] = True
@@ -270,7 +281,7 @@ def admin_login_direct():
     session.permanent = True
 
     db.log_access(email, 'admin_direct_login', 'Administrative Console')
-    logger.info(f"Authorized Admin logged in directly: {email}")
+    logger.info(f"Authorized Admin logged in directly: {email} (role: {user_role})")
 
     flash(f"Welcome Administrator {name}! Signed in successfully.", 'success')
     return redirect(url_for('admin_dashboard'))
@@ -1191,71 +1202,324 @@ def admin_delete_boundary(boundary_id=None):
         logger.error(f"Error in admin_delete_boundary: {e}", exc_info=True)
         return jsonify({'success': False, 'message': f'Server error deleting boundary: {str(e)}'}), 500
 
+# ==================== SUPER ADMIN & ADMIN ACCESS MANAGEMENT ====================
+
+@app.route('/admin/admins')
+@require_admin
+def admin_admins():
+    """
+    Administrator & Super Administrator Management View.
+    Accessible to all administrators; Super Administrators have full authority to add or remove admins.
+    """
+    users = db.get_users() or []
+    admin_users = []
+    seen_emails = set()
+
+    # 1. Collect from users.json
+    for u in users:
+        role = u.get('role', '').lower()
+        username = str(u.get('username', '')).strip()
+        email = str(u.get('email', '')).strip() or username
+        if role in ['admin', 'super_admin'] or AuthService.is_super_admin(username) or AuthService.is_super_admin(email):
+            actual_role = 'super_admin' if (AuthService.is_super_admin(username) or AuthService.is_super_admin(email) or role == 'super_admin') else 'admin'
+            clean_ident = email.lower()
+            if clean_ident not in seen_emails:
+                seen_emails.add(clean_ident)
+                admin_users.append({
+                    'id': u.get('id'),
+                    'username': username,
+                    'email': email,
+                    'name': u.get('name', username),
+                    'role': actual_role,
+                    'created_at': u.get('created_at', 'Permanent')[:10] if u.get('created_at') else 'Permanent',
+                    'is_primary_super': clean_ident == 'laxminivasmorishetty143@gmail.com'
+                })
+
+    # 2. Include any Super Admins from Config
+    for sa in getattr(Config, 'SUPER_ADMIN_EMAILS', []):
+        clean_sa = sa.lower().strip()
+        if clean_sa and clean_sa not in seen_emails:
+            seen_emails.add(clean_sa)
+            admin_users.append({
+                'id': None,
+                'username': clean_sa,
+                'email': clean_sa,
+                'name': clean_sa.split('@')[0].replace('.', ' ').title(),
+                'role': 'super_admin',
+                'created_at': 'System Config',
+                'is_primary_super': clean_sa == 'laxminivasmorishetty143@gmail.com'
+            })
+
+    # 3. Include any Admins from Config
+    for adm in Config.ADMIN_EMAILS:
+        clean_adm = adm.lower().strip()
+        if clean_adm and clean_adm not in seen_emails:
+            seen_emails.add(clean_adm)
+            admin_users.append({
+                'id': None,
+                'username': clean_adm,
+                'email': clean_adm,
+                'name': clean_adm.split('@')[0].replace('.', ' ').title(),
+                'role': 'admin',
+                'created_at': 'System Config',
+                'is_primary_super': False
+            })
+
+    admin_users.sort(key=lambda a: (0 if a['role'] == 'super_admin' else 1, a['name'].lower()))
+
+    return render_template(
+        'admin_admins.html',
+        admins=admin_users,
+        total_admins=len(admin_users),
+        super_admins_count=len([a for a in admin_users if a['role'] == 'super_admin'])
+    )
+
+@app.route('/admin/api/admins')
+@require_admin
+def admin_api_admins():
+    """API endpoint returning list of active administrators and roles."""
+    users = db.get_users() or []
+    admin_users = []
+    seen = set()
+
+    for u in users:
+        role = u.get('role', '').lower()
+        username = str(u.get('username', '')).strip()
+        email = str(u.get('email', '')).strip() or username
+        if role in ['admin', 'super_admin'] or AuthService.is_super_admin(username) or AuthService.is_super_admin(email):
+            actual_role = 'super_admin' if (AuthService.is_super_admin(username) or AuthService.is_super_admin(email) or role == 'super_admin') else 'admin'
+            clean_ident = email.lower()
+            if clean_ident not in seen:
+                seen.add(clean_ident)
+                admin_users.append({
+                    'id': u.get('id'),
+                    'username': username,
+                    'email': email,
+                    'name': u.get('name', username),
+                    'role': actual_role,
+                    'created_at': u.get('created_at', 'Permanent')[:10] if u.get('created_at') else 'Recent',
+                    'is_primary_super': clean_ident == 'laxminivasmorishetty143@gmail.com'
+                })
+
+    admin_users.sort(key=lambda a: (0 if a['role'] == 'super_admin' else 1, a['name'].lower()))
+    return jsonify({'success': True, 'admins': admin_users})
+
+@app.route('/admin/add-admin', methods=['POST'])
+@require_super_admin
+def admin_add_admin():
+    """Super Administrator endpoint to grant Administrator or Super Administrator access."""
+    data = request.get_json(silent=True) or request.form
+    raw_email = str(data.get('email', '')).strip().lower()
+    name = str(data.get('name', '')).strip()
+    role = str(data.get('role', 'admin')).strip().lower()
+    password = str(data.get('password', 'admin123')).strip()
+
+    if role not in ['admin', 'super_admin']:
+        role = 'admin'
+
+    if not raw_email or ('@' not in raw_email and len(raw_email) < 3):
+        return jsonify({'success': False, 'message': 'Please enter a valid administrator email address.'}), 400
+
+    # Prepare user entry
+    user_entry = {
+        'username': raw_email,
+        'email': raw_email,
+        'name': name or raw_email.split('@')[0].replace('.', ' ').title(),
+        'role': role,
+        'password': password or 'admin123',
+        'created_by': session.get('user_id', 'super_admin'),
+        'created_at': datetime.now().isoformat()
+    }
+
+    # Save to users.json
+    db.save_user(user_entry)
+
+    # Add to in-memory Config lists for immediate authorization
+    if raw_email not in [e.lower() for e in Config.ADMIN_EMAILS]:
+        Config.ADMIN_EMAILS.append(raw_email)
+    if role == 'super_admin':
+        if not hasattr(Config, 'SUPER_ADMIN_EMAILS'):
+            Config.SUPER_ADMIN_EMAILS = []
+        if raw_email not in [e.lower() for e in Config.SUPER_ADMIN_EMAILS]:
+            Config.SUPER_ADMIN_EMAILS.append(raw_email)
+
+    db.log_access(session.get('user_id'), f"super_admin_add_{role}_{raw_email}")
+    logger.info(f"Super Admin {session.get('user_id')} added new {role}: {raw_email}")
+
+    display_role = 'Super Administrator' if role == 'super_admin' else 'Administrator'
+    return jsonify({
+        'success': True,
+        'message': f"{display_role} access granted to '{raw_email}' successfully.",
+        'admin': user_entry
+    })
+
+@app.route('/admin/remove-admin', methods=['POST'])
+@require_super_admin
+def admin_remove_admin():
+    """Super Administrator endpoint to revoke Administrator or Super Administrator access."""
+    data = request.get_json(silent=True) or request.form
+    raw_email = str(data.get('email', '') or data.get('username', '')).strip().lower()
+
+    if not raw_email:
+        return jsonify({'success': False, 'message': 'Email or username is required.'}), 400
+
+    # Protected Primary Super Admin
+    if raw_email == 'laxminivasmorishetty143@gmail.com':
+        return jsonify({'success': False, 'message': 'Cannot revoke access from the primary Super Administrator.'}), 400
+
+    # Prevent self-removal
+    if raw_email == str(session.get('user_id', '')).lower():
+        return jsonify({'success': False, 'message': 'You cannot revoke your own administrator privileges.'}), 400
+
+    # Remove from users.json
+    db.delete_user(raw_email)
+
+    # Remove from Config in-memory lists
+    Config.ADMIN_EMAILS = [e for e in Config.ADMIN_EMAILS if e.lower() != raw_email]
+    if hasattr(Config, 'SUPER_ADMIN_EMAILS'):
+        Config.SUPER_ADMIN_EMAILS = [e for e in Config.SUPER_ADMIN_EMAILS if e.lower() != raw_email]
+
+    db.log_access(session.get('user_id'), f"super_admin_remove_{raw_email}")
+    logger.info(f"Super Admin {session.get('user_id')} revoked access from admin: {raw_email}")
+
+    return jsonify({
+        'success': True,
+        'message': f"Administrator access for '{raw_email}' revoked successfully."
+    })
+
 # ==================== ADMIN STATISTICS & LOGS ====================
 
+@app.route('/admin/analytics')
 @app.route('/admin/statistics')
 @require_admin
 def admin_statistics():
-    logs = db.get_access_logs()
-    users = db.get_users()
-    pdfs = db.get_pdfs()
+    """
+    Library Analytics and System Intelligence View.
+    Zero-error resilient implementation guarding against malformed logs or missing data keys.
+    """
+    try:
+        logs = db.get_access_logs() or []
+        users = db.get_users() or []
+        pdfs = db.get_pdfs() or []
 
-    total_users = len(users)
-    admins_count = len([u for u in users if u.get('role') == 'admin'])
-    students_count = len([u for u in users if u.get('role') == 'student'])
+        total_users = len(users)
+        admins_count = len([u for u in users if u.get('role') in ['admin', 'super_admin']])
+        super_admins_count = len([u for u in users if u.get('role') == 'super_admin'])
+        students_count = len([u for u in users if u.get('role') == 'student'])
 
-    today_str = datetime.now().strftime('%Y-%m-%d')
-    today_logs = [l for l in logs if l.get('date') == today_str]
-    active_users = len(set(l.get('username') for l in logs))
+        today_str = datetime.now().strftime('%Y-%m-%d')
+        today_logs = [l for l in logs if isinstance(l, dict) and l.get('date') == today_str]
+        active_users = len(set(l.get('username') for l in logs if isinstance(l, dict) and l.get('username')))
 
-    hourly_counts = {h: 0 for h in range(24)}
-    for l in logs:
-        hour = l.get('hour', 0)
-        if isinstance(hour, int) and 0 <= hour <= 23:
-            hourly_counts[hour] += 1
+        hourly_counts = {h: 0 for h in range(24)}
+        for l in logs:
+            if not isinstance(l, dict):
+                continue
+            hour = l.get('hour', 0)
+            if isinstance(hour, int) and 0 <= hour <= 23:
+                hourly_counts[hour] += 1
 
-    location_counts = {}
-    for l in logs:
-        loc = l.get('location', 'Unknown')
-        location_counts[loc] = location_counts.get(loc, 0) + 1
+        location_counts = {}
+        for l in logs:
+            if not isinstance(l, dict):
+                continue
+            loc = l.get('location', 'Campus') or 'Campus'
+            location_counts[loc] = location_counts.get(loc, 0) + 1
 
-    pdf_views = {}
-    for l in logs:
-        if l.get('action') in ['pdf_view', 'pdf_token_requested'] and l.get('pdf_id'):
-            pid = str(l.get('pdf_id'))
-            pdf_views[pid] = pdf_views.get(pid, 0) + 1
+        pdf_views = {}
+        for l in logs:
+            if not isinstance(l, dict):
+                continue
+            if l.get('action') in ['pdf_view', 'pdf_token_requested'] and l.get('pdf_id'):
+                pid = str(l.get('pdf_id'))
+                pdf_views[pid] = pdf_views.get(pid, 0) + 1
 
-    top_pdfs = []
-    pdf_lookup = {str(p.get('id')): p for p in pdfs}
-    for pid, count in sorted(pdf_views.items(), key=lambda x: x[1], reverse=True)[:5]:
-        p = pdf_lookup.get(pid)
-        if p:
-            top_pdfs.append({
-                'title': p.get('title'),
-                'views': count
-            })
+        top_pdfs = []
+        pdf_lookup = {str(p.get('id')): p for p in pdfs if isinstance(p, dict)}
+        for pid, count in sorted(pdf_views.items(), key=lambda x: x[1], reverse=True)[:5]:
+            p = pdf_lookup.get(pid)
+            if p:
+                top_pdfs.append({
+                    'title': p.get('title', f"Document #{pid}"),
+                    'views': count
+                })
 
-    stats = {
-        'total_users': total_users,
-        'admins_count': admins_count,
-        'students_count': students_count,
-        'total_pdfs': len(pdfs),
-        'active_users': active_users,
-        'today_activity': len(today_logs),
-        'total_logs': len(logs),
-        'hourly_data': [hourly_counts[h] for h in range(24)],
-        'location_labels': list(location_counts.keys())[:8],
-        'location_data': list(location_counts.values())[:8],
-        'top_pdfs': top_pdfs
-    }
+        stats = {
+            'total_users': total_users,
+            'admins_count': admins_count,
+            'super_admins_count': super_admins_count,
+            'students_count': students_count,
+            'total_pdfs': len(pdfs),
+            'active_users': active_users,
+            'today_activity': len(today_logs),
+            'total_logs': len(logs),
+            'hourly_data': [hourly_counts[h] for h in range(24)],
+            'location_breakdown': location_counts,
+            'location_labels': list(location_counts.keys())[:8],
+            'location_data': list(location_counts.values())[:8],
+            'top_pdfs': top_pdfs
+        }
 
-    recent_logs = sorted(logs, key=lambda x: x.get('timestamp', ''), reverse=True)[:50]
+        recent_logs = sorted(
+            [l for l in logs if isinstance(l, dict)],
+            key=lambda x: x.get('timestamp', ''),
+            reverse=True
+        )[:50]
 
-    return render_template(
-        'admin_statistics.html',
-        stats=stats,
-        recent_logs=recent_logs
-    )
+        storage_status = lifecycle_service.get_storage_status()
+
+        return render_template(
+            'admin_statistics.html',
+            stats=stats,
+            recent_logs=recent_logs,
+            storage_status=storage_status
+        )
+    except Exception as e:
+        logger.error(f"Error rendering admin statistics / analytics: {e}", exc_info=True)
+        # Safe fallback stats to ensure page ALWAYS renders without 500 error
+        fallback_stats = {
+            'total_users': len(db.get_users() or []),
+            'admins_count': 1,
+            'super_admins_count': 1,
+            'students_count': 0,
+            'total_pdfs': len(db.get_pdfs() or []),
+            'active_users': 1,
+            'today_activity': 0,
+            'total_logs': 0,
+            'hourly_data': [0] * 24,
+            'location_breakdown': {'Campus': 1},
+            'location_labels': ['Campus'],
+            'location_data': [1],
+            'top_pdfs': []
+        }
+        return render_template(
+            'admin_statistics.html',
+            stats=fallback_stats,
+            recent_logs=[],
+            storage_status=lifecycle_service.get_storage_status()
+        )
+
+@app.route('/admin/api/storage-status')
+@require_admin
+def admin_api_storage_status():
+    """Retrieve storage, partition, and backup lifecycle status."""
+    return jsonify({'success': True, 'storage': lifecycle_service.get_storage_status()})
+
+@app.route('/admin/api/backup/run', methods=['POST'])
+@require_admin
+def admin_api_run_backup():
+    """Trigger immediate 15-day backup snapshot."""
+    res = lifecycle_service.create_backup_snapshot()
+    db.log_access(session.get('user_id'), 'admin_manual_backup_created')
+    return jsonify(res)
+
+@app.route('/admin/api/retention/cleanup', methods=['POST'])
+@require_admin
+def admin_api_run_retention_cleanup():
+    """Trigger 45-day retention purge of expired logs, contacts, and old backups."""
+    res = lifecycle_service.run_45_day_retention_purge()
+    db.log_access(session.get('user_id'), 'admin_manual_retention_purge')
+    return jsonify(res)
 
 @app.route('/admin/export-statistics')
 @require_admin

@@ -302,11 +302,21 @@ class DataStore:
     # ==================== ACCESS LOGS ====================
     def get_access_logs(self):
         data = self._load_raw('access_logs.json')
-        return list(data) if isinstance(data, list) else []
+        active = list(data) if isinstance(data, list) else []
+        try:
+            from services.backup_service import lifecycle_service
+            partitioned = lifecycle_service.load_all_partitioned_logs()
+            if partitioned:
+                combined = active + partitioned
+                combined.sort(key=lambda x: x.get('timestamp', ''), reverse=True)
+                return combined
+        except Exception as e:
+            logger.error(f"Error loading partitioned access logs: {e}")
+        return active
 
     def log_access(self, username: str, action: str, location: str = None, pdf_id: int = None):
         try:
-            logs = self.get_access_logs()
+            logs = list(self._load_raw('access_logs.json'))
             now = datetime.now()
             entry = {
                 'id': len(logs) + 1,
@@ -321,11 +331,19 @@ class DataStore:
             }
             logs.append(entry)
 
-            # Keep 30 days of logs to maintain high performance
-            cutoff = now - timedelta(days=30)
+            # Auto-partitioning when data increases & 15-day backup check
+            try:
+                from services.backup_service import lifecycle_service
+                logs = lifecycle_service.check_and_partition_logs(logs)
+                lifecycle_service.run_15_day_backup_if_due(force=False)
+            except Exception as pe:
+                logger.error(f"Lifecycle service trigger error: {pe}")
+
+            # 45-day retention window
+            cutoff = now - timedelta(days=45)
             logs = [
                 l for l in logs
-                if datetime.fromisoformat(l['timestamp']) > cutoff
+                if datetime.fromisoformat(l['timestamp'][:19]) > cutoff
             ]
             self._save_raw('access_logs.json', logs)
         except Exception as e:

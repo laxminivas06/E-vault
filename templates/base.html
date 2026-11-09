@@ -61,12 +61,17 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'admin_admins' %}active{% endif %}" href="{{ url_for('admin_admins') }}">
+                            <i class="fas fa-user-shield"></i> Admins
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link {% if request.endpoint == 'admin_location' %}active{% endif %}" href="{{ url_for('admin_location') }}">
                             <i class="fas fa-map-location-dot"></i> Boundaries
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if request.endpoint == 'admin_statistics' %}active{% endif %}" href="{{ url_for('admin_statistics') }}">
+                        <a class="nav-link {% if request.endpoint in ['admin_statistics', 'admin_analytics'] %}active{% endif %}" href="{{ url_for('admin_statistics') }}">
                             <i class="fas fa-chart-line"></i> Analytics
                         </a>
                     </li>

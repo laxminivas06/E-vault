@@ -196,20 +196,47 @@ class AuthService:
             return False, f"Could not verify Google account token: {str(e)}", None
 
     @classmethod
+    def is_super_admin(cls, identifier: str) -> bool:
+        """Check if an identifier (email or username) is a Super Administrator."""
+        if not identifier:
+            return False
+        clean = str(identifier).lower().strip()
+        super_admins = [
+            'laxminivasmorishetty143@gmail.com',
+            *[e.lower().strip() for e in getattr(Config, 'SUPER_ADMIN_EMAILS', [])]
+        ]
+        if clean in super_admins:
+            return True
+        user = db.get_user(clean)
+        if user and user.get('role') == 'super_admin':
+            return True
+        for u in db.get_users():
+            if u.get('role') == 'super_admin':
+                u_email = str(u.get('email', '')).lower().strip()
+                u_name = str(u.get('username', '')).lower().strip()
+                if u_email == clean or u_name == clean:
+                    return True
+        return False
+
+    @classmethod
     def is_authorized_admin_email(cls, email: str) -> bool:
-        """Check if an email is authorized for admin privileges."""
+        """Check if an email is authorized for admin or super admin privileges."""
         if not email:
             return False
-        email_clean = email.lower().strip()
+        email_clean = str(email).lower().strip()
 
-        # Check Config.ADMIN_EMAILS
+        # 1. Super Admin is always an authorized admin
+        if cls.is_super_admin(email_clean):
+            return True
+
+        # 2. Check Config.ADMIN_EMAILS
         if email_clean in [adm.lower().strip() for adm in Config.ADMIN_EMAILS]:
             return True
 
-        # Check users.json for an admin with matching email or username
+        # 3. Check users.json for an admin with matching email or username
         users = db.get_users()
         for u in users:
-            if u.get('role') == 'admin':
+            if u.get('role') in ['admin', 'super_admin']:
                 u_email = str(u.get('email', '')).lower().strip()
                 u_name = str(u.get('username', '')).lower().strip()
                 if u_email == email_clean or u_name == email_clean:
@@ -236,10 +263,27 @@ def require_admin(f):
             session['intended_url'] = request.url
             flash('Administrator authentication required. Please sign in with Google.', 'warning')
             return redirect(url_for('admin_login'))
-        if session.get('user_role') != 'admin':
+        role = session.get('user_role')
+        if role not in ['admin', 'super_admin']:
             logger.warning(f"Forbidden admin access attempt by user: {session.get('user_id')}")
             flash('Access denied. Administrator privileges required.', 'error')
             return redirect(url_for('dashboard'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+def require_super_admin(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get('user_id'):
+            session['intended_url'] = request.url
+            flash('Administrator authentication required. Please sign in with Google.', 'warning')
+            return redirect(url_for('admin_login'))
+        if not AuthService.is_super_admin(session.get('user_id')):
+            logger.warning(f"Forbidden super admin action attempt by user: {session.get('user_id')}")
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.is_json:
+                return jsonify({'success': False, 'message': 'Access denied: Super Administrator privileges required.'}), 403
+            flash('Access denied. Super Administrator privileges required.', 'error')
+            return redirect(url_for('admin_dashboard'))
         return f(*args, **kwargs)
     return decorated_function
 

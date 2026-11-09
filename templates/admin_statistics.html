@@ -180,11 +180,11 @@
 {% block extra_scripts %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const hourlyData = {{ stats.hourly_data|tojson }};
+    const hourlyData = {{ (stats.hourly_data or [])|tojson }};
     const hourlyLabels = Array.from({ length: 24 }, (_, i) => `${i}:00`);
 
     const ctxHourly = document.getElementById('hourlyChart');
-    if (ctxHourly) {
+    if (ctxHourly && typeof Chart !== 'undefined') {
         new Chart(ctxHourly, {
             type: 'bar',
             data: {
@@ -208,19 +208,19 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    const locData = {{ stats.location_breakdown|tojson }};
+    const locData = {{ (stats.location_breakdown or {})|tojson }};
     const locLabels = Object.keys(locData);
     const locValues = Object.values(locData);
 
     const ctxLoc = document.getElementById('locationChart');
-    if (ctxLoc) {
+    if (ctxLoc && typeof Chart !== 'undefined') {
         new Chart(ctxLoc, {
             type: 'doughnut',
             data: {
                 labels: locLabels.length ? locLabels : ['Campus Ground'],
                 datasets: [{
                     data: locValues.length ? locValues : [1],
-                    backgroundColor: ['#1a73e8', '#16a34a', '#f59e0b', '#3b82f6', '#ef4444'],
+                    backgroundColor: ['#1a73e8', '#16a34a', '#f59e0b', '#3b82f6', '#ef4444', '#8b5cf6', '#ec4899'],
                     borderWidth: 2,
                     borderColor: '#ffffff'
                 }]

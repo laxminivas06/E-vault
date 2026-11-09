@@ -1,0 +1,16 @@
+{
+  "backup_timestamp": "2026-11-09T11:19:31.850750",
+  "backup_cycle_days": 15,
+  "retention_policy_days": 45,
+  "files_backed_up": [
+    "access_logs.json",
+    "contacts.json"
+  ],
+  "partitions_backed_up": 0,
+  "exempt_permanent_files": [
+    "users.json",
+    "credentials.json",
+    "pdfs.json",
+    "boundaries.json"
+  ]
+}
