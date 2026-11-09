@@ -97,7 +97,7 @@ class StorageLifecycleService:
             to_archive = active_logs[:cutoff_idx]
             remaining_active = active_logs[cutoff_idx:]
 
-            now_str = datetime.now().strftime('%Y%m%d_%H%M%S')
+            now_str = datetime.now().strftime('%Y%m%d_%H%M%S_%f')
             partition_filename = f"access_logs_partition_{now_str}.json"
             partition_path = self.logs_dir / partition_filename
 
@@ -160,10 +160,14 @@ class StorageLifecycleService:
 
         return self.create_backup_snapshot()
 
+    def is_permanently_exempt(self, filename: str) -> bool:
+        """Check whether a file is permanently exempt from pruning or deletion."""
+        return Path(filename).name in self.PERMANENT_EXEMPT_FILES
+
     def create_backup_snapshot(self) -> Dict[str, Any]:
         """Creates an immediate 15-day backup snapshot in data/backups/."""
         now = datetime.now()
-        timestamp = now.strftime('%Y%m%d_%H%M%S')
+        timestamp = now.strftime('%Y%m%d_%H%M%S_%f')
         snapshot_dir = self.backups_dir / f"backup_15d_{timestamp}"
         snapshot_dir.mkdir(parents=True, exist_ok=True)
 
@@ -203,6 +207,7 @@ class StorageLifecycleService:
 
         logger.info(f"Created 15-day backup snapshot at {snapshot_dir.name}")
         return {
+            'success': True,
             'status': 'success',
             'message': f"Backup snapshot '{snapshot_dir.name}' created successfully.",
             'snapshot': snapshot_dir.name,
@@ -272,8 +277,23 @@ class StorageLifecycleService:
         # 3. Delete expired partition files in data/logs/
         for part_file in self.logs_dir.glob("access_logs_partition_*.json"):
             try:
-                mtime = datetime.fromtimestamp(part_file.stat().st_mtime)
-                if mtime < cutoff_date:
+                is_expired = False
+                # Try parsing date from filename
+                parts = part_file.stem.split('_')
+                if len(parts) >= 4 and len(parts[3]) == 8 and parts[3].isdigit():
+                    try:
+                        file_date = datetime.strptime(parts[3], '%Y%m%d')
+                        if file_date < cutoff_date:
+                            is_expired = True
+                    except Exception:
+                        pass
+                
+                if not is_expired:
+                    mtime = datetime.fromtimestamp(part_file.stat().st_mtime)
+                    if mtime < cutoff_date:
+                        is_expired = True
+
+                if is_expired:
                     part_file.unlink()
                     purged_stats['partition_files_deleted'] += 1
                     logger.info(f"Purged expired log partition: {part_file.name}")
@@ -284,8 +304,22 @@ class StorageLifecycleService:
         for snap_dir in self.backups_dir.glob("backup_15d_*"):
             if snap_dir.is_dir():
                 try:
-                    mtime = datetime.fromtimestamp(snap_dir.stat().st_mtime)
-                    if mtime < cutoff_date:
+                    is_expired = False
+                    parts = snap_dir.name.split('_')
+                    if len(parts) >= 3 and len(parts[2]) == 8 and parts[2].isdigit():
+                        try:
+                            snap_date = datetime.strptime(parts[2], '%Y%m%d')
+                            if snap_date < cutoff_date:
+                                is_expired = True
+                        except Exception:
+                            pass
+
+                    if not is_expired:
+                        mtime = datetime.fromtimestamp(snap_dir.stat().st_mtime)
+                        if mtime < cutoff_date:
+                            is_expired = True
+
+                    if is_expired:
                         shutil.rmtree(snap_dir)
                         purged_stats['backup_snapshots_deleted'] += 1
                         logger.info(f"Purged expired backup snapshot: {snap_dir.name}")
@@ -300,6 +334,7 @@ class StorageLifecycleService:
 
         logger.info(f"45-day retention purge completed: {purged_stats}")
         return {
+            'success': True,
             'status': 'success',
             'purged_stats': purged_stats,
             'cutoff_date': cutoff_date.isoformat(),
@@ -341,8 +376,8 @@ class StorageLifecycleService:
         if not timestamp_str:
             return True
         try:
-            # Handle ISO timestamps or YYYY-MM-DD
-            clean_ts = str(timestamp_str)[:19]
+            # Handle ISO timestamps, space-separated timestamps, or YYYY-MM-DD
+            clean_ts = str(timestamp_str).strip()[:19].replace(' ', 'T')
             if 'T' in clean_ts:
                 dt = datetime.fromisoformat(clean_ts)
             else:
