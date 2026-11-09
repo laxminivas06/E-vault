@@ -278,9 +278,11 @@ def require_super_admin(f):
             session['intended_url'] = request.url
             flash('Administrator authentication required. Please sign in with Google.', 'warning')
             return redirect(url_for('admin_login'))
-        if not AuthService.is_super_admin(session.get('user_id')):
-            logger.warning(f"Forbidden super admin action attempt by user: {session.get('user_id')}")
-            if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.is_json:
+        user_id = session.get('user_id', '')
+        user_role = session.get('user_role', '')
+        if user_role != 'super_admin' and not AuthService.is_super_admin(user_id):
+            logger.warning(f"Forbidden super admin action attempt by user: {user_id}")
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.is_json or request.path.startswith('/admin/api/') or request.method in ['POST', 'PUT', 'DELETE']:
                 return jsonify({'success': False, 'message': 'Access denied: Super Administrator privileges required.'}), 403
             flash('Access denied. Super Administrator privileges required.', 'error')
             return redirect(url_for('admin_dashboard'))

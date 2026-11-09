@@ -17,7 +17,13 @@
     <div class="d-flex flex-wrap align-items-center justify-content-center gap-2 mt-3">
         <div class="user-info-pill">
             <span><i class="fab fa-google text-primary me-1"></i> <strong>Account:</strong> {{ session.get('user_id') }}</span>
-            <span class="badge-role admin"><i class="fas fa-users-gear me-1"></i> User Directory Access</span>
+            <span class="badge-role admin">
+                {% if is_super_admin %}
+                <i class="fas fa-shield-halved text-warning me-1"></i> Super Admin
+                {% else %}
+                <i class="fas fa-eye text-primary me-1"></i> Admin (Verification Only)
+                {% endif %}
+            </span>
         </div>
         <a href="{{ url_for('logout') }}" class="btn btn-sm btn-outline-danger py-1 px-3 rounded-pill d-inline-flex align-items-center gap-1 shadow-sm" title="Sign out">
             <i class="fas fa-arrow-right-from-bracket"></i>
@@ -35,6 +41,7 @@
     </div>
     
     <div class="col-12 col-md-6 d-flex flex-wrap justify-content-md-end gap-2">
+        {% if is_super_admin %}
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
             <i class="fas fa-user-plus me-1"></i> Add User
         </button>
@@ -44,6 +51,14 @@
         <a href="{{ url_for('admin_download_users_template') }}" class="btn btn-secondary" title="Download sample import spreadsheet">
             <i class="fas fa-file-excel text-success me-1"></i> Template
         </a>
+        {% else %}
+        <span class="badge bg-light text-secondary border px-3 py-2 rounded-pill align-self-center">
+            <i class="fas fa-eye text-primary me-1"></i> Verification Mode (Read Only)
+        </span>
+        <a href="{{ url_for('admin_download_users_template') }}" class="btn btn-outline-secondary btn-sm align-self-center" title="Download sample import spreadsheet">
+            <i class="fas fa-file-excel text-success me-1"></i> Template
+        </a>
+        {% endif %}
     </div>
 </div>
 
@@ -113,6 +128,7 @@
                                 </td>
                                 <td><span class="text-muted small">{{ user.created_at[:10] if user.created_at else 'Recent' }}</span></td>
                                 <td style="text-align: right;">
+                                    {% if is_super_admin %}
                                     <div class="d-inline-flex gap-1 justify-content-end">
                                         {% if user.role == 'student' %}
                                         <button type="button" class="btn btn-outline-primary btn-sm py-1 px-2" onclick="openEditUserModal('{{ user.username }}')" title="Edit Academic Status / Lateral Entry">
@@ -127,6 +143,9 @@
                                         <span class="badge bg-light text-muted border small align-self-center">Current</span>
                                         {% endif %}
                                     </div>
+                                    {% else %}
+                                    <span class="badge bg-light text-muted border small"><i class="fas fa-check text-success me-1"></i>Verified</span>
+                                    {% endif %}
                                 </td>
                             </tr>
                             {% endfor %}
@@ -530,6 +549,7 @@ function renderUserRows(users) {
     }
 
     const currentUserId = "{{ session.get('user_id') }}";
+    const isSuperAdmin = {{ 'true' if is_super_admin else 'false' }};
     tbody.innerHTML = users.map(u => {
         const isStudent = u.role === 'student';
         const yearBadgeClass = u.is_graduated ? 'bg-secondary' : (u.year_label === 'Pre-Admission' ? 'bg-info text-dark' : 'bg-primary');
@@ -544,6 +564,21 @@ function renderUserRows(users) {
             `<span class="badge bg-light text-secondary border px-2 py-1">Regular</span>`
         ) : `<span class="text-muted small">&mdash;</span>`;
 
+        const actionContent = isSuperAdmin ? `
+            <div class="d-inline-flex gap-1 justify-content-end">
+                ${isStudent ? `
+                    <button type="button" class="btn btn-outline-primary btn-sm py-1 px-2" onclick="openEditUserModal('${escapeHtml(u.username)}')" title="Edit Academic Status / Lateral Entry">
+                        <i class="fas fa-user-pen"></i>
+                    </button>
+                ` : ''}
+                ${u.username !== currentUserId ? `
+                    <button type="button" class="btn btn-outline-danger btn-sm py-1 px-2" onclick="confirmDeleteUser('${escapeHtml(u.username)}')" title="Delete User">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                ` : `<span class="badge bg-light text-muted border small align-self-center">Current</span>`}
+            </div>
+        ` : `<span class="badge bg-light text-muted border small"><i class="fas fa-check text-success me-1"></i>Verified</span>`;
+
         return `
             <tr>
                 <td><span class="badge bg-light text-dark border">#${u.id}</span></td>
@@ -554,18 +589,7 @@ function renderUserRows(users) {
                 <td><span class="badge-role ${escapeHtml(u.role)}">${escapeHtml(u.role)}</span></td>
                 <td><span class="text-muted small">${(u.created_at || 'Recent').slice(0, 10)}</span></td>
                 <td style="text-align: right;">
-                    <div class="d-inline-flex gap-1 justify-content-end">
-                        ${isStudent ? `
-                            <button type="button" class="btn btn-outline-primary btn-sm py-1 px-2" onclick="openEditUserModal('${escapeHtml(u.username)}')" title="Edit Academic Status / Lateral Entry">
-                                <i class="fas fa-user-pen"></i>
-                            </button>
-                        ` : ''}
-                        ${u.username !== currentUserId ? `
-                            <button type="button" class="btn btn-outline-danger btn-sm py-1 px-2" onclick="confirmDeleteUser('${escapeHtml(u.username)}')" title="Delete User">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        ` : `<span class="badge bg-light text-muted border small align-self-center">Current</span>`}
-                    </div>
+                    ${actionContent}
                 </td>
             </tr>
         `;

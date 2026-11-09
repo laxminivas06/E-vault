@@ -666,7 +666,7 @@ def admin_dashboard():
     )
 
 @app.route('/admin/add-pdf', methods=['POST'])
-@require_admin
+@require_super_admin
 def admin_add_pdf():
     data = request.get_json(silent=True) or request.form
     title = str(data.get('title', '')).strip()
@@ -691,7 +691,7 @@ def admin_add_pdf():
     return jsonify({'success': False, 'message': 'Failed to save PDF.'}), 500
 
 @app.route('/admin/delete-pdf/<int:pdf_id>', methods=['POST'])
-@require_admin
+@require_super_admin
 def admin_delete_pdf(pdf_id):
     deleted = db.delete_pdf(pdf_id)
     if deleted:
@@ -839,7 +839,7 @@ def admin_get_user(username):
     })
 
 @app.route('/admin/add-user', methods=['POST'])
-@require_admin
+@require_super_admin
 def admin_add_user():
     data = request.get_json(silent=True) or request.form
     username = str(data.get('username', '')).strip().upper()
@@ -890,7 +890,7 @@ def admin_add_user():
 
 @app.route('/admin/update-user/<username>', methods=['POST'])
 @app.route('/admin/api/user/<username>/update', methods=['POST'])
-@require_admin
+@require_super_admin
 def admin_update_user(username):
     """
     Update student or user academic status, including Lateral Entry flag and Manual Year Override.
@@ -945,7 +945,7 @@ def admin_update_user(username):
     return jsonify({'success': False, 'message': 'Failed to save updates.'}), 500
 
 @app.route('/admin/delete-user/<username>', methods=['POST'])
-@require_admin
+@require_super_admin
 def admin_delete_user(username):
     if username.upper() == str(session.get('user_id', '')).upper():
         return jsonify({'success': False, 'message': 'You cannot delete your own account.'}), 400
@@ -998,7 +998,7 @@ def admin_download_pdfs_template():
     )
 
 @app.route('/admin/upload-users-excel', methods=['POST'])
-@require_admin
+@require_super_admin
 def admin_upload_users_excel():
     if 'file' not in request.files:
         flash('No file uploaded.', 'error')
@@ -1067,7 +1067,7 @@ def admin_upload_users_excel():
 
 @app.route('/admin/upload-pdfs-excel', methods=['POST'])
 @app.route('/admin/upload-pdfs-bulk', methods=['POST'])
-@require_admin
+@require_super_admin
 def admin_upload_pdfs_excel():
     if 'file' not in request.files:
         flash('No file uploaded.', 'error')
@@ -1127,7 +1127,7 @@ def admin_get_boundaries():
 
 @app.route('/admin/save-boundary', methods=['POST'])
 @app.route('/admin/add-boundary', methods=['POST'])
-@require_admin
+@require_super_admin
 def admin_save_boundary():
     try:
         data = request.get_json(silent=True) or request.form or {}
@@ -1187,7 +1187,7 @@ def admin_save_boundary():
 
 @app.route('/admin/delete-boundary/<int:boundary_id>', methods=['POST', 'DELETE'])
 @app.route('/admin/delete-boundary', methods=['POST'])
-@require_admin
+@require_super_admin
 def admin_delete_boundary(boundary_id=None):
     try:
         if boundary_id is None:
@@ -1506,17 +1506,17 @@ def admin_api_storage_status():
     return jsonify({'success': True, 'storage': lifecycle_service.get_storage_status()})
 
 @app.route('/admin/api/backup/run', methods=['POST'])
-@require_admin
+@require_super_admin
 def admin_api_run_backup():
-    """Trigger immediate 15-day backup snapshot."""
+    """Trigger immediate 15-day backup snapshot (Super Admin restricted)."""
     res = lifecycle_service.create_backup_snapshot()
     db.log_access(session.get('user_id'), 'admin_manual_backup_created')
     return jsonify(res)
 
 @app.route('/admin/api/retention/cleanup', methods=['POST'])
-@require_admin
+@require_super_admin
 def admin_api_run_retention_cleanup():
-    """Trigger 45-day retention purge of expired logs, contacts, and old backups."""
+    """Trigger 45-day retention purge of expired logs, contacts, and old backups (Super Admin restricted)."""
     res = lifecycle_service.run_45_day_retention_purge()
     db.log_access(session.get('user_id'), 'admin_manual_retention_purge')
     return jsonify(res)
@@ -1567,7 +1567,7 @@ def admin_contacts():
     return render_template('admin_contacts.html', contacts=sorted_contacts)
 
 @app.route('/admin/update-contact-status', methods=['POST'])
-@require_admin
+@require_super_admin
 def admin_update_contact_status():
     data = request.get_json(silent=True) or request.form
     contact_id = data.get('id')
@@ -1578,11 +1578,13 @@ def admin_update_contact_status():
         return jsonify({'success': True, 'message': 'Status updated.'})
     return jsonify({'success': False, 'message': 'Contact not found.'}), 404
 
+@app.route('/admin/delete-contact/<int:contact_id>', methods=['POST', 'DELETE'])
 @app.route('/admin/delete-contact', methods=['POST'])
-@require_admin
-def admin_delete_contact():
-    data = request.get_json(silent=True) or request.form
-    contact_id = data.get('id')
+@require_super_admin
+def admin_delete_contact(contact_id=None):
+    if contact_id is None:
+        data = request.get_json(silent=True) or request.form
+        contact_id = data.get('id')
 
     deleted = db.delete_contact(contact_id)
     if deleted:

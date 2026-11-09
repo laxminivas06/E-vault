@@ -1,6 +1,6 @@
 {
-  "last_backup_at": "2026-11-09T11:29:21.626754",
-  "last_cleanup_at": "2026-11-09T11:29:21.655274",
+  "last_backup_at": "2026-11-09T11:54:48.072183",
+  "last_cleanup_at": "2026-11-09T11:54:48.091882",
   "total_purged_records": 0,
   "total_partitions_created": 0,
   "retention_policy_days": 45,

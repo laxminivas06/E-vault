@@ -24,9 +24,11 @@
                             <button type="button" class="btn btn-outline-primary btn-sm py-1 px-2" onclick="openSecurePdfViewer('{{ pdf.id }}', '{{ pdf.title|replace('\'', '\\\'') }}')" title="Preview Document">
                                 <i class="fas fa-eye"></i>
                             </button>
+                            {% if is_super_admin %}
                             <button type="button" class="btn btn-outline-danger btn-sm py-1 px-2" onclick="confirmDeletePdf('{{ pdf.id }}', '{{ pdf.title|replace('\'', '\\\'') }}')" title="Delete Document">
                                 <i class="fas fa-trash"></i>
                             </button>
+                            {% endif %}
                         </div>
                     </td>
                 </tr>
